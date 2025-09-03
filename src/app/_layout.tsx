@@ -1,6 +1,41 @@
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import "./global.css";
 
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  fade: true,
+  duration: 400,
+});
+
+const InitialLayout = () => {
+  const [fontsLoaded] = useFonts({
+    "Rubik-Bold": require("../../assets/fonts/Rubik-Bold.ttf"),
+    "Rubik-ExtraBold": require("../../assets/fonts/Rubik-ExtraBold.ttf"),
+    "Rubik-Light": require("../../assets/fonts/Rubik-Light.ttf"),
+    "Rubik-Medium": require("../../assets/fonts/Rubik-Medium.ttf"),
+    "Rubik-Regular": require("../../assets/fonts/Rubik-Regular.ttf"),
+    "Rubik-SemiBold": require("../../assets/fonts/Rubik-SemiBold.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  return (
+    <>
+      <StatusBar style="dark" />
+      <Stack />
+    </>
+  );
+};
+
 export default function RootLayout() {
-  return <Stack />;
+  return <InitialLayout />;
 }
