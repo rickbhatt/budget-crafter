@@ -31,7 +31,14 @@ const InitialLayout = () => {
   return (
     <>
       <StatusBar style="dark" />
-      <Stack />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="(protected)" />
+        <Stack.Screen name="(public)" />
+      </Stack>
     </>
   );
 };
