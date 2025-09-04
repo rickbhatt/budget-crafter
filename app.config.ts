@@ -57,6 +57,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
+    "expo-font",
+    "expo-secure-store",
     [
       "expo-splash-screen",
       {
@@ -71,20 +73,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         enableFullScreenImage_legacy: true,
       },
     ],
-    [
-      "expo-font",
-      {
-        fonts: [
-          "./assets/fonts/Rubik-Bold.ttf",
-          "./assets/fonts/Rubik-ExtraBold.ttf",
-          "./assets/fonts/Rubik-Light.ttf",
-          "./assets/fonts/Rubik-Medium.ttf",
-          "./assets/fonts/Rubik-Regular.ttf",
-          "./assets/fonts/Rubik-SemiBold.ttf",
-        ],
-      },
-    ],
-    "expo-secure-store",
   ],
   experiments: {
     typedRoutes: true,

@@ -13,20 +13,23 @@ SplashScreen.setOptions({
 });
 
 const InitialLayout = () => {
-  const [fontsLoaded] = useFonts({
-    "Rubik-Bold": require("../../assets/fonts/Rubik-Bold.ttf"),
-    "Rubik-ExtraBold": require("../../assets/fonts/Rubik-ExtraBold.ttf"),
-    "Rubik-Light": require("../../assets/fonts/Rubik-Light.ttf"),
-    "Rubik-Medium": require("../../assets/fonts/Rubik-Medium.ttf"),
-    "Rubik-Regular": require("../../assets/fonts/Rubik-Regular.ttf"),
-    "Rubik-SemiBold": require("../../assets/fonts/Rubik-SemiBold.ttf"),
+  const [fontsLoaded, error] = useFonts({
+    "Quicksand-Bold": require("../../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Medium": require("../../assets/fonts/Quicksand-Medium.ttf"),
+    "Quicksand-Regular": require("../../assets/fonts/Quicksand-Regular.ttf"),
+    "Quicksand-SemiBold": require("../../assets/fonts/Quicksand-SemiBold.ttf"),
+    "Quicksand-Light": require("../../assets/fonts/Quicksand-Light.ttf"),
   });
 
   useEffect(() => {
+    if (error) {
+      console.log("fonts error", error);
+      throw error;
+    }
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, error]);
 
   return (
     <>
