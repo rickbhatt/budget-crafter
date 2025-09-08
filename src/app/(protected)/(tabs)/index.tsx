@@ -1,4 +1,4 @@
-import TabsHeader from "@/components/TabsHeader";
+import ScreenHeader from "@/components/ScreenHeader";
 import { Stack } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
@@ -9,7 +9,15 @@ const Dashboard = () => {
     <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
       <Stack.Screen
         options={{
-          header: () => <TabsHeader title="Dashboard" />,
+          header: () => (
+            <ScreenHeader
+              title="Dashboard"
+              iconBtnStyles="bg-gray-200"
+              iconColor="black"
+              showBackBtn={true}
+              showSettingBtn={true}
+            />
+          ),
         }}
       />
       <View className="flex-1 flex items-center justify-center">
