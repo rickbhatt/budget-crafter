@@ -31,6 +31,8 @@ const InitialLayout = () => {
     }
   }, [fontsLoaded, error]);
 
+  const isAuthenticated = false;
+
   return (
     <>
       <StatusBar style="dark" />
@@ -39,8 +41,12 @@ const InitialLayout = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="(protected)" />
-        <Stack.Screen name="(public)" />
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="(protected)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="(public)" />
+        </Stack.Protected>
       </Stack>
     </>
   );
