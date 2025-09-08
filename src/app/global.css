@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .flex-start {
+    @apply flex items-start justify-center;
+  }
+}
+
+@layer components {
+  .custom-btn {
+    @apply flex items-center justify-center w-full px-3 py-5 gap-x-2 rounded-xl active:scale-95;
+  }
+
+  .h1-bold {
+    @apply text-3xl font-quicksand-bold;
+  }
+
+  .h3-bold {
+    @apply text-xl font-quicksand-bold;
+  }
+
+  .base-bold {
+    @apply text-lg font-quicksand-bold !important;
+  }
+
+  .base-semibold {
+    @apply text-lg font-quicksand-semibold;
+  }
+
+  .base-regular {
+    @apply text-lg font-quicksand;
+  }
+
+  .paragraph-bold {
+    @apply text-base font-quicksand-bold;
+  }
+
+  .paragraph-semibold {
+    @apply text-base font-quicksand-semibold;
+  }
+
+  .paragraph-medium {
+    @apply text-base font-quicksand-medium;
+  }
+}
