@@ -1,3 +1,5 @@
+import { Href } from "expo-router";
+
 interface CustomButtonProps {
   onPress: () => void;
   title: string;
@@ -10,7 +12,11 @@ interface CustomButtonProps {
 
 interface ScreenHeaderProps {
   title: string;
-  rightIcons?: React.ReactNode[];
+  rightIcons?: {
+    icon: React.ReactNode;
+    path: Href;
+    name: string;
+  }[];
   showBackBtn?: boolean;
   headerStyles?: string;
   iconBtnStyles?: string;
@@ -18,7 +24,7 @@ interface ScreenHeaderProps {
   showSettingBtn?: boolean;
 }
 
-interface HeaderBtn {
+interface HeaderBtnProps {
   onPress: () => void;
   icon: React.ReactNode;
   iconBtnStyles?: string;

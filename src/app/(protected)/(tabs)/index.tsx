@@ -14,7 +14,7 @@ const Dashboard = () => {
               title="Dashboard"
               iconBtnStyles="bg-gray-200"
               iconColor="black"
-              showBackBtn={true}
+              showBackBtn={false}
               showSettingBtn={true}
             />
           ),

@@ -22,7 +22,7 @@
   }
 
   .screen-title {
-    @apply text-2xl font-quicksand-bold;
+    @apply text-2xl font-quicksand-bold leading-tight;
   }
 
   .screen-header-btn {
