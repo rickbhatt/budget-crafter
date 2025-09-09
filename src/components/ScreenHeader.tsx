@@ -30,7 +30,7 @@ const ScreenHeader = ({
       <View className="flex-1 flex items-center flex-row gap-x-2">
         {showBackBtn && (
           <HeaderButton
-            onPress={() => {}}
+            onPress={() => router.back()}
             iconBtnStyles={iconBtnStyles}
             icon={
               <Ionicons
