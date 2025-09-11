@@ -25,12 +25,12 @@ const Dashboard = () => {
       <ScrollView className="container bg-bg-primary flex flex-col">
         {/* intro view */}
 
-        <Text className="mt-4 text-5xl font-quicksand-bold text-text-primary leading-tight">
+        <Text className="mt-4 screen-hr-padding text-5xl font-quicksand-bold text-text-primary leading-tight">
           {"\u{1F44B}"} Hi, Ritankar
         </Text>
 
         {/* chart view */}
-        <View className="mt-10 bg-yellow">
+        <View className="screen-hr-padding mt-10 bg-yellow">
           <Text>Something</Text>
         </View>
 

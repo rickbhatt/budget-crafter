@@ -57,7 +57,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
-    "expo-font",
+    [
+      "expo-font",
+      {
+        fonts: [
+          "./assets/fonts/Quicksand-Bold.ttf",
+          "./assets/fonts/Quicksand-Medium.ttf",
+          "./assets/fonts/Quicksand-Regular.ttf",
+          "./assets/fonts/Quicksand-SemiBold.ttf",
+          "./assets/fonts/Quicksand-Light.ttf",
+        ],
+      },
+    ],
     "expo-secure-store",
     [
       "expo-splash-screen",

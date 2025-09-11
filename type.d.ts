@@ -29,3 +29,9 @@ interface HeaderBtnProps {
   icon: React.ReactNode;
   iconBtnStyles?: string;
 }
+
+interface TabBarIconProps {
+  focused: boolean;
+  icon: React.ReactNode;
+  title: string;
+}

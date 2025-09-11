@@ -24,7 +24,10 @@ const ScreenHeader = ({
       style={{
         paddingTop: top,
       }}
-      className={cn("flex-between flex-row px-4 h-36", headerStyles)}
+      className={cn(
+        "flex-between flex-row screen-hr-padding h-36",
+        headerStyles
+      )}
     >
       {/* title and back button */}
       <View className="flex-1 flex items-center flex-row gap-x-2">
@@ -42,7 +45,7 @@ const ScreenHeader = ({
           />
         )}
 
-        <Text className="screen-title text-black">{title}</Text>
+        <Text className="screen-title text-text-primary">{title}</Text>
       </View>
 
       {/* right side buttons */}

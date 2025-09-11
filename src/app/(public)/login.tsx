@@ -47,7 +47,7 @@ const Login = () => {
     <View className="h-full flex-center flex-col  bg-emerald gap-y-8">
       <View className="w-full flex flex-col gap-y-5 px-5">
         <View className="flex flex-col">
-          <Text className="text-text-light text-center font-quicksand-bold text-8xl leading-tight">
+          <Text className="text-text-light text-center font-quicksand-bold text-8xl leading-none">
             Budget
           </Text>
           <Text className="text-text-light text-center font-quicksand-bold text-8xl">
