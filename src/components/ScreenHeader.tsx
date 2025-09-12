@@ -24,13 +24,10 @@ const ScreenHeader = ({
       style={{
         paddingTop: top,
       }}
-      className={cn(
-        "flex-between flex-row screen-hr-padding h-36",
-        headerStyles
-      )}
+      className={cn("screen-header", headerStyles)}
     >
       {/* title and back button */}
-      <View className="flex-1 flex items-center flex-row gap-x-2">
+      <View className="flex-1 flex items-center flex-row gap-x-3">
         {showBackBtn && (
           <HeaderButton
             onPress={() => router.back()}
@@ -38,7 +35,7 @@ const ScreenHeader = ({
             icon={
               <Ionicons
                 name="chevron-back-outline"
-                size={24}
+                size={30}
                 color={iconColor}
               />
             }
@@ -63,7 +60,7 @@ const ScreenHeader = ({
             onPress={() => router.push("/(protected)/settings")}
             iconBtnStyles={iconBtnStyles}
             icon={
-              <Ionicons name="settings-outline" size={34} color={iconColor} />
+              <Ionicons name="settings-outline" size={30} color={iconColor} />
             }
           />
         )}

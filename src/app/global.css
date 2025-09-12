@@ -25,12 +25,20 @@
     @apply px-4;
   }
 
+  .screen-header {
+    @apply flex-between flex-row screen-hr-padding h-32;
+  }
+
+  .screen-border {
+    @apply border;
+  }
+
   .screen-title {
     @apply text-2xl font-quicksand-bold;
   }
 
   .screen-header-btn {
-    @apply flex flex-row items-center justify-center rounded-full w-16 h-16 p-2.5 active:scale-90;
+    @apply flex flex-row items-center justify-center rounded-full w-14 h-14 p-2.5 active:scale-75;
   }
 
   .tab-icon {
