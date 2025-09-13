@@ -1,5 +1,7 @@
 import cn from "clsx";
+import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { CustomButtonProps } from "type";
 
 const CustomButton = ({
   onPress,
@@ -11,9 +13,14 @@ const CustomButton = ({
   isLoading = false,
   activityIndicatorColor,
 }: CustomButtonProps) => {
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    onPress();
+  };
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       style={{
         elevation: 10,
         shadowColor: "#878787",

@@ -1,9 +1,13 @@
 import ScreenHeader from "@/components/ScreenHeader";
+import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 
 const Dashboard = () => {
+  const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
+
   return (
     <>
       <Stack.Screen
@@ -25,9 +29,11 @@ const Dashboard = () => {
       <ScrollView className="container bg-bg-primary flex flex-col">
         {/* intro view */}
 
-        <Text className="mt-4 screen-hr-padding text-5xl font-quicksand-bold text-text-primary leading-tight">
-          {"\u{1F44B}"} Hi, Ritankar
-        </Text>
+        {userProfile && (
+          <Text className="mt-4 screen-hr-padding text-5xl font-quicksand-bold text-text-primary leading-tight">
+            {"\u{1F44B}"} Hi, {userProfile?.firstName}
+          </Text>
+        )}
 
         {/* chart view */}
         <View className="screen-hr-padding mt-10 bg-yellow">
