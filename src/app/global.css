@@ -18,7 +18,35 @@
 
 @layer components {
   .custom-btn {
-    @apply flex items-center justify-center w-full px-3 py-5 gap-x-2 rounded-xl active:scale-95;
+    @apply flex items-center justify-center w-full px-3 py-5 gap-x-2 rounded-xl active:scale-75;
+  }
+
+  .screen-hr-padding {
+    @apply px-4;
+  }
+
+  .screen-header {
+    @apply flex-between flex-row screen-hr-padding h-32;
+  }
+
+  .screen-border {
+    @apply border;
+  }
+
+  .screen-title {
+    @apply text-2xl font-quicksand-bold;
+  }
+
+  .screen-header-btn {
+    @apply flex flex-row items-center justify-center rounded-full w-14 h-14 p-2.5 active:scale-75;
+  }
+
+  .tab-icon {
+    @apply flex flex-col items-center justify-center min-h-full min-w-20 gap-1;
+  }
+
+  .container {
+    @apply flex-1 flex flex-col;
   }
 
   .h1-bold {

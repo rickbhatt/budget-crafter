@@ -1,25 +1,51 @@
-import TabsHeader from "@/components/TabsHeader";
+import ScreenHeader from "@/components/ScreenHeader";
+import { api } from "convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, Text, View } from "react-native";
 
 const Dashboard = () => {
+  const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
+
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+    <>
       <Stack.Screen
         options={{
-          header: () => <TabsHeader title="Dashboard" />,
+          header: () => (
+            <ScreenHeader
+              title="Dashboard"
+              iconBtnStyles="bg-gray-100"
+              iconColor="black"
+              showBackBtn={false}
+              showSettingBtn={true}
+              headerStyles="bg-bg-primary"
+            />
+          ),
         }}
       />
-      <View className="flex-1 flex items-center justify-center">
-        <Text className="text-amber-900 font-quicksand-bold text-3xl">
-          Dashboard
-        </Text>
-        <Text className="font-quicksand">Ritankar Bhattacharjee</Text>
-        <Text className="font-quicksand">Ritankar Bhattacharjee</Text>
-      </View>
-    </SafeAreaView>
+
+      {/* main content view */}
+      <ScrollView className="container bg-bg-primary flex flex-col">
+        {/* intro view */}
+
+        {userProfile && (
+          <Text className="mt-4 screen-hr-padding text-5xl font-quicksand-bold text-text-primary leading-tight">
+            {"\u{1F44B}"} Hi, {userProfile?.firstName}
+          </Text>
+        )}
+
+        {/* chart view */}
+        <View className="screen-hr-padding mt-10 bg-yellow">
+          <Text>Something</Text>
+        </View>
+
+        {/* expense list fiew */}
+        <View className="bg-bg-dark">
+          <Text className="text-text-light">Expenses</Text>
+        </View>
+      </ScrollView>
+    </>
   );
 };
 

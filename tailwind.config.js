@@ -12,6 +12,7 @@ module.exports = {
         "quicksand-medium": ["Quicksand-Medium", "sans-serif"],
       },
       colors: {
+        yellow: "#FFEA00",
         mint: "#A7F3D0",
         coral: "#FB7185",
         sky: "#7DD3FC",
@@ -25,8 +26,11 @@ module.exports = {
         red: "#EF4444",
         purple: "#8B5CF6",
         // Background Colors
-        "bg-primary": "#FFFFFF", // Main background
-        "bg-secondary": "#F8FAFC", // Secondary background
+        "bg-primary": "#FFFFFF",
+        "bg-secondary": "#F8FAFC",
+        "bg-dark": "#151515",
+        "inactive-tint": "#6B7280",
+        "active-tint": "#3B82F6",
 
         // Text Colors
         "text-primary": "#151515", // Main text (using your dark)
