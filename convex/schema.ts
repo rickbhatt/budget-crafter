@@ -7,6 +7,7 @@ export const User = {
   firstName: v.optional(v.string()),
   lastName: v.optional(v.string()),
   imageUrl: v.optional(v.string()),
+  updated_at: v.optional(v.number()),
 };
 
 export default defineSchema({

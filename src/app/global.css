@@ -21,12 +21,12 @@
     @apply flex items-center justify-center w-full px-3 py-5 gap-x-2 rounded-xl active:scale-75;
   }
 
-  .screen-hr-padding {
+  .screen-x-padding {
     @apply px-4;
   }
 
   .screen-header {
-    @apply flex-between flex-row screen-hr-padding h-32;
+    @apply flex-between flex-row screen-x-padding h-32;
   }
 
   .screen-border {
@@ -51,6 +51,9 @@
 
   .h1-bold {
     @apply text-3xl font-quicksand-bold;
+  }
+  .h2-bold {
+    @apply text-2xl font-quicksand-bold;
   }
 
   .h3-bold {
