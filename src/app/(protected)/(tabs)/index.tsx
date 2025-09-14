@@ -1,3 +1,4 @@
+import CustomButton from "@/components/CustomButton";
 import ScreenHeader from "@/components/ScreenHeader";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -15,8 +16,7 @@ const Dashboard = () => {
 
   const pieData = [
     { value: 60, color: "#151515", text: "60%" },
-
-    { value: 40, color: "#FFFFFF", text: "40%", focused: true },
+    { value: 40, color: "#3B82F6", text: "40%", focused: true },
   ];
 
   return (
@@ -75,14 +75,25 @@ const Dashboard = () => {
               <Text className="paragraph-semibold">Budget</Text>
             </View>
             <View className="flex flex-row items-center gap-x-2">
-              <View className="bg-bg-primary w-5 h-5 rounded-full" />
+              <View className="bg-blue w-5 h-5 rounded-full" />
               <Text className="paragraph-semibold">Expense</Text>
             </View>
           </View>
         </View>
 
         {/* expense list fiew */}
-        <View className="bg-bg-dark"></View>
+        <View className="bg-bg-dark py-3 screen-x-padding">
+          {/* section heading and button */}
+          <View className="flex-between flex-row">
+            <Text className="h3-bold text-text-light">Expenses</Text>
+            <CustomButton
+              title="View All"
+              style="bg-bg-primary w-32 py-3 rounded-xl"
+              textStyle="text-text-primary text-base"
+              onPress={() => console.log("view all")}
+            />
+          </View>
+        </View>
       </ScrollView>
     </>
   );

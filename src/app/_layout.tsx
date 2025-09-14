@@ -6,8 +6,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { PaperProvider } from "react-native-paper";
 
+import { paperTheme } from "@/theme";
 import "./global.css";
-import { paperTheme } from "./theme";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
