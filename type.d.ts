@@ -35,3 +35,11 @@ interface TabBarIconProps {
   icon: React.ReactNode;
   title: string;
 }
+
+interface ExpenseCardProps {
+  category: string;
+  amount: number;
+  description: string;
+  icon: React.ReactNode;
+  date: string;
+}

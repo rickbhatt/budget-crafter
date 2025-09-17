@@ -83,4 +83,7 @@
   .paragraph-medium {
     @apply text-base font-quicksand-medium;
   }
+  .paragraph-regular {
+    @apply text-base font-quicksand;
+  }
 }

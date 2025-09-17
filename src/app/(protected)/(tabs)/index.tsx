@@ -1,11 +1,14 @@
 import CustomButton from "@/components/CustomButton";
+import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
+import { ExpenseCardProps } from "type";
 
 const Dashboard = () => {
   const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
@@ -18,6 +21,46 @@ const Dashboard = () => {
     { value: 60, color: "#151515", text: "60%" },
     { value: 40, color: "#3B82F6", text: "40%", focused: true },
   ];
+
+  const expenseData: ExpenseCardProps[] = [
+    {
+      category: "Groceries",
+      amount: 2000,
+      description: "Groceries for the week and also for the next three months.",
+      icon: <Ionicons name="cart" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Entertainment",
+      amount: 750,
+      description: "Entertainment for the week",
+      icon: <Ionicons name="film" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Utilities",
+      amount: 900,
+      description: "Electricity bill",
+      icon: <Ionicons name="bulb" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Utilities",
+      amount: 1006,
+      description: "Wifi bill",
+      icon: <Ionicons name="wifi" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Travel",
+      amount: 800,
+      description: "Travel for the week",
+      icon: <Ionicons name="airplane" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+  ];
+
+  const router = useRouter();
 
   return (
     <>
@@ -58,13 +101,13 @@ const Dashboard = () => {
             <PieChart
               donut
               innerCircleColor="#FFEA00"
-              innerRadius={80}
+              innerRadius={100}
               radius={150}
               sectionAutoFocus
               data={pieData}
               centerLabelComponent={() => (
-                <View className="flex-center">
-                  <Text className="h2-bold">₹22000</Text>
+                <View className="flex-center flex-row p-2.5">
+                  <Text className="h2-bold text-center">₹5000/ ₹220000</Text>
                 </View>
               )}
             />
@@ -82,17 +125,45 @@ const Dashboard = () => {
         </View>
 
         {/* expense list fiew */}
-        <View className="bg-bg-dark py-3 screen-x-padding">
+        <View className="flex flex-col bg-bg-dark pt-3">
           {/* section heading and button */}
-          <View className="flex-between flex-row">
+          <View className="screen-x-padding flex-between flex-row">
             <Text className="h3-bold text-text-light">Expenses</Text>
             <CustomButton
               title="View All"
               style="bg-bg-primary w-32 py-3 rounded-xl"
               textStyle="text-text-primary text-base"
-              onPress={() => console.log("view all")}
+              onPress={() =>
+                router.push({
+                  pathname: "/expense/[id]",
+                  params: { id: "1" },
+                })
+              }
             />
           </View>
+
+          {/* expense cards */}
+          {expenseData && expenseData.length > 0 ? (
+            <View className="flex-col flex mt-5">
+              {expenseData.map((expense, index) => (
+                <ExpenseCard
+                  key={index}
+                  category={expense.category}
+                  amount={expense.amount}
+                  description={expense.description}
+                  icon={expense.icon}
+                  date={expense.date}
+                  isLast={index == expenseData.length - 1}
+                />
+              ))}
+            </View>
+          ) : (
+            <View className="flex-center flex-row mt-3">
+              <Text className="paragraph-semibold text-text-light">
+                No Expenses Found
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </>
