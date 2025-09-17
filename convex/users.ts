@@ -8,6 +8,7 @@ export const createUser = internalMutation({
     lastName: v.string(),
     email: v.string(),
     imageUrl: v.optional(v.string()),
+    updated_at: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db.insert("users", {

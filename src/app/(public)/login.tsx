@@ -58,10 +58,10 @@ const Login = () => {
           Craft Your Financial Future
         </Text>
       </View>
-      <View className="px-5 w-full">
+      <View className="px-6 flex-center flex-row">
         <CustomButton
           onPress={handleLogin}
-          style="bg-bg-primary"
+          style="bg-bg-primary w-full"
           title="Continue with Google"
           textStyle="text-primary"
           activityIndicatorColor="black"

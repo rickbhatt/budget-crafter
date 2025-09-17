@@ -4,7 +4,10 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PaperProvider } from "react-native-paper";
 
+import { paperTheme } from "@/theme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -44,7 +47,11 @@ export default function RootLayout() {
     <ClerkProvider tokenCache={tokenCache} publishableKey={clerkPublishableKey}>
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <InitialLayout />
+          <PaperProvider theme={paperTheme}>
+            <SafeAreaProvider>
+              <InitialLayout />
+            </SafeAreaProvider>
+          </PaperProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>
     </ClerkProvider>

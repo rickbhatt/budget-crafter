@@ -20,12 +20,7 @@ const ScreenHeader = ({
   const router = useRouter();
   return (
     // main view
-    <View
-      style={{
-        paddingTop: top,
-      }}
-      className={cn("screen-header", headerStyles)}
-    >
+    <View className={cn("screen-header", headerStyles)}>
       {/* title and back button */}
       <View className="flex-1 flex items-center flex-row gap-x-3">
         {showBackBtn && (

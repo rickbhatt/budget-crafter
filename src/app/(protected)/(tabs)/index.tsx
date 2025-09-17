@@ -1,12 +1,66 @@
+import CustomButton from "@/components/CustomButton";
+import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
+import { PieChart } from "react-native-gifted-charts";
+import { ExpenseCardProps } from "type";
 
 const Dashboard = () => {
   const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
+
+  const date = new Date();
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+
+  const pieData = [
+    { value: 60, color: "#151515", text: "60%" },
+    { value: 40, color: "#3B82F6", text: "40%", focused: true },
+  ];
+
+  const expenseData: ExpenseCardProps[] = [
+    {
+      category: "Groceries",
+      amount: 2000,
+      description: "Groceries for the week and also for the next three months.",
+      icon: <Ionicons name="cart" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Entertainment",
+      amount: 750,
+      description: "Entertainment for the week",
+      icon: <Ionicons name="film" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Utilities",
+      amount: 900,
+      description: "Electricity bill",
+      icon: <Ionicons name="bulb" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Utilities",
+      amount: 1006,
+      description: "Wifi bill",
+      icon: <Ionicons name="wifi" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+    {
+      category: "Travel",
+      amount: 800,
+      description: "Travel for the week",
+      icon: <Ionicons name="airplane" size={24} color="white" />,
+      date: "16-09-2025",
+    },
+  ];
+
+  const router = useRouter();
 
   return (
     <>
@@ -30,19 +84,86 @@ const Dashboard = () => {
         {/* intro view */}
 
         {userProfile && (
-          <Text className="mt-4 screen-hr-padding text-5xl font-quicksand-bold text-text-primary leading-tight">
+          <Text className="mt-4 screen-x-padding text-4xl font-quicksand-bold text-text-primary">
             {"\u{1F44B}"} Hi, {userProfile?.firstName}
           </Text>
         )}
 
-        {/* chart view */}
-        <View className="screen-hr-padding mt-10 bg-yellow">
-          <Text>Something</Text>
+        {/* summary view */}
+        <View className="flex-center flex-col px-6 mt-10 bg-yellow gap-y-8 pt-10 pb-8 rounded-t-[32px]">
+          {/* current month and budget toggle */}
+          <View className="w-full flex-between flex-row">
+            <Text className="paragraph-semibold">{`${month} ${year}`}</Text>
+            <Text>Monthly Budget</Text>
+          </View>
+          {/* chart */}
+          <View className="w-full flex-center">
+            <PieChart
+              donut
+              innerCircleColor="#FFEA00"
+              innerRadius={100}
+              radius={150}
+              sectionAutoFocus
+              data={pieData}
+              centerLabelComponent={() => (
+                <View className="flex-center flex-row p-2.5">
+                  <Text className="h2-bold text-center">₹5000/ ₹220000</Text>
+                </View>
+              )}
+            />
+          </View>
+          <View className="w-full flex-row flex-between">
+            <View className="flex flex-row items-center gap-x-2">
+              <View className="bg-bg-dark w-5 h-5 rounded-full" />
+              <Text className="paragraph-semibold">Budget</Text>
+            </View>
+            <View className="flex flex-row items-center gap-x-2">
+              <View className="bg-blue w-5 h-5 rounded-full" />
+              <Text className="paragraph-semibold">Expense</Text>
+            </View>
+          </View>
         </View>
 
         {/* expense list fiew */}
-        <View className="bg-bg-dark">
-          <Text className="text-text-light">Expenses</Text>
+        <View className="flex flex-col bg-bg-dark pt-3">
+          {/* section heading and button */}
+          <View className="screen-x-padding flex-between flex-row">
+            <Text className="h3-bold text-text-light">Expenses</Text>
+            <CustomButton
+              title="View All"
+              style="bg-bg-primary w-32 py-3 rounded-xl"
+              textStyle="text-text-primary text-base"
+              onPress={() =>
+                router.push({
+                  pathname: "/expense/[id]",
+                  params: { id: "1" },
+                })
+              }
+            />
+          </View>
+
+          {/* expense cards */}
+          {expenseData && expenseData.length > 0 ? (
+            <View className="flex-col flex mt-5">
+              {expenseData.map((expense, index) => (
+                <ExpenseCard
+                  key={index}
+                  category={expense.category}
+                  amount={expense.amount}
+                  description={expense.description}
+                  icon={expense.icon}
+                  date={expense.date}
+                  isLast={index == expenseData.length - 1}
+                />
+              ))}
+            </View>
+          ) : (
+            <View className="flex-center flex-row mt-3">
+              <Text className="paragraph-semibold text-text-light">
+                No Expenses Found
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </>

@@ -19,7 +19,6 @@ module.exports = {
         lavender: "#C084FC",
         peach: "#FDBA74",
         lime: "#BEF264",
-
         emerald: "#10B981",
         blue: "#3B82F6",
         orange: "#F59E0B",
