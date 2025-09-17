@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { PaperProvider } from "react-native-paper";
 
 import { paperTheme } from "@/theme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import "./global.css";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -47,7 +48,9 @@ export default function RootLayout() {
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <PaperProvider theme={paperTheme}>
-            <InitialLayout />
+            <SafeAreaProvider>
+              <InitialLayout />
+            </SafeAreaProvider>
           </PaperProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>
