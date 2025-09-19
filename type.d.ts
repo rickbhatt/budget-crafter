@@ -42,4 +42,5 @@ interface ExpenseCardProps {
   description: string;
   icon: React.ReactNode;
   date: string;
+  expenseId: string;
 }

@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import cn from "clsx";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { ExpenseCardProps } from "type";
@@ -11,17 +12,18 @@ const ExpenseCard = ({
   icon,
   date,
   isLast,
+  expenseId,
 }: ExpenseCardProps & { isLast?: boolean }) => {
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(`/(protected)/expense/${expenseId}`);
+  };
+
   return (
     <Pressable
-      onPress={() => {
-        console.log("pressed");
-      }}
-      android_ripple={{ color: "rgba(255, 255, 255, 0.3)" }}
-      className={cn(
-        "screen-x-padding flex-between flex-row py-5 border-b border-border-light",
-        isLast && "border-b-0"
-      )}
+      onPress={handlePress}
+      className={cn("expense-card", isLast && "border-b-0")}
     >
       {/* Left Side: icon and expense category and desc view */}
       <View className="flex-row flex items-center gap-x-3 flex-1 mr-6">

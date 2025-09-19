@@ -43,6 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: false,
     adaptiveIcon: {
       foregroundImage: "./assets/images/adaptive-icon.png",
       monochromeImage: "./assets/images/adaptive-icon.png",
@@ -82,12 +83,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           image: "./assets/images/splash-icon-light.png",
           backgroundColor: "#000000",
         },
-        enableFullScreenImage_legacy: true,
       },
     ],
   ],
   experiments: {
     typedRoutes: true,
+    reactCompiler: true,
   },
   extra: {
     eas: {

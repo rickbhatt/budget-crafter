@@ -29,6 +29,7 @@ const Dashboard = () => {
       description: "Groceries for the week and also for the next three months.",
       icon: <Ionicons name="cart" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Entertainment",
@@ -36,6 +37,7 @@ const Dashboard = () => {
       description: "Entertainment for the week",
       icon: <Ionicons name="film" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Utilities",
@@ -43,6 +45,7 @@ const Dashboard = () => {
       description: "Electricity bill",
       icon: <Ionicons name="bulb" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Utilities",
@@ -50,6 +53,7 @@ const Dashboard = () => {
       description: "Wifi bill",
       icon: <Ionicons name="wifi" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Travel",
@@ -57,6 +61,7 @@ const Dashboard = () => {
       description: "Travel for the week",
       icon: <Ionicons name="airplane" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
   ];
 
@@ -106,8 +111,11 @@ const Dashboard = () => {
               sectionAutoFocus
               data={pieData}
               centerLabelComponent={() => (
-                <View className="flex-center flex-row p-2.5">
-                  <Text className="h2-bold text-center">₹5000/ ₹220000</Text>
+                <View className="flex-center flex-col gap-y-1 p-2.5">
+                  <Text className="text-4xl font-quicksand-bold text-center">
+                    ₹5000
+                  </Text>
+                  <Text className="h3-bold text-center">of ₹22000</Text>
                 </View>
               )}
             />
@@ -148,6 +156,7 @@ const Dashboard = () => {
               {expenseData.map((expense, index) => (
                 <ExpenseCard
                   key={index}
+                  expenseId={expense.expenseId}
                   category={expense.category}
                   amount={expense.amount}
                   description={expense.description}
