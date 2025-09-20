@@ -27,14 +27,10 @@ const CustomCreateExpenseBtn = () => {
       <View
         className={cn(
           "w-16 h-16 p-3 rounded-full flex-center flex-row",
-          focused ? "bg-active-tint" : "bg-gray-100"
+          focused ? "bg-active-tint" : "bg-bg-dark"
         )}
       >
-        <Entypo
-          name="add-to-list"
-          size={25}
-          color={focused ? "#FFFFFF" : "#000000"}
-        />
+        <Entypo name="add-to-list" size={25} color={"#FFFFFF"} />
       </View>
     </Pressable>
   );
