@@ -95,7 +95,9 @@ const TabsLayout = () => {
         name="add-transaction"
         options={{
           title: "Some Transaction",
-          tabBarButton: () => <CustomCreateExpenseBtn />,
+          tabBarIcon: ({ focused }) => (
+            <CustomCreateExpenseBtn focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen

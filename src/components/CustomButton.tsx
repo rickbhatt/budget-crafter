@@ -13,12 +13,9 @@ const CustomButton = ({
   isLoading = false,
   activityIndicatorColor,
 }: CustomButtonProps) => {
-  const handlePress = async () => {
-    try {
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-    } catch (error) {
-      console.warn("Haptics failed:", error);
-    }
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+
     onPress();
   };
 
