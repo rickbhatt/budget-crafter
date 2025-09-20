@@ -1,3 +1,4 @@
+import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import cn from "clsx";
@@ -93,8 +94,8 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="add-transaction"
         options={{
-          title: "Add Transaction",
-          tabBarLabel: "Add",
+          title: "Some Transaction",
+          tabBarButton: () => <CustomCreateExpenseBtn />,
         }}
       />
       <Tabs.Screen

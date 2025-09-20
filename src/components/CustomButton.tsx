@@ -17,7 +17,7 @@ const CustomButton = ({
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
     } catch (error) {
-      console.warn("Haptics failed:", error); // Optional logging
+      console.warn("Haptics failed:", error);
     }
     onPress();
   };

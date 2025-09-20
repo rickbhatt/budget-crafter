@@ -5,8 +5,12 @@ import { Pressable } from "react-native";
 import { HeaderBtnProps } from "type";
 
 const HeaderButton = ({ icon, onPress, iconBtnStyles }: HeaderBtnProps) => {
-  const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const handlePress = async () => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    } catch (error) {
+      console.warn("Haptics failed:", error);
+    }
     onPress();
   };
 
