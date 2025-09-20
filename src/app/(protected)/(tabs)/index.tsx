@@ -98,7 +98,7 @@ const Dashboard = () => {
         <View className="flex-center flex-col px-6 mt-10 bg-yellow gap-y-8 pt-10 pb-8 rounded-t-[32px]">
           {/* current month and budget toggle */}
           <View className="w-full flex-between flex-row">
-            <Text className="paragraph-semibold">{`${month} ${year}`}</Text>
+            <Text className="base-bold">{`${month} ${year}`}</Text>
             <Text>Monthly Budget</Text>
           </View>
           {/* chart */}
@@ -122,12 +122,12 @@ const Dashboard = () => {
           </View>
           <View className="w-full flex-row flex-between">
             <View className="flex flex-row items-center gap-x-2">
-              <View className="bg-bg-dark w-5 h-5 rounded-full" />
-              <Text className="paragraph-semibold">Budget</Text>
+              <View className="bg-blue w-5 h-5 rounded-full" />
+              <Text className="base-bold">Expense</Text>
             </View>
             <View className="flex flex-row items-center gap-x-2">
-              <View className="bg-blue w-5 h-5 rounded-full" />
-              <Text className="paragraph-semibold">Expense</Text>
+              <View className="bg-bg-dark w-5 h-5 rounded-full" />
+              <Text className="base-bold">Budget</Text>
             </View>
           </View>
         </View>

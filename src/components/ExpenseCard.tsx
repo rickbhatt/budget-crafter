@@ -26,7 +26,7 @@ const ExpenseCard = ({
       className={cn("expense-card", isLast && "border-b-0")}
     >
       {/* Left Side: icon and expense category and desc view */}
-      <View className="flex-row flex items-center gap-x-3 flex-1 mr-6">
+      <View className="flex-row flex items-center gap-x-4 flex-1 mr-6">
         {icon}
         <View className="flex-col flex gap-y-1 flex-1">
           <Text
