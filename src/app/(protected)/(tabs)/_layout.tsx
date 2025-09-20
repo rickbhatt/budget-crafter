@@ -43,7 +43,7 @@ const TabsLayout = () => {
         tabBarButton: ({ children, onPress }) => (
           <Pressable
             onPress={(event: GestureResponderEvent) => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               onPress?.(event);
             }}
             className="flex-1 items-center justify-center"

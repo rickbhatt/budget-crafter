@@ -14,7 +14,7 @@ const CustomButton = ({
   activityIndicatorColor,
 }: CustomButtonProps) => {
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     onPress();
   };
