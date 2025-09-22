@@ -36,10 +36,6 @@
     @apply flex-between flex-row screen-x-padding pt-safe h-32;
   }
 
-  .screen-border {
-    @apply border;
-  }
-
   .screen-title {
     @apply text-2xl font-quicksand-bold;
   }

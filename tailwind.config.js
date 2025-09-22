@@ -24,6 +24,7 @@ module.exports = {
         orange: "#F59E0B",
         red: "#EF4444",
         purple: "#8B5CF6",
+
         // Background Colors
         "bg-primary": "#FFFFFF",
         "bg-secondary": "#F8FAFC",

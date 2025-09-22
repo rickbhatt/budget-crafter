@@ -7,7 +7,8 @@ export const User = {
   firstName: v.optional(v.string()),
   lastName: v.optional(v.string()),
   imageUrl: v.optional(v.string()),
-  updated_at: v.optional(v.number()),
+  updatedAt: v.optional(v.number()),
+  primaryCurrency: v.optional(v.string()),
 };
 
 export const Budgets = {
@@ -15,9 +16,9 @@ export const Budgets = {
   type: v.union(v.literal("monthly"), v.literal("credit")),
   amount: v.number(),
   currency: v.string(),
-  month: v.number(), // 1-12
-  year: v.number(),
-  updatedAt: v.number(),
+  periodStartDate: v.number(),
+  periodEndDate: v.number(),
+  updatedAt: v.optional(v.number()),
 };
 
 export const Categories = {
@@ -51,9 +52,11 @@ export default defineSchema({
     .index("byEmail", ["email"])
     .index("byClerkId", ["clerkId"]),
   budgets: defineTable(Budgets)
-    .index("by_user_and_date", ["userId", "year", "month"])
+    .index("by_user", ["userId"])
     .index("by_user_and_type", ["userId", "type"])
-    .index("by_user_type_date", ["userId", "type", "year", "month"]),
+    .index("by_user_and_period_start", ["userId", "periodStartDate"])
+    .index("by_user_type_period", ["userId", "type", "periodStartDate"])
+    .index("by_period_range", ["periodStartDate", "periodEndDate"]),
   categories: defineTable(Categories)
     .index("by_user", ["userId"])
     .index("by_user_and_default", ["userId", "isDefault"]),

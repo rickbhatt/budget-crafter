@@ -3,7 +3,6 @@ import cn from "clsx";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenHeaderProps } from "type";
 import HeaderButton from "./HeaderButton";
 
@@ -11,12 +10,12 @@ const ScreenHeader = ({
   title,
   rightIcons = [] as ScreenHeaderProps["rightIcons"],
   showBackBtn = false,
-  headerStyles,
-  iconBtnStyles,
+  headerStyles = "bg-bg-primary",
+  iconBtnStyles = "bg-gray-100",
   iconColor = "black",
   showSettingBtn = false,
+  titleStyles = "text-text-primary",
 }: ScreenHeaderProps) => {
-  const { top } = useSafeAreaInsets();
   const router = useRouter();
   return (
     // main view
@@ -30,14 +29,14 @@ const ScreenHeader = ({
             icon={
               <Ionicons
                 name="chevron-back-outline"
-                size={30}
+                size={24}
                 color={iconColor}
               />
             }
           />
         )}
 
-        <Text className="screen-title text-text-primary">{title}</Text>
+        <Text className={cn("screen-title", titleStyles)}>{title}</Text>
       </View>
 
       {/* right side buttons */}

@@ -74,11 +74,9 @@ const Dashboard = () => {
           header: () => (
             <ScreenHeader
               title="Dashboard"
-              iconBtnStyles="bg-gray-100"
               iconColor="black"
               showBackBtn={false}
               showSettingBtn={true}
-              headerStyles="bg-bg-primary"
             />
           ),
         }}

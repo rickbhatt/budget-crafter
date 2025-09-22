@@ -22,6 +22,7 @@ interface ScreenHeaderProps {
   iconBtnStyles?: string;
   iconColor?: string;
   showSettingBtn?: boolean;
+  titleStyles?: string;
 }
 
 interface HeaderBtnProps {
