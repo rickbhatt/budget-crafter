@@ -87,3 +87,16 @@ export type NewExpense = Omit<
   createdAt?: number;
   updatedAt?: number;
 };
+
+type PrimitiveValue = string | number | boolean | Date | null | undefined;
+
+interface CustomInputProps {
+  type: "amount" | "text" | "date" | "password" | "select";
+  onChange: (name: string, value: string) => void;
+  value: string | number | Date | null;
+  autoFocus?: boolean;
+  labelName: string;
+  icon?: React.ReactNode;
+  applyValidRange?: boolean;
+  inputName: string;
+}

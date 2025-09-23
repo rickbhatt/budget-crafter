@@ -20,6 +20,14 @@
   .active-press-scale {
     @apply active:scale-95;
   }
+
+  .form-input {
+    @apply flex flex-col gap-y-1.5 border-border-light border-b py-2.5 h-32;
+  }
+
+  .form-label {
+    @apply paragraph-bold text-text-light;
+  }
   .custom-btn {
     @apply flex items-center justify-center px-3 py-5 gap-x-2 rounded-xl active:active-press-scale;
   }
