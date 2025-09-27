@@ -1,3 +1,4 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
@@ -14,9 +15,15 @@ const CreateBudget = () => {
   });
 
   const handleFormDataOnChange = (name: string, value: string) => {
-    console.log(name, value);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const budgetTypeOptions = [
+    { label: "Monthly", value: "monthly" },
+    { label: "Credit Card", value: "creditCard" },
+  ];
+
+  console.log(formData);
 
   return (
     <>
@@ -37,7 +44,7 @@ const CreateBudget = () => {
         }}
       />
 
-      <View className=" flex-1 bg-bg-dark gap-y-6 screen-x-padding">
+      <View className=" flex-1 bg-bg-dark screen-x-padding">
         <CustomInputs
           type="amount"
           labelName="Budget Amount"
@@ -47,11 +54,26 @@ const CreateBudget = () => {
           inputName="amount"
         />
         <CustomInputs
+          type="select"
+          labelName="Budget Type"
+          value={formData.type}
+          selectOptions={budgetTypeOptions}
+          onChange={handleFormDataOnChange}
+          inputName="type"
+          icon={
+            <MaterialCommunityIcons
+              name="sack-outline"
+              size={28}
+              color="#FFFFFF"
+            />
+          }
+        />
+
+        <CustomInputs
           type="date"
           labelName="Period Start Date"
           value={formData.periodStartDate}
           onChange={handleFormDataOnChange}
-          applyValidRange={true}
           inputName="periodStartDate"
         />
         <CustomInputs
@@ -59,7 +81,6 @@ const CreateBudget = () => {
           labelName="Period End Date"
           value={formData.periodEndDate}
           onChange={handleFormDataOnChange}
-          applyValidRange={true}
           inputName="periodEndDate"
         />
       </View>

@@ -50,6 +50,7 @@ export const paperTheme = {
     ...MD3DarkTheme.colors,
     background: "#151515", // Modal background
     onSurface: "#FFFFFF", // Text color
-    primary: "#808080", // Selection color
+    primary: "#FFFFFF", // Selection color
+    onPrimary: "#000000",
   },
 };

@@ -94,6 +94,7 @@ interface CustomInputProps {
   type: "amount" | "text" | "date" | "password" | "select";
   onChange: (name: string, value: string) => void;
   value: string | number | Date | null;
+  selectOptions?: any[];
   autoFocus?: boolean;
   labelName: string;
   icon?: React.ReactNode;

@@ -21,8 +21,12 @@
     @apply active:scale-95;
   }
 
+  .form-group {
+    @apply flex flex-col gap-y-3 border-border-light border-b mt-6 h-28;
+  }
+
   .form-input {
-    @apply flex flex-col gap-y-1.5 border-border-light border-b py-2.5 h-32;
+    @apply flex-1 flex flex-row items-center gap-x-4;
   }
 
   .form-label {
