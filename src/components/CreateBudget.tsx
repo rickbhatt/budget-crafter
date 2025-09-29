@@ -1,8 +1,7 @@
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import CustomInputs from "./CustomInputs";
 import ScreenHeader from "./ScreenHeader";
 
@@ -23,8 +22,6 @@ const CreateBudget = () => {
     { label: "Credit Card", value: "creditCard" },
   ];
 
-  console.log(formData);
-
   return (
     <>
       <StatusBar style="light" />
@@ -44,16 +41,17 @@ const CreateBudget = () => {
         }}
       />
 
-      <View className=" flex-1 bg-bg-dark screen-x-padding">
+      <View className="flex-1 bg-bg-dark">
         <CustomInputs
-          type="amount"
+          type="text"
           labelName="Budget Amount"
           value={formData.amount}
           onChange={handleFormDataOnChange}
           autoFocus={true}
           inputName="amount"
+          icon={<Text className="text-3xl text-text-light">₹</Text>}
         />
-        <CustomInputs
+        {/* <CustomInputs
           type="select"
           labelName="Budget Type"
           value={formData.type}
@@ -82,7 +80,7 @@ const CreateBudget = () => {
           value={formData.periodEndDate}
           onChange={handleFormDataOnChange}
           inputName="periodEndDate"
-        />
+        /> */}
       </View>
     </>
   );

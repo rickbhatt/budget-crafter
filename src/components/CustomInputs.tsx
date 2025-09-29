@@ -11,7 +11,6 @@ import {
   View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { TextInput } from "react-native-paper";
 import {
   DatePickerModal,
   en,
@@ -70,58 +69,19 @@ const CustomInputs = ({
         <View className="form-group">
           <Text className="form-label">{labelName}</Text>
           <View className="form-input">
-            {icon && icon}
-            <TextInput
-              autoFocus={autoFocus}
-              style={{
-                backgroundColor: "#151515",
-                flex: 1,
-                marginLeft: 15,
-              }}
-              mode="outlined"
-              outlineStyle={{ borderWidth: 0 }}
-              cursorColor="#FFFFFF"
-              contentStyle={{
-                color: "#FFFFFF",
-                paddingLeft: 0,
-                fontSize: 16,
-              }}
-              keyboardType="numeric"
-              value={value?.toString()}
-              onChangeText={(text) => onChange(inputName, text)}
-              theme={{
-                colors: {
-                  primary: "#6B7280",
-                },
-                fonts: {
-                  regular: {
-                    fontFamily: "Quicksand-Regular",
-                  },
-                },
-              }}
-            />
-          </View>
-        </View>
-      );
-
-    case "amount":
-      return (
-        <View className="form-group">
-          <Text className="form-label">{labelName}</Text>
-          <View className="form-input">
-            <Text className="text-3xl text-text-light">
-              {user?.primaryCurrency}
-            </Text>
-            <RNTextInput
-              className="text-3xl text-text-light flex-1"
-              placeholder="1000"
-              textAlignVertical="center"
-              placeholderClassName="base-regular"
-              value={value?.toString()}
-              onChangeText={(text) => onChange(inputName, text)}
-              autoFocus={autoFocus}
-              keyboardType="numeric"
-            />
+            <View className="icon-wrapper">{icon}</View>
+            <View className="input-wrapper">
+              <RNTextInput
+                className="border border-green-600 text-3xl text-text-light w-full"
+                placeholder="1000"
+                textAlignVertical="center"
+                placeholderClassName="base-regular"
+                value={value?.toString()}
+                onChangeText={(text) => onChange(inputName, text)}
+                autoFocus={autoFocus}
+                keyboardType="numeric"
+              />
+            </View>
           </View>
         </View>
       );
@@ -133,7 +93,9 @@ const CustomInputs = ({
             onPress={() => setDatePickerOpen(true)}
             className="form-input"
           >
-            <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
+            <View className="icon-wrapper">
+              <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
+            </View>
             <Text
               className={cn(
                 "text-3xl",
@@ -163,6 +125,7 @@ const CustomInputs = ({
         <View className="form-group">
           <Text className="form-label">{labelName}</Text>
           <View className="form-input">
+            <View className="icon-wrapper">{icon}</View>
             <DropDownPicker
               open={showDropDown}
               value={value as string}
@@ -189,7 +152,7 @@ const CustomInputs = ({
                 borderColor: "#9CA3AF",
                 padding: 0,
                 flex: 1,
-                borderWidth: 0,
+                // borderWidth: 0,
               }}
               listItemContainerStyle={{
                 height: 60,
@@ -201,10 +164,10 @@ const CustomInputs = ({
                 fontSize: 30,
               }}
               ArrowDownIconComponent={({ style }) => (
-                <Icon name="arrow-down" size={20} color="#FFFFFF" />
+                <Icon name="arrow-down" size={18} color="#FFFFFF" />
               )}
               ArrowUpIconComponent={({ style }) => (
-                <Icon name="arrow-up" size={20} color="#FFFFFF" />
+                <Icon name="arrow-up" size={18} color="#FFFFFF" />
               )}
             />
           </View>

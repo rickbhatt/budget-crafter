@@ -22,11 +22,19 @@
   }
 
   .form-group {
-    @apply flex flex-col gap-y-3 border-border-light border-b mt-6 h-28;
+    @apply flex flex-col w-full gap-y-3 border-border-light border-t border-b border-r border-l mt-6 screen-x-padding h-32;
   }
 
   .form-input {
-    @apply flex-1 flex flex-row items-center gap-x-4;
+    @apply border-yellow border w-full flex flex-row items-center gap-x-4;
+  }
+
+  .icon-wrapper {
+    @apply border-red border w-10;
+  }
+
+  .input-wrapper {
+    @apply flex-1 flex;
   }
 
   .form-label {
