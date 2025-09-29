@@ -13,7 +13,7 @@ export const User = {
 
 export const Budgets = {
   userId: v.id("users"),
-  type: v.union(v.literal("monthly"), v.literal("creditCard")),
+  budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
   amount: v.number(),
   currency: v.string(),
   periodStartDate: v.number(),
@@ -53,9 +53,9 @@ export default defineSchema({
     .index("byClerkId", ["clerkId"]),
   budgets: defineTable(Budgets)
     .index("by_user", ["userId"])
-    .index("by_user_and_type", ["userId", "type"])
+    .index("by_user_and_type", ["userId", "budgetType"])
     .index("by_user_and_period_start", ["userId", "periodStartDate"])
-    .index("by_user_type_period", ["userId", "type", "periodStartDate"])
+    .index("by_user_type_period", ["userId", "budgetType", "periodStartDate"])
     .index("by_period_range", ["periodStartDate", "periodEndDate"]),
   categories: defineTable(Categories)
     .index("by_user", ["userId"])

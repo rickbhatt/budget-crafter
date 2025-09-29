@@ -4,7 +4,7 @@ import { getAuthenticatedUser } from "./users";
 
 export const createBudget = mutation({
   args: {
-    type: v.union(v.literal("monthly"), v.literal("credit")),
+    budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
     amount: v.number(),
     periodStartDate: v.number(),
     periodEndDate: v.number(),
@@ -35,7 +35,7 @@ export const updateBudget = mutation({
     budgetId: v.id("budgets"),
     updates: v.object({
       amount: v.optional(v.number()),
-      type: v.optional(v.union(v.literal("monthly"), v.literal("credit"))),
+      type: v.optional(v.union(v.literal("monthly"), v.literal("creditCard"))),
       periodStartDate: v.optional(v.number()),
       periodEndDate: v.optional(v.number()),
     }),

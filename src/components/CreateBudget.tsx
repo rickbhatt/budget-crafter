@@ -1,4 +1,6 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { api } from "convex/_generated/api";
+import { useMutation } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
@@ -15,6 +17,8 @@ const CreateBudget = () => {
     periodEndDate: null,
   };
 
+  const createBudget = useMutation(api.budget.createBudget);
+
   const [formData, setFormData] = useState(IntialState);
 
   const handleFormDataOnChange = (name: string, value: string) => {
@@ -30,8 +34,10 @@ const CreateBudget = () => {
     setFormData(IntialState);
   };
 
-  const handleCreateBudgetPress = () => {
-    console.log(formData);
+  const handleCreateBudgetPress = async () => {
+    await createBudget({ ...formData, amount: Number(formData.amount) });
+    console.log("data submited");
+    setFormData(IntialState);
   };
 
   return (
