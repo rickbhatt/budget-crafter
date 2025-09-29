@@ -1,17 +1,21 @@
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
+import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
 import ScreenHeader from "./ScreenHeader";
 
 const CreateBudget = () => {
-  const [formData, setFormData] = useState({
+  const IntialState = {
     amount: null,
-    type: null,
+    budgetType: null,
     periodStartDate: null,
     periodEndDate: null,
-  });
+  };
+
+  const [formData, setFormData] = useState(IntialState);
 
   const handleFormDataOnChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -21,6 +25,14 @@ const CreateBudget = () => {
     { label: "Monthly", value: "monthly" },
     { label: "Credit Card", value: "creditCard" },
   ];
+
+  const handleClearAllPress = () => {
+    setFormData(IntialState);
+  };
+
+  const handleCreateBudgetPress = () => {
+    console.log(formData);
+  };
 
   return (
     <>
@@ -50,14 +62,15 @@ const CreateBudget = () => {
           autoFocus={true}
           inputName="amount"
           icon={<Text className="text-3xl text-text-light">₹</Text>}
+          keyboardType="numeric"
         />
-        {/* <CustomInputs
+        <CustomInputs
           type="select"
           labelName="Budget Type"
-          value={formData.type}
+          value={formData.budgetType}
           selectOptions={budgetTypeOptions}
           onChange={handleFormDataOnChange}
-          inputName="type"
+          inputName="budgetType"
           icon={
             <MaterialCommunityIcons
               name="sack-outline"
@@ -74,13 +87,29 @@ const CreateBudget = () => {
           onChange={handleFormDataOnChange}
           inputName="periodStartDate"
         />
+
         <CustomInputs
           type="date"
           labelName="Period End Date"
           value={formData.periodEndDate}
           onChange={handleFormDataOnChange}
           inputName="periodEndDate"
-        /> */}
+        />
+
+        <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
+          <CustomButton
+            title="Clear All"
+            onPress={handleClearAllPress}
+            style="w-1/2 bg-transparent border-border-light border"
+            textStyle="text-text-light"
+          />
+          <CustomButton
+            title="Create Budget"
+            onPress={handleCreateBudgetPress}
+            style="bg-emerald w-1/2"
+            textStyle="text-text-light"
+          />
+        </View>
       </View>
     </>
   );

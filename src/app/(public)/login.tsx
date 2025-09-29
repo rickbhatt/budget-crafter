@@ -64,6 +64,7 @@ const Login = () => {
           style="bg-bg-primary w-full"
           title="Continue with Google"
           textStyle="text-primary"
+          showElevation={true}
           activityIndicatorColor="black"
           leftIcon={<Ionicons name="logo-google" size={24} color="black" />}
           isLoading={isLoading}

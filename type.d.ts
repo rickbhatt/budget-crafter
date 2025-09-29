@@ -1,4 +1,5 @@
 import { Href } from "expo-router";
+import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
 interface CustomButtonProps {
   onPress: () => void;
@@ -8,6 +9,7 @@ interface CustomButtonProps {
   textStyle?: string;
   isLoading?: boolean;
   activityIndicatorColor?: string;
+  showElevation?: boolean;
 }
 
 interface ScreenHeaderProps {
@@ -100,4 +102,5 @@ interface CustomInputProps {
   icon?: React.ReactNode;
   applyValidRange?: boolean;
   inputName: string;
+  keyboardType?: KeyboardTypeOptions;
 }

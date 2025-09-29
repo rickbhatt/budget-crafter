@@ -2,14 +2,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import { getLocales } from "expo-localization";
-import { useState } from "react";
-import {
-  Pressable,
-  TextInput as RNTextInput,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import {
   DatePickerModal,
@@ -31,6 +25,7 @@ const CustomInputs = ({
   applyValidRange = false,
   inputName,
   selectOptions = [{ label: "", value: "" }],
+  keyboardType = "default",
 }: CustomInputProps) => {
   const user = useQuery(api.users.getAuthenticatedUserProfile);
 
@@ -39,6 +34,10 @@ const CustomInputs = ({
 
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || null);
+
+  useEffect(() => {
+    setSelectedValue(value || null);
+  }, [value]);
 
   const [showDropDown, setShowDropDown] = useState(false);
 
@@ -58,11 +57,6 @@ const CustomInputs = ({
     onChange(name, timeStamp);
   };
 
-  const onSelection = (value: string) => {
-    onChange(inputName, value);
-    setShowDropDown(false);
-  };
-
   switch (type) {
     case "text":
       return (
@@ -71,15 +65,18 @@ const CustomInputs = ({
           <View className="form-input">
             <View className="icon-wrapper">{icon}</View>
             <View className="input-wrapper">
-              <RNTextInput
-                className="border border-green-600 text-3xl text-text-light w-full"
+              <TextInput
+                className="text-text-light w-full pl-0"
+                placeholderTextColor="#9CA3AF"
+                style={{
+                  fontSize: 30,
+                }}
                 placeholder="1000"
                 textAlignVertical="center"
-                placeholderClassName="base-regular"
                 value={value?.toString()}
                 onChangeText={(text) => onChange(inputName, text)}
                 autoFocus={autoFocus}
-                keyboardType="numeric"
+                keyboardType={keyboardType}
               />
             </View>
           </View>
@@ -87,24 +84,33 @@ const CustomInputs = ({
       );
     case "date":
       return (
-        <View className="form-group">
-          <Text className="form-label">{labelName}</Text>
-          <Pressable
-            onPress={() => setDatePickerOpen(true)}
-            className="form-input"
-          >
-            <View className="icon-wrapper">
-              <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
+        <>
+          <View className="form-group">
+            <Text className="form-label">{labelName}</Text>
+            <View className="form-input">
+              <View className="icon-wrapper">
+                <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
+              </View>
+              <View className="input-wrapper">
+                <Pressable
+                  className="py-3 w-full"
+                  onPress={() => setDatePickerOpen(true)}
+                >
+                  <Text
+                    className={cn(
+                      "text-3xl",
+                      value ? "text-text-light" : "text-text-tertiary"
+                    )}
+                  >
+                    {value
+                      ? new Date(value).toLocaleDateString()
+                      : "Select Date"}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
-            <Text
-              className={cn(
-                "text-3xl",
-                value ? "text-text-light" : "text-text-tertiary"
-              )}
-            >
-              {value ? new Date(value).toLocaleDateString() : "Select Date"}
-            </Text>
-          </Pressable>
+          </View>
+
           <DatePickerModal
             locale={languageTag}
             mode="single"
@@ -117,7 +123,7 @@ const CustomInputs = ({
             saveLabel="Select Date"
             startWeekOnMonday
           />
-        </View>
+        </>
       );
 
     case "select":
@@ -126,50 +132,55 @@ const CustomInputs = ({
           <Text className="form-label">{labelName}</Text>
           <View className="form-input">
             <View className="icon-wrapper">{icon}</View>
-            <DropDownPicker
-              open={showDropDown}
-              value={value as string}
-              items={selectOptions}
-              setOpen={setShowDropDown}
-              setValue={setSelectedValue}
-              setItems={() => {}}
-              onSelectItem={(item) => {
-                onChange(inputName, item.value as string);
-              }}
-              listMode="SCROLLVIEW"
-              placeholder="Select a type"
-              dropDownContainerStyle={{
-                backgroundColor: "#151515",
-                borderColor: "#FFFFFF",
-              }}
-              textStyle={{
-                color: "#FFFFFF",
+            <View className="input-wrapper">
+              <DropDownPicker
+                open={showDropDown}
+                value={selectedValue ? (selectedValue as string) : null}
+                items={selectOptions}
+                setOpen={setShowDropDown}
+                setValue={setSelectedValue}
+                setItems={() => {}}
+                onSelectItem={(item) => {
+                  onChange(inputName, item.value as string);
+                }}
+                listMode="SCROLLVIEW"
+                placeholder="Select a type"
+                dropDownContainerStyle={{
+                  backgroundColor: "#151515",
+                  borderColor: "#FFFFFF",
+                }}
+                textStyle={{
+                  color: "#FFFFFF",
 
-                fontSize: 30,
-              }}
-              style={{
-                backgroundColor: "#151515",
-                borderColor: "#9CA3AF",
-                padding: 0,
-                flex: 1,
-                // borderWidth: 0,
-              }}
-              listItemContainerStyle={{
-                height: 60,
-                paddingVertical: 10,
-              }}
-              searchable={false}
-              placeholderStyle={{
-                color: "#9CA3AF",
-                fontSize: 30,
-              }}
-              ArrowDownIconComponent={({ style }) => (
-                <Icon name="arrow-down" size={18} color="#FFFFFF" />
-              )}
-              ArrowUpIconComponent={({ style }) => (
-                <Icon name="arrow-up" size={18} color="#FFFFFF" />
-              )}
-            />
+                  fontSize: 30,
+                }}
+                style={{
+                  backgroundColor: "#151515",
+                  borderColor: "#9CA3AF",
+                  padding: 0,
+                  width: "100%",
+                  borderRadius: 0,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                  borderWidth: 0,
+                }}
+                listItemContainerStyle={{
+                  height: 60,
+                  paddingVertical: 10,
+                }}
+                searchable={false}
+                placeholderStyle={{
+                  color: "#9CA3AF",
+                  fontSize: 30,
+                }}
+                ArrowDownIconComponent={({ style }) => (
+                  <Icon name="arrow-down" size={18} color="#FFFFFF" />
+                )}
+                ArrowUpIconComponent={({ style }) => (
+                  <Icon name="arrow-up" size={18} color="#FFFFFF" />
+                )}
+              />
+            </View>
           </View>
         </View>
       );
