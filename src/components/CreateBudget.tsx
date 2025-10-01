@@ -11,7 +11,7 @@ import ScreenHeader from "./ScreenHeader";
 
 const CreateBudget = () => {
   const IntialState = {
-    amount: null,
+    budgetAmount: null,
     budgetType: null,
     periodStartDate: null,
     periodEndDate: null,
@@ -35,9 +35,16 @@ const CreateBudget = () => {
   };
 
   const handleCreateBudgetPress = async () => {
-    await createBudget({ ...formData, amount: Number(formData.amount) });
-    console.log("data submited");
-    setFormData(IntialState);
+    try {
+      await createBudget({
+        ...formData,
+        budgetAmount: Number(formData.budgetAmount),
+      });
+      setFormData(IntialState);
+      console.log("data submited");
+    } catch (error) {
+      console.log("🚀 ~ handleCreateBudgetPress ~ error:", error);
+    }
   };
 
   return (
@@ -63,10 +70,10 @@ const CreateBudget = () => {
         <CustomInputs
           type="text"
           labelName="Budget Amount"
-          value={formData.amount}
+          value={formData.budgetAmount}
           onChange={handleFormDataOnChange}
           autoFocus={true}
-          inputName="amount"
+          inputName="budgetAmount"
           icon={<Text className="text-3xl text-text-light">₹</Text>}
           keyboardType="numeric"
         />

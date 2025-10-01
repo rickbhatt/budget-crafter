@@ -5,7 +5,7 @@ import { getAuthenticatedUser } from "./users";
 export const createBudget = mutation({
   args: {
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-    amount: v.number(),
+    budgetAmount: v.number(),
     periodStartDate: v.number(),
     periodEndDate: v.number(),
   },
@@ -25,7 +25,7 @@ export const createBudget = mutation({
 
       return budget;
     } catch (error) {
-      console.log("🚀 ~ createBudget error:", error);
+      throw error;
     }
   },
 });
@@ -34,7 +34,7 @@ export const updateBudget = mutation({
   args: {
     budgetId: v.id("budgets"),
     updates: v.object({
-      amount: v.optional(v.number()),
+      budgetAmount: v.optional(v.number()),
       type: v.optional(v.union(v.literal("monthly"), v.literal("creditCard"))),
       periodStartDate: v.optional(v.number()),
       periodEndDate: v.optional(v.number()),

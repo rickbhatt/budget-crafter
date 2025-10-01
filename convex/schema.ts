@@ -14,7 +14,7 @@ export const User = {
 export const Budgets = {
   userId: v.id("users"),
   budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-  amount: v.number(),
+  budgetAmount: v.number(),
   currency: v.string(),
   periodStartDate: v.number(),
   periodEndDate: v.number(),
