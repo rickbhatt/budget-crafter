@@ -26,6 +26,7 @@ const CustomInputs = ({
   inputName,
   selectOptions = [{ label: "", value: "" }],
   keyboardType = "default",
+  error,
 }: CustomInputProps) => {
   const user = useQuery(api.users.getAuthenticatedUserProfile);
 
@@ -53,62 +54,77 @@ const CustomInputs = ({
 
   const onConfirmSingle = (name: string, params: any) => {
     setDatePickerOpen(false);
-    let timeStamp = params.date.getTime();
+    // Return timestamp to match Convex schema
+    const timeStamp = params.date.getTime();
     onChange(name, timeStamp);
   };
 
   switch (type) {
     case "text":
       return (
-        <View className="form-group">
-          <Text className="form-label">{labelName}</Text>
-          <View className="form-input">
-            <View className="icon-wrapper">{icon}</View>
-            <View className="input-wrapper">
-              <TextInput
-                className="text-text-light w-full pl-0"
-                placeholderTextColor="#9CA3AF"
-                style={{
-                  fontSize: 30,
-                }}
-                placeholder="1000"
-                textAlignVertical="center"
-                value={value?.toString()}
-                onChangeText={(text) => onChange(inputName, text)}
-                autoFocus={autoFocus}
-                keyboardType={keyboardType}
-              />
+        <View className="form-wrapper">
+          <View className="form-group">
+            <Text className="form-label">{labelName}</Text>
+            <View className="form-input">
+              <View className="icon-wrapper">{icon}</View>
+              <View className="input-wrapper">
+                <TextInput
+                  className="text-text-light w-full pl-0"
+                  placeholderTextColor="#9CA3AF"
+                  style={{
+                    fontSize: 30,
+                  }}
+                  placeholder="1000"
+                  textAlignVertical="center"
+                  value={value?.toString()}
+                  onChangeText={(text) => onChange(inputName, text)}
+                  autoFocus={autoFocus}
+                  keyboardType={keyboardType}
+                />
+              </View>
             </View>
           </View>
+          {error && (
+            <View className="error-message-container">
+              <Text className="error-text">{error}</Text>
+            </View>
+          )}
         </View>
       );
     case "date":
       return (
         <>
-          <View className="form-group">
-            <Text className="form-label">{labelName}</Text>
-            <View className="form-input">
-              <View className="icon-wrapper">
-                <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
-              </View>
-              <View className="input-wrapper">
-                <Pressable
-                  className="py-3 w-full"
-                  onPress={() => setDatePickerOpen(true)}
-                >
-                  <Text
-                    className={cn(
-                      "text-3xl",
-                      value ? "text-text-light" : "text-text-tertiary"
-                    )}
+          <View className="form-wrapper">
+            <View className="form-group">
+              <Text className="form-label">{labelName}</Text>
+              <View className="form-input">
+                <View className="icon-wrapper">
+                  <Ionicons name="calendar-outline" size={28} color="#FFFFFF" />
+                </View>
+                <View className="input-wrapper">
+                  <Pressable
+                    className="py-3 w-full"
+                    onPress={() => setDatePickerOpen(true)}
                   >
-                    {value
-                      ? new Date(value).toLocaleDateString()
-                      : "Select Date"}
-                  </Text>
-                </Pressable>
+                    <Text
+                      className={cn(
+                        "text-3xl",
+                        value ? "text-text-light" : "text-text-tertiary"
+                      )}
+                    >
+                      {value
+                        ? new Date(value).toLocaleDateString()
+                        : "Select Date"}
+                    </Text>
+                  </Pressable>
+                </View>
               </View>
             </View>
+            {error && (
+              <View className="error-message-container">
+                <Text className="error-text">{error}</Text>
+              </View>
+            )}
           </View>
 
           <DatePickerModal
@@ -116,7 +132,7 @@ const CustomInputs = ({
             mode="single"
             visible={datePickerOpen}
             onDismiss={onDismissSingle}
-            date={value !== null ? new Date(value!) : new Date()}
+            date={value && value !== "" ? new Date(value) : new Date()}
             onConfirm={(params) => onConfirmSingle(inputName, params)}
             validRange={applyValidRange ? { startDate: today } : undefined}
             startDate={new Date()}
@@ -128,60 +144,67 @@ const CustomInputs = ({
 
     case "select":
       return (
-        <View className="form-group">
-          <Text className="form-label">{labelName}</Text>
-          <View className="form-input">
-            <View className="icon-wrapper">{icon}</View>
-            <View className="input-wrapper">
-              <DropDownPicker
-                open={showDropDown}
-                value={selectedValue ? (selectedValue as string) : null}
-                items={selectOptions}
-                setOpen={setShowDropDown}
-                setValue={setSelectedValue}
-                setItems={() => {}}
-                onSelectItem={(item) => {
-                  onChange(inputName, item.value as string);
-                }}
-                listMode="SCROLLVIEW"
-                placeholder="Select a type"
-                dropDownContainerStyle={{
-                  backgroundColor: "#151515",
-                  borderColor: "#FFFFFF",
-                }}
-                textStyle={{
-                  color: "#FFFFFF",
+        <View className="form-wrapper">
+          <View className="form-group">
+            <Text className="form-label">{labelName}</Text>
+            <View className="form-input">
+              <View className="icon-wrapper">{icon}</View>
+              <View className="input-wrapper">
+                <DropDownPicker
+                  open={showDropDown}
+                  value={selectedValue ? (selectedValue as string) : null}
+                  items={selectOptions}
+                  setOpen={setShowDropDown}
+                  setValue={setSelectedValue}
+                  setItems={() => {}}
+                  onSelectItem={(item) => {
+                    onChange(inputName, item.value as string);
+                  }}
+                  listMode="SCROLLVIEW"
+                  placeholder="Select a type"
+                  dropDownContainerStyle={{
+                    backgroundColor: "#151515",
+                    borderColor: "#FFFFFF",
+                  }}
+                  textStyle={{
+                    color: "#FFFFFF",
 
-                  fontSize: 30,
-                }}
-                style={{
-                  backgroundColor: "#151515",
-                  borderColor: "#9CA3AF",
-                  padding: 0,
-                  width: "100%",
-                  borderRadius: 0,
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  borderWidth: 0,
-                }}
-                listItemContainerStyle={{
-                  height: 60,
-                  paddingVertical: 10,
-                }}
-                searchable={false}
-                placeholderStyle={{
-                  color: "#9CA3AF",
-                  fontSize: 30,
-                }}
-                ArrowDownIconComponent={({ style }) => (
-                  <Icon name="arrow-down" size={18} color="#FFFFFF" />
-                )}
-                ArrowUpIconComponent={({ style }) => (
-                  <Icon name="arrow-up" size={18} color="#FFFFFF" />
-                )}
-              />
+                    fontSize: 30,
+                  }}
+                  style={{
+                    backgroundColor: "#151515",
+                    borderColor: "#9CA3AF",
+                    padding: 0,
+                    width: "100%",
+                    borderRadius: 0,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                    borderWidth: 0,
+                  }}
+                  listItemContainerStyle={{
+                    height: 60,
+                    paddingVertical: 10,
+                  }}
+                  searchable={false}
+                  placeholderStyle={{
+                    color: "#9CA3AF",
+                    fontSize: 30,
+                  }}
+                  ArrowDownIconComponent={({ style }) => (
+                    <Icon name="arrow-down" size={18} color="#FFFFFF" />
+                  )}
+                  ArrowUpIconComponent={({ style }) => (
+                    <Icon name="arrow-up" size={18} color="#FFFFFF" />
+                  )}
+                />
+              </View>
             </View>
           </View>
+          {error && (
+            <View className="error-message-container">
+              <Text className="error-text">{error}</Text>
+            </View>
+          )}
         </View>
       );
 

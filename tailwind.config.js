@@ -22,7 +22,10 @@ module.exports = {
         emerald: "#10B981",
         blue: "#3B82F6",
         orange: "#F59E0B",
-        red: "#EF4444",
+        red: {
+          500: "#EF4444", // Base - for text
+          700: "#B91C1C", // Dark - for border
+        },
         purple: "#8B5CF6",
 
         // Background Colors

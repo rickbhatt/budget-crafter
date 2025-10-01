@@ -1,29 +1,80 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
+import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
 import ScreenHeader from "./ScreenHeader";
 
-const CreateBudget = () => {
-  const IntialState = {
-    budgetAmount: null,
-    budgetType: null,
-    periodStartDate: null,
-    periodEndDate: null,
-  };
+// Zod validation schema - input schema for form fields
+const budgetFormSchema = z
+  .object({
+    budgetAmount: z
+      .number({ message: "Budget amount must be a valid number" })
+      .positive("Budget amount must be greater than 0"),
+    budgetType: z.enum(["monthly", "creditCard"], {
+      message: "Please select a budget type",
+    }),
+    periodStartDate: z
+      .number({ message: "Period start date is required" })
+      .nullable()
+      .refine((val) => val !== null, {
+        message: "Period start date is required",
+      }),
+    periodEndDate: z
+      .number({ message: "Period end date is required" })
+      .nullable()
+      .refine((val) => val !== null, {
+        message: "Period end date is required",
+      }),
+  })
+  .refine(
+    (data) => {
+      // Only validate if both dates are present
+      if (data.periodStartDate !== null && data.periodEndDate !== null) {
+        // Normalize dates to midnight to compare only the date part (not time)
+        const startDate = new Date(data.periodStartDate);
+        startDate.setHours(0, 0, 0, 0);
 
+        const endDate = new Date(data.periodEndDate);
+        endDate.setHours(0, 0, 0, 0);
+
+        return endDate.getTime() > startDate.getTime();
+      }
+      // Skip validation if either date is missing (handled by individual field validation)
+      return true;
+    },
+    {
+      message: "End date must be after start date",
+      path: ["periodEndDate"],
+    }
+  );
+
+type BudgetFormData = z.infer<typeof budgetFormSchema>;
+
+const CreateBudget = () => {
   const createBudget = useMutation(api.budget.createBudget);
 
-  const [formData, setFormData] = useState(IntialState);
-
-  const handleFormDataOnChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<BudgetFormData>({
+    resolver: zodResolver(budgetFormSchema),
+    defaultValues: {
+      budgetAmount: undefined,
+      budgetType: undefined,
+      periodStartDate: null,
+      periodEndDate: null,
+    },
+  });
 
   const budgetTypeOptions = [
     { label: "Monthly", value: "monthly" },
@@ -31,19 +82,29 @@ const CreateBudget = () => {
   ];
 
   const handleClearAllPress = () => {
-    setFormData(IntialState);
+    reset();
   };
 
-  const handleCreateBudgetPress = async () => {
+  const onSubmit = async (data: BudgetFormData) => {
     try {
+      // Normalize dates to midnight before saving to database
+      // This ensures consistent date storage without time-of-day variations
+      const startDate = new Date(data.periodStartDate!);
+      startDate.setHours(0, 0, 0, 0);
+
+      const endDate = new Date(data.periodEndDate!);
+      endDate.setHours(0, 0, 0, 0);
+
       await createBudget({
-        ...formData,
-        budgetAmount: Number(formData.budgetAmount),
+        budgetAmount: data.budgetAmount,
+        budgetType: data.budgetType,
+        periodStartDate: startDate.getTime(),
+        periodEndDate: endDate.getTime(),
       });
-      setFormData(IntialState);
-      console.log("data submited");
+      reset();
+      console.log("Budget created successfully");
     } catch (error) {
-      console.log("🚀 ~ handleCreateBudgetPress ~ error:", error);
+      console.log("🚀 ~ onSubmit ~ error:", error);
     }
   };
 
@@ -67,46 +128,75 @@ const CreateBudget = () => {
       />
 
       <View className="flex-1 bg-bg-dark">
-        <CustomInputs
-          type="text"
-          labelName="Budget Amount"
-          value={formData.budgetAmount}
-          onChange={handleFormDataOnChange}
-          autoFocus={true}
-          inputName="budgetAmount"
-          icon={<Text className="text-3xl text-text-light">₹</Text>}
-          keyboardType="numeric"
-        />
-        <CustomInputs
-          type="select"
-          labelName="Budget Type"
-          value={formData.budgetType}
-          selectOptions={budgetTypeOptions}
-          onChange={handleFormDataOnChange}
-          inputName="budgetType"
-          icon={
-            <MaterialCommunityIcons
-              name="sack-outline"
-              size={28}
-              color="#FFFFFF"
+        <Controller
+          control={control}
+          name="budgetAmount"
+          render={({ field: { onChange, value } }) => (
+            <CustomInputs
+              type="text"
+              labelName="Budget Amount"
+              value={value?.toString() || ""}
+              onChange={(name, val) => onChange(val ? Number(val) : undefined)}
+              autoFocus={true}
+              inputName="budgetAmount"
+              icon={<Text className="text-3xl text-text-light">₹</Text>}
+              keyboardType="numeric"
+              error={errors.budgetAmount?.message}
             />
-          }
+          )}
         />
 
-        <CustomInputs
-          type="date"
-          labelName="Period Start Date"
-          value={formData.periodStartDate}
-          onChange={handleFormDataOnChange}
-          inputName="periodStartDate"
+        <Controller
+          control={control}
+          name="budgetType"
+          render={({ field: { onChange, value } }) => (
+            <CustomInputs
+              type="select"
+              labelName="Budget Type"
+              value={value || ""}
+              selectOptions={budgetTypeOptions}
+              onChange={(name, val) => onChange(val)}
+              inputName="budgetType"
+              icon={
+                <MaterialCommunityIcons
+                  name="sack-outline"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              }
+              error={errors.budgetType?.message}
+            />
+          )}
         />
 
-        <CustomInputs
-          type="date"
-          labelName="Period End Date"
-          value={formData.periodEndDate}
-          onChange={handleFormDataOnChange}
-          inputName="periodEndDate"
+        <Controller
+          control={control}
+          name="periodStartDate"
+          render={({ field: { onChange, value } }) => (
+            <CustomInputs
+              type="date"
+              labelName="Period Start Date"
+              value={value}
+              onChange={(name, val) => onChange(val)}
+              inputName="periodStartDate"
+              error={errors.periodStartDate?.message}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="periodEndDate"
+          render={({ field: { onChange, value } }) => (
+            <CustomInputs
+              type="date"
+              labelName="Period End Date"
+              value={value}
+              onChange={(name, val) => onChange(val)}
+              inputName="periodEndDate"
+              error={errors.periodEndDate?.message}
+            />
+          )}
         />
 
         <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
@@ -118,7 +208,7 @@ const CreateBudget = () => {
           />
           <CustomButton
             title="Create Budget"
-            onPress={handleCreateBudgetPress}
+            onPress={handleSubmit(onSubmit)}
             style="bg-emerald w-1/2"
             textStyle="text-text-light"
           />

@@ -103,4 +103,5 @@ interface CustomInputProps {
   applyValidRange?: boolean;
   inputName: string;
   keyboardType?: KeyboardTypeOptions;
+  error?: string;
 }

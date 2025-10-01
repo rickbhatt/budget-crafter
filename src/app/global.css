@@ -21,8 +21,20 @@
     @apply active:scale-95;
   }
 
+  .error-message-container {
+    @apply mx-5 mt-2 bg-red-500/10 border border-red-700 rounded p-2;
+  }
+
+  .error-text {
+    @apply text-red-500 text-sm;
+  }
+
+  .form-wrapper {
+    @apply flex flex-col gap-3 mt-6;
+  }
+
   .form-group {
-    @apply flex flex-col w-full gap-y-3 border-border-light border-b mt-6 screen-x-padding justify-center h-28;
+    @apply flex flex-col w-full gap-y-3 border-border-light border-b screen-x-padding justify-center h-28;
   }
 
   .form-input {
