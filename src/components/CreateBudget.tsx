@@ -119,10 +119,10 @@ const CreateBudget = () => {
         }}
       />
       <KeyboardAwareScrollView
-        className="flex-1"
+        className="flex-1 bg-bg-dark"
         bottomOffset={62}
         overScrollMode="never"
-        contentContainerClassName="bg-bg-dark pb-safe"
+        contentContainerClassName="pb-safe"
       >
         <CustomInputs
           type="text"
