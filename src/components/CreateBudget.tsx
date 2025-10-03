@@ -6,7 +6,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardToolbar,
@@ -84,9 +84,6 @@ const CreateBudget = () => {
 
   const onSubmit = async (data: BudgetFormData) => {
     try {
-      // Normalize dates to midnight before saving to database
-      // This ensures consistent date storage without time-of-day variations
-
       await createBudget({
         budgetAmount: data.budgetAmount,
         budgetType: data.budgetType,
@@ -94,9 +91,13 @@ const CreateBudget = () => {
         periodEndDate: data.periodEndDate!,
       });
       reset();
-      console.log("Budget created successfully");
+      Alert.alert("Success", "Budget created successfully");
     } catch (error) {
-      console.log("🚀 ~ onSubmit ~ error:", error);
+      Alert.alert(
+        "Error",
+        "We are facing some issues. Please try again later."
+      );
+      console.log("🚀 ~ create budget onSubmit ~ error:", error);
     }
   };
 
