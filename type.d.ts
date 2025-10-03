@@ -94,8 +94,6 @@ type PrimitiveValue = string | number | boolean | Date | null | undefined;
 
 interface CustomInputProps {
   type: "amount" | "text" | "date" | "password" | "select";
-  onChange: (name: string, value: string) => void;
-  value: string | number | Date | null;
   selectOptions?: any[];
   autoFocus?: boolean;
   labelName: string;
@@ -104,4 +102,6 @@ interface CustomInputProps {
   inputName: string;
   keyboardType?: KeyboardTypeOptions;
   error?: string;
+  // React Hook Form props
+  control: any; // Control object from useForm
 }

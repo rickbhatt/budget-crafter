@@ -5,7 +5,7 @@ import { useMutation } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
@@ -38,14 +38,7 @@ const budgetFormSchema = z
     (data) => {
       // Only validate if both dates are present
       if (data.periodStartDate !== null && data.periodEndDate !== null) {
-        // Normalize dates to midnight to compare only the date part (not time)
-        const startDate = new Date(data.periodStartDate);
-        startDate.setHours(0, 0, 0, 0);
-
-        const endDate = new Date(data.periodEndDate);
-        endDate.setHours(0, 0, 0, 0);
-
-        return endDate.getTime() > startDate.getTime();
+        return data.periodEndDate > data.periodStartDate;
       }
       // Skip validation if either date is missing (handled by individual field validation)
       return true;
@@ -89,17 +82,12 @@ const CreateBudget = () => {
     try {
       // Normalize dates to midnight before saving to database
       // This ensures consistent date storage without time-of-day variations
-      const startDate = new Date(data.periodStartDate!);
-      startDate.setHours(0, 0, 0, 0);
-
-      const endDate = new Date(data.periodEndDate!);
-      endDate.setHours(0, 0, 0, 0);
 
       await createBudget({
         budgetAmount: data.budgetAmount,
         budgetType: data.budgetType,
-        periodStartDate: startDate.getTime(),
-        periodEndDate: endDate.getTime(),
+        periodStartDate: data.periodStartDate!,
+        periodEndDate: data.periodEndDate!,
       });
       reset();
       console.log("Budget created successfully");
@@ -128,75 +116,47 @@ const CreateBudget = () => {
       />
 
       <View className="flex-1 bg-bg-dark">
-        <Controller
+        <CustomInputs
+          type="text"
+          labelName="Budget Amount"
+          autoFocus={true}
+          inputName="budgetAmount"
+          icon={<Text className="text-3xl text-text-light">₹</Text>}
+          keyboardType="numeric"
+          error={errors.budgetAmount?.message}
           control={control}
-          name="budgetAmount"
-          render={({ field: { onChange, value } }) => (
-            <CustomInputs
-              type="text"
-              labelName="Budget Amount"
-              value={value?.toString() || ""}
-              onChange={(name, val) => onChange(val ? Number(val) : undefined)}
-              autoFocus={true}
-              inputName="budgetAmount"
-              icon={<Text className="text-3xl text-text-light">₹</Text>}
-              keyboardType="numeric"
-              error={errors.budgetAmount?.message}
-            />
-          )}
         />
 
-        <Controller
+        <CustomInputs
+          type="select"
+          labelName="Budget Type"
+          selectOptions={budgetTypeOptions}
+          inputName="budgetType"
           control={control}
-          name="budgetType"
-          render={({ field: { onChange, value } }) => (
-            <CustomInputs
-              type="select"
-              labelName="Budget Type"
-              value={value || ""}
-              selectOptions={budgetTypeOptions}
-              onChange={(name, val) => onChange(val)}
-              inputName="budgetType"
-              icon={
-                <MaterialCommunityIcons
-                  name="sack-outline"
-                  size={28}
-                  color="#FFFFFF"
-                />
-              }
-              error={errors.budgetType?.message}
+          icon={
+            <MaterialCommunityIcons
+              name="sack-outline"
+              size={28}
+              color="#FFFFFF"
             />
-          )}
+          }
+          error={errors.budgetType?.message}
         />
 
-        <Controller
+        <CustomInputs
+          type="date"
           control={control}
-          name="periodStartDate"
-          render={({ field: { onChange, value } }) => (
-            <CustomInputs
-              type="date"
-              labelName="Period Start Date"
-              value={value}
-              onChange={(name, val) => onChange(val)}
-              inputName="periodStartDate"
-              error={errors.periodStartDate?.message}
-            />
-          )}
+          labelName="Period Start Date"
+          inputName="periodStartDate"
+          error={errors.periodStartDate?.message}
         />
 
-        <Controller
+        <CustomInputs
+          type="date"
           control={control}
-          name="periodEndDate"
-          render={({ field: { onChange, value } }) => (
-            <CustomInputs
-              type="date"
-              labelName="Period End Date"
-              value={value}
-              onChange={(name, val) => onChange(val)}
-              inputName="periodEndDate"
-              error={errors.periodEndDate?.message}
-            />
-          )}
+          labelName="Period End Date"
+          inputName="periodEndDate"
+          error={errors.periodEndDate?.message}
         />
 
         <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
