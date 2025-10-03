@@ -13,7 +13,6 @@
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.27",
     "@expo/metro-runtime": "~6.1.2",
-    "@expo/ui": "~0.2.0-beta.6",
     "@expo/vector-icons": "^15.0.2",
     "@hookform/resolvers": "^5.2.1",
     "@react-native-vector-icons/material-design-icons": "^12.3.0",
