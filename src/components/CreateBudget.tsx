@@ -7,6 +7,10 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
+import {
+  KeyboardAwareScrollView,
+  KeyboardToolbar,
+} from "react-native-keyboard-controller";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
@@ -114,8 +118,12 @@ const CreateBudget = () => {
           ),
         }}
       />
-
-      <View className="flex-1 bg-bg-dark">
+      <KeyboardAwareScrollView
+        className="flex-1"
+        bottomOffset={62}
+        overScrollMode="never"
+        contentContainerClassName="bg-bg-dark pb-safe"
+      >
         <CustomInputs
           type="text"
           labelName="Budget Amount"
@@ -173,7 +181,8 @@ const CreateBudget = () => {
             textStyle="text-text-light"
           />
         </View>
-      </View>
+      </KeyboardAwareScrollView>
+      <KeyboardToolbar />
     </>
   );
 };

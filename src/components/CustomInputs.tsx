@@ -66,9 +66,9 @@ const CustomInputs = ({
                       textAlignVertical="center"
                       value={value?.toString()}
                       onChangeText={(text) => {
-                        let val: string | number = text;
+                        let val: string | number | undefined = text;
                         if (keyboardType === "numeric") {
-                          val = Number(text);
+                          val = text === "" ? undefined : Number(text);
                         }
                         onChange(val);
                       }}
