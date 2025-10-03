@@ -97,6 +97,7 @@ const CreateBudget = () => {
         "Error",
         "We are facing some issues. Please try again later."
       );
+      console.log("🚀 ~ create budget onSubmit ~ error:", error);
     }
   };
 
