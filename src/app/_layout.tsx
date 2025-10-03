@@ -4,6 +4,7 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { PaperProvider } from "react-native-paper";
 
 import { paperTheme } from "@/theme";
@@ -49,7 +50,9 @@ export default function RootLayout() {
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <PaperProvider theme={paperTheme}>
             <SafeAreaProvider>
-              <InitialLayout />
+              <KeyboardProvider>
+                <InitialLayout />
+              </KeyboardProvider>
             </SafeAreaProvider>
           </PaperProvider>
         </ConvexProviderWithClerk>

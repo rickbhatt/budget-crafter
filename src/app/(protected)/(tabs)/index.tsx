@@ -29,6 +29,7 @@ const Dashboard = () => {
       description: "Groceries for the week and also for the next three months.",
       icon: <Ionicons name="cart" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Entertainment",
@@ -36,6 +37,7 @@ const Dashboard = () => {
       description: "Entertainment for the week",
       icon: <Ionicons name="film" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Utilities",
@@ -43,6 +45,7 @@ const Dashboard = () => {
       description: "Electricity bill",
       icon: <Ionicons name="bulb" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Utilities",
@@ -50,6 +53,7 @@ const Dashboard = () => {
       description: "Wifi bill",
       icon: <Ionicons name="wifi" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
     {
       category: "Travel",
@@ -57,6 +61,7 @@ const Dashboard = () => {
       description: "Travel for the week",
       icon: <Ionicons name="airplane" size={24} color="white" />,
       date: "16-09-2025",
+      expenseId: "1",
     },
   ];
 
@@ -69,11 +74,9 @@ const Dashboard = () => {
           header: () => (
             <ScreenHeader
               title="Dashboard"
-              iconBtnStyles="bg-gray-100"
               iconColor="black"
               showBackBtn={false}
               showSettingBtn={true}
-              headerStyles="bg-bg-primary"
             />
           ),
         }}
@@ -93,7 +96,7 @@ const Dashboard = () => {
         <View className="flex-center flex-col px-6 mt-10 bg-yellow gap-y-8 pt-10 pb-8 rounded-t-[32px]">
           {/* current month and budget toggle */}
           <View className="w-full flex-between flex-row">
-            <Text className="paragraph-semibold">{`${month} ${year}`}</Text>
+            <Text className="base-bold">{`${month} ${year}`}</Text>
             <Text>Monthly Budget</Text>
           </View>
           {/* chart */}
@@ -106,20 +109,23 @@ const Dashboard = () => {
               sectionAutoFocus
               data={pieData}
               centerLabelComponent={() => (
-                <View className="flex-center flex-row p-2.5">
-                  <Text className="h2-bold text-center">₹5000/ ₹220000</Text>
+                <View className="flex-center flex-col gap-y-1 p-2.5">
+                  <Text className="text-4xl font-quicksand-bold text-center">
+                    ₹5000
+                  </Text>
+                  <Text className="h3-bold text-center">of ₹22000</Text>
                 </View>
               )}
             />
           </View>
           <View className="w-full flex-row flex-between">
             <View className="flex flex-row items-center gap-x-2">
-              <View className="bg-bg-dark w-5 h-5 rounded-full" />
-              <Text className="paragraph-semibold">Budget</Text>
+              <View className="bg-blue w-5 h-5 rounded-full" />
+              <Text className="base-bold">Expense</Text>
             </View>
             <View className="flex flex-row items-center gap-x-2">
-              <View className="bg-blue w-5 h-5 rounded-full" />
-              <Text className="paragraph-semibold">Expense</Text>
+              <View className="bg-bg-dark w-5 h-5 rounded-full" />
+              <Text className="base-bold">Budget</Text>
             </View>
           </View>
         </View>
@@ -148,6 +154,7 @@ const Dashboard = () => {
               {expenseData.map((expense, index) => (
                 <ExpenseCard
                   key={index}
+                  expenseId={expense.expenseId}
                   category={expense.category}
                   amount={expense.amount}
                   description={expense.description}

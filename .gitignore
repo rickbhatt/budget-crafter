@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+.claude/
 # Expo
 .expo/
 dist/
@@ -19,6 +19,7 @@ ios/
 *.p12
 *.key
 *.mobileprovision
+dump.txt
 
 # Metro
 .metro-health-check*

@@ -7,6 +7,7 @@ import { HeaderBtnProps } from "type";
 const HeaderButton = ({ icon, onPress, iconBtnStyles }: HeaderBtnProps) => {
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     onPress();
   };
 

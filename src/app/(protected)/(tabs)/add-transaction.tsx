@@ -1,12 +1,1 @@
-import React from "react";
-import { Text, View } from "react-native";
-
-const AddTransaction = () => {
-  return (
-    <View>
-      <Text>AddTransaction</Text>
-    </View>
-  );
-};
-
-export default AddTransaction;
+export { default } from "@/components/CreateExpense";
