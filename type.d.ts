@@ -98,7 +98,6 @@ interface CustomInputProps {
   autoFocus?: boolean;
   labelName: string;
   icon?: React.ReactNode;
-  applyValidRange?: boolean;
   inputName: string;
   keyboardType?: KeyboardTypeOptions;
   error?: string;
