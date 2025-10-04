@@ -24,10 +24,6 @@ const CustomInputs = ({
 
   const [showDropDown, setShowDropDown] = useState(false);
 
-  // Get today's date to prevent selecting past dates
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set to start of day
-
   switch (type) {
     case "text":
       return (
@@ -120,14 +116,12 @@ const CustomInputs = ({
                 <DateTimePicker
                   value={value ? new Date(value) : new Date()}
                   mode="date"
-                  display="default"
+                  display="calendar"
                   onChange={(event, selectedDate) => {
                     setDatePickerOpen(false);
-
                     if (selectedDate) {
                       const timestamp = new Date(selectedDate);
                       timestamp.setHours(0, 0, 0, 0);
-
                       onChange(selectedDate.getTime());
                     }
                   }}
