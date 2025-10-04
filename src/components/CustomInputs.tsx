@@ -1,13 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getLocales } from "expo-localization";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import {
-  DatePickerModal,
-  en,
-  registerTranslation,
-} from "react-native-paper-dates";
 
 import cn from "clsx";
 import { Controller } from "react-hook-form";
@@ -20,28 +15,18 @@ const CustomInputs = ({
   autoFocus = false,
   labelName,
   icon,
-  applyValidRange = false,
   inputName,
   selectOptions = [{ label: "", value: "" }],
   keyboardType = "default",
   error,
 }: CustomInputProps) => {
-  const loales = getLocales();
-  const languageTag = loales[0].languageTag;
-
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
 
-  registerTranslation(languageTag, en);
-
   // Get today's date to prevent selecting past dates
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set to start of day
-
-  const onDismissDatePicker = () => {
-    setDatePickerOpen(false);
-  };
 
   switch (type) {
     case "text":
@@ -131,23 +116,23 @@ const CustomInputs = ({
                 )}
               </View>
 
-              <DatePickerModal
-                locale={languageTag}
-                mode="single"
-                visible={datePickerOpen}
-                onDismiss={onDismissDatePicker}
-                date={value && value !== null ? new Date(value) : new Date()}
-                onConfirm={(param) => {
-                  const timestamp = new Date(param.date!);
-                  timestamp.setHours(0, 0, 0, 0);
-                  onChange(timestamp.getTime());
-                  setDatePickerOpen(false);
-                }}
-                validRange={applyValidRange ? { startDate: today } : undefined}
-                startDate={new Date()}
-                saveLabel="Select Date"
-                startWeekOnMonday
-              />
+              {datePickerOpen && (
+                <DateTimePicker
+                  value={value ? new Date(value) : new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setDatePickerOpen(false);
+
+                    if (selectedDate) {
+                      const timestamp = new Date(selectedDate);
+                      timestamp.setHours(0, 0, 0, 0);
+
+                      onChange(selectedDate.getTime());
+                    }
+                  }}
+                />
+              )}
             </>
           )}
         />
