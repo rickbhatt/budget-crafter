@@ -22,8 +22,14 @@ import ScreenHeader from "./ScreenHeader";
 const budgetFormSchema = z
   .object({
     budgetAmount: z
-      .number({ message: "Budget amount must be a valid number" })
-      .positive("Budget amount must be greater than 0"),
+      .string()
+      .min(1, "Budget amount is required")
+      .refine((val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      }, {
+        message: "Budget amount must be greater than 0",
+      }),
     budgetType: z.enum(["monthly", "creditCard"], {
       message: "Please select a budget type",
     }),
@@ -69,7 +75,7 @@ const CreateBudget = () => {
   } = useForm<BudgetFormData>({
     resolver: zodResolver(budgetFormSchema),
     defaultValues: {
-      budgetAmount: undefined,
+      budgetAmount: "",
       budgetType: undefined,
       periodStartDate: null,
       periodEndDate: null,
@@ -88,32 +94,31 @@ const CreateBudget = () => {
   const onSubmit = async (data: BudgetFormData) => {
     try {
       await createBudget({
-        budgetAmount: data.budgetAmount,
+        budgetAmount: parseFloat(data.budgetAmount),
         budgetType: data.budgetType,
         periodStartDate: data.periodStartDate!,
         periodEndDate: data.periodEndDate!,
       });
-      reset();
-
       Toast.show({
         type: "success",
         text1: "Success",
         text2: "Budget created successfully!",
-        position: "bottom",
+        position: "top",
         visibilityTime: 5000,
         autoHide: true,
-        bottomOffset: 80,
+        topOffset: 80,
         swipeable: true,
       });
+      reset();
     } catch (error) {
       Toast.show({
         type: "error",
         text1: "Error",
         text2: "Something went wrong!",
-        position: "bottom",
+        position: "top",
         visibilityTime: 5000,
         autoHide: true,
-        bottomOffset: 80,
+        topOffset: 80,
         swipeable: true,
       });
       console.log("🚀 ~ create budget onSubmit ~ error:", error);
@@ -147,6 +152,7 @@ const CreateBudget = () => {
         <CustomInputs
           type="text"
           labelName="Budget Amount"
+          placeholder="1000"
           autoFocus={true}
           inputName="budgetAmount"
           icon={
@@ -154,7 +160,7 @@ const CreateBudget = () => {
               {user?.currency?.currencySymbol || "₹"}
             </Text>
           }
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
           error={errors.budgetAmount?.message}
           control={control}
         />

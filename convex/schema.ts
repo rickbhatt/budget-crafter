@@ -21,7 +21,7 @@ export const User = {
 export const Budgets = {
   userId: v.id("users"),
   budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-  budgetAmount: v.number(),
+  budgetAmount: v.float64(),
   periodStartDate: v.number(),
   periodEndDate: v.number(),
   updatedAt: v.optional(v.number()),
@@ -40,8 +40,7 @@ export const Expenses = {
   userId: v.id("users"),
   budgetId: v.id("budgets"), // Foreign key to budgets table
   categoryId: v.id("categories"), // Foreign key to budgets table
-  amount: v.number(),
-  currency: v.string(),
+  amount: v.float64(),
   description: v.string(),
   paymentMethod: v.union(
     v.literal("cash"),

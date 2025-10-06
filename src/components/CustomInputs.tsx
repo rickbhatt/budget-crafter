@@ -18,6 +18,7 @@ const CustomInputs = ({
   inputName,
   selectOptions = [{ label: "", value: "" }],
   keyboardType = "default",
+  placeholder = "",
   error,
 }: CustomInputProps) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -43,15 +44,11 @@ const CustomInputs = ({
                       style={{
                         fontSize: 30,
                       }}
-                      placeholder="1000"
+                      placeholder={placeholder}
                       textAlignVertical="center"
                       value={value?.toString()}
                       onChangeText={(text) => {
-                        let val: string | number | undefined = text;
-                        if (keyboardType === "numeric") {
-                          val = text === "" ? undefined : Number(text);
-                        }
-                        onChange(val);
+                        onChange(text);
                       }}
                       autoFocus={autoFocus}
                       keyboardType={keyboardType}
@@ -122,7 +119,7 @@ const CustomInputs = ({
                     if (selectedDate) {
                       const timestamp = new Date(selectedDate);
                       timestamp.setHours(0, 0, 0, 0);
-                      onChange(selectedDate.getTime());
+                      onChange(timestamp.getTime());
                     }
                   }}
                 />

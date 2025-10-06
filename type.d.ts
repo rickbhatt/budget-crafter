@@ -103,4 +103,5 @@ interface CustomInputProps {
   error?: string;
   // React Hook Form props
   control: any; // Control object from useForm
+  placeholder?: string;
 }

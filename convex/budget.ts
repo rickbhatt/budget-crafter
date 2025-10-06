@@ -5,7 +5,7 @@ import { getAuthenticatedUser } from "./users";
 export const createBudget = mutation({
   args: {
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-    budgetAmount: v.number(),
+    budgetAmount: v.float64(),
     periodStartDate: v.number(),
     periodEndDate: v.number(),
   },
@@ -20,7 +20,6 @@ export const createBudget = mutation({
       const budget = await ctx.db.insert("budgets", {
         ...args,
         userId: user._id,
-        currency: user.primaryCurrency ?? "",
       });
 
       return budget;
