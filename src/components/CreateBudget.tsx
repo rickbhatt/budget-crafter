@@ -1,11 +1,12 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -24,15 +25,24 @@ const budgetFormSchema = z
     budgetAmount: z
       .string()
       .min(1, "Budget amount is required")
-      .refine((val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      }, {
-        message: "Budget amount must be greater than 0",
-      }),
+      .refine(
+        (val) => {
+          const num = parseFloat(val);
+          return !isNaN(num) && num > 0;
+        },
+        {
+          message: "Budget amount must be greater than 0",
+        }
+      ),
     budgetType: z.enum(["monthly", "creditCard"], {
       message: "Please select a budget type",
     }),
+    cardName: z.string().optional().nullable(),
+    cardLastFourDigits: z
+      .string()
+      .length(4, "Must be exactly 4 digits")
+      .optional()
+      .nullable(),
     periodStartDate: z
       .number({ message: "Period start date is required" })
       .nullable()
@@ -59,7 +69,25 @@ const budgetFormSchema = z
       message: "End date must be after start date",
       path: ["periodEndDate"],
     }
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (data.budgetType === "creditCard") {
+      if (!data.cardName) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Card name is required for credit card budgets",
+          path: ["cardName"],
+        });
+      }
+      if (!data.cardLastFourDigits) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Last four digits are required for credit card budgets",
+          path: ["cardLastFourDigits"],
+        });
+      }
+    }
+  });
 
 type BudgetFormData = z.infer<typeof budgetFormSchema>;
 
@@ -67,10 +95,17 @@ const CreateBudget = () => {
   const createBudget = useMutation(api.budget.createBudget);
   const user = useQuery(api.users.getAuthenticatedUserProfile);
 
+  const budgetTypeOptions = [
+    { label: "Monthly", value: "monthly" },
+    { label: "Credit Card", value: "creditCard" },
+  ];
+
   const {
     control,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<BudgetFormData>({
     resolver: zodResolver(budgetFormSchema),
@@ -79,13 +114,19 @@ const CreateBudget = () => {
       budgetType: undefined,
       periodStartDate: null,
       periodEndDate: null,
+      cardName: null,
+      cardLastFourDigits: null,
     },
   });
 
-  const budgetTypeOptions = [
-    { label: "Monthly", value: "monthly" },
-    { label: "Credit Card", value: "creditCard" },
-  ];
+  const budgetType = watch("budgetType");
+
+  useEffect(() => {
+    if (budgetType === "monthly") {
+      setValue("cardName", null, { shouldValidate: false });
+      setValue("cardLastFourDigits", null, { shouldValidate: false });
+    }
+  }, [budgetType, setValue]);
 
   const handleClearAllPress = () => {
     reset();
@@ -98,6 +139,10 @@ const CreateBudget = () => {
         budgetType: data.budgetType,
         periodStartDate: data.periodStartDate!,
         periodEndDate: data.periodEndDate!,
+        ...(data.budgetType === "creditCard" && {
+          cardName: data.cardName!,
+          cardLastFourDigits: data.cardLastFourDigits!,
+        }),
       });
       Toast.show({
         type: "success",
@@ -180,6 +225,37 @@ const CreateBudget = () => {
           }
           error={errors.budgetType?.message}
         />
+        {budgetType === "creditCard" && (
+          <>
+            <CustomInputs
+              type="text"
+              labelName="Card Name"
+              placeholder="HDFC card, SBI card"
+              inputName="cardName"
+              icon={<AntDesign name="credit-card" size={28} color="#FFFFFF" />}
+              keyboardType="default"
+              error={errors.cardName?.message}
+              control={control}
+            />
+            <CustomInputs
+              type="text"
+              labelName="Card's Last 4 Digits"
+              placeholder="8112"
+              inputName="cardLastFourDigits"
+              maxLength={4}
+              icon={
+                <MaterialCommunityIcons
+                  name="numeric"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              }
+              keyboardType="number-pad"
+              error={errors.cardLastFourDigits?.message}
+              control={control}
+            />
+          </>
+        )}
 
         <CustomInputs
           type="date"

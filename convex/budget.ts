@@ -7,6 +7,8 @@ export const createBudget = mutation({
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
     budgetAmount: v.float64(),
     periodStartDate: v.number(),
+    cardName: v.optional(v.string()),
+    cardLastFourDigits: v.optional(v.string()),
     periodEndDate: v.number(),
   },
   handler: async (ctx, args) => {
@@ -19,6 +21,7 @@ export const createBudget = mutation({
 
       const budget = await ctx.db.insert("budgets", {
         ...args,
+
         userId: user._id,
       });
 
@@ -114,6 +117,16 @@ export const getAllBudgets = query({
       return budgets;
     } catch (error) {
       console.log("🚀 ~ getAllBudgets error:", error);
+    }
+  },
+});
+
+export const getBudgetByDate = query({
+  args: {},
+  handler: async (ctx, args) => {
+    try {
+    } catch (error) {
+      console.log("🚀 ~ getBudgetByDate error:", error);
     }
   },
 });

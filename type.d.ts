@@ -104,4 +104,5 @@ interface CustomInputProps {
   // React Hook Form props
   control: any; // Control object from useForm
   placeholder?: string;
+  maxLength?: number | undefined;
 }

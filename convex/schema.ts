@@ -22,6 +22,9 @@ export const Budgets = {
   userId: v.id("users"),
   budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
   budgetAmount: v.float64(),
+  // Credit card specific fields (optional, only for creditCard type)
+  cardName: v.optional(v.string()),
+  cardLastFourDigits: v.optional(v.string()), // "4532" (4 digits only)
   periodStartDate: v.number(),
   periodEndDate: v.number(),
   updatedAt: v.optional(v.number()),

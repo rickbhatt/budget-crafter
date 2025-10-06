@@ -20,6 +20,7 @@ const CustomInputs = ({
   keyboardType = "default",
   placeholder = "",
   error,
+  maxLength = undefined,
 }: CustomInputProps) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
@@ -52,6 +53,7 @@ const CustomInputs = ({
                       }}
                       autoFocus={autoFocus}
                       keyboardType={keyboardType}
+                      maxLength={maxLength}
                     />
                   </View>
                 </View>
