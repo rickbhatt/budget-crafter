@@ -1,16 +1,19 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
@@ -20,11 +23,26 @@ import ScreenHeader from "./ScreenHeader";
 const budgetFormSchema = z
   .object({
     budgetAmount: z
-      .number({ message: "Budget amount must be a valid number" })
-      .positive("Budget amount must be greater than 0"),
+      .string()
+      .min(1, "Budget amount is required")
+      .refine(
+        (val) => {
+          const num = parseFloat(val);
+          return !isNaN(num) && num > 0;
+        },
+        {
+          message: "Budget amount must be greater than 0",
+        }
+      ),
     budgetType: z.enum(["monthly", "creditCard"], {
       message: "Please select a budget type",
     }),
+    cardName: z.string().optional().nullable(),
+    cardLastFourDigits: z
+      .string()
+      .length(4, "Must be exactly 4 digits")
+      .optional()
+      .nullable(),
     periodStartDate: z
       .number({ message: "Period start date is required" })
       .nullable()
@@ -51,32 +69,64 @@ const budgetFormSchema = z
       message: "End date must be after start date",
       path: ["periodEndDate"],
     }
-  );
+  )
+  .superRefine((data, ctx) => {
+    if (data.budgetType === "creditCard") {
+      if (!data.cardName) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Card name is required for credit card budgets",
+          path: ["cardName"],
+        });
+      }
+      if (!data.cardLastFourDigits) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Last four digits are required for credit card budgets",
+          path: ["cardLastFourDigits"],
+        });
+      }
+    }
+  });
 
 type BudgetFormData = z.infer<typeof budgetFormSchema>;
 
 const CreateBudget = () => {
   const createBudget = useMutation(api.budget.createBudget);
-
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<BudgetFormData>({
-    resolver: zodResolver(budgetFormSchema),
-    defaultValues: {
-      budgetAmount: undefined,
-      budgetType: undefined,
-      periodStartDate: null,
-      periodEndDate: null,
-    },
-  });
+  const user = useQuery(api.users.getAuthenticatedUserProfile);
 
   const budgetTypeOptions = [
     { label: "Monthly", value: "monthly" },
     { label: "Credit Card", value: "creditCard" },
   ];
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<BudgetFormData>({
+    resolver: zodResolver(budgetFormSchema),
+    defaultValues: {
+      budgetAmount: "",
+      budgetType: undefined,
+      periodStartDate: null,
+      periodEndDate: null,
+      cardName: null,
+      cardLastFourDigits: null,
+    },
+  });
+
+  const budgetType = watch("budgetType");
+
+  useEffect(() => {
+    if (budgetType === "monthly") {
+      setValue("cardName", null, { shouldValidate: false });
+      setValue("cardLastFourDigits", null, { shouldValidate: false });
+    }
+  }, [budgetType, setValue]);
 
   const handleClearAllPress = () => {
     reset();
@@ -85,20 +135,49 @@ const CreateBudget = () => {
   const onSubmit = async (data: BudgetFormData) => {
     try {
       await createBudget({
-        budgetAmount: data.budgetAmount,
+        budgetAmount: parseFloat(data.budgetAmount),
         budgetType: data.budgetType,
         periodStartDate: data.periodStartDate!,
         periodEndDate: data.periodEndDate!,
+        ...(data.budgetType === "creditCard" && {
+          cardName: data.cardName!,
+          cardLastFourDigits: data.cardLastFourDigits!,
+        }),
+      });
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Budget created successfully!",
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+        topOffset: 80,
+        swipeable: true,
       });
       reset();
-      //! Add toast alerts
-      Alert.alert("Success", "Budget created successfully");
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        "We are facing some issues. Please try again later."
-      );
-      console.log("🚀 ~ create budget onSubmit ~ error:", error);
+    } catch (error: any) {
+      // Parse ConvexError from the mutation
+      const errorData = error?.data;
+      let errorMessage = "Something went wrong!";
+
+      if (errorData?.code === "BUDGET_OVERLAP") {
+        errorMessage = errorData.message;
+      } else if (errorData?.code === "UNAUTHORIZED") {
+        errorMessage = "Please log in to create a budget";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: errorMessage,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+        topOffset: 80,
+        swipeable: true,
+      });
     }
   };
 
@@ -129,10 +208,15 @@ const CreateBudget = () => {
         <CustomInputs
           type="text"
           labelName="Budget Amount"
+          placeholder="1000"
           autoFocus={true}
           inputName="budgetAmount"
-          icon={<Text className="text-3xl text-text-light">₹</Text>}
-          keyboardType="numeric"
+          icon={
+            <Text className="text-3xl text-text-light">
+              {user?.currency?.currencySymbol || "₹"}
+            </Text>
+          }
+          keyboardType="decimal-pad"
           error={errors.budgetAmount?.message}
           control={control}
         />
@@ -152,6 +236,37 @@ const CreateBudget = () => {
           }
           error={errors.budgetType?.message}
         />
+        {budgetType === "creditCard" && (
+          <>
+            <CustomInputs
+              type="text"
+              labelName="Card Name"
+              placeholder="HDFC card, SBI card"
+              inputName="cardName"
+              icon={<AntDesign name="credit-card" size={28} color="#FFFFFF" />}
+              keyboardType="default"
+              error={errors.cardName?.message}
+              control={control}
+            />
+            <CustomInputs
+              type="text"
+              labelName="Card's Last 4 Digits"
+              placeholder="8112"
+              inputName="cardLastFourDigits"
+              maxLength={4}
+              icon={
+                <MaterialCommunityIcons
+                  name="numeric"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              }
+              keyboardType="number-pad"
+              error={errors.cardLastFourDigits?.message}
+              control={control}
+            />
+          </>
+        )}
 
         <CustomInputs
           type="date"

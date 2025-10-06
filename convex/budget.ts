@@ -1,32 +1,74 @@
-import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { ConvexError, v } from "convex/values";
+import { Id } from "./_generated/dataModel";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthenticatedUser } from "./users";
+
+const checkOverllapingMonthlyBudgets = async ({
+  ctx,
+  timestamp,
+  userId,
+}: {
+  ctx: QueryCtx;
+  timestamp: number;
+  userId: Id<"users">;
+}): Promise<boolean> => {
+  try {
+    const budgets = await ctx.db
+      .query("budgets")
+      .withIndex("byUserTypeStartDate", (q) =>
+        q
+          .eq("userId", userId)
+          .eq("budgetType", "monthly")
+          .lte("periodStartDate", timestamp)
+      )
+      .filter((q) => q.gte(q.field("periodEndDate"), timestamp))
+      .first();
+
+    return budgets !== null;
+  } catch (error) {
+    console.error("Error checking overlapping budgets:", error);
+    throw error;
+  }
+};
 
 export const createBudget = mutation({
   args: {
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-    budgetAmount: v.number(),
+    budgetAmount: v.float64(),
     periodStartDate: v.number(),
+    cardName: v.optional(v.string()),
+    cardLastFourDigits: v.optional(v.string()),
     periodEndDate: v.number(),
   },
   handler: async (ctx, args) => {
-    try {
-      const user = await getAuthenticatedUser(ctx);
+    const user = await getAuthenticatedUser(ctx);
 
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-
-      const budget = await ctx.db.insert("budgets", {
-        ...args,
-        userId: user._id,
-        currency: user.primaryCurrency ?? "",
+    if (!user) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "User not authenticated",
       });
-
-      return budget;
-    } catch (error) {
-      throw error;
     }
+
+    const isOverlapping = await checkOverllapingMonthlyBudgets({
+      ctx,
+      timestamp: args.periodStartDate,
+      userId: user._id,
+    });
+
+    if (isOverlapping) {
+      throw new ConvexError({
+        code: "BUDGET_OVERLAP",
+        message: "A monthly budget already exists for this period",
+      });
+    }
+
+    const budget = await ctx.db.insert("budgets", {
+      ...args,
+      userId: user._id,
+    });
+
+    return budget;
   },
 });
 
@@ -109,12 +151,22 @@ export const getAllBudgets = query({
 
       const budgets = ctx.db
         .query("budgets")
-        .withIndex("by_user", (q) => q.eq("userId", user._id))
+        .withIndex("byUser", (q) => q.eq("userId", user._id))
         .collect();
 
       return budgets;
     } catch (error) {
       console.log("🚀 ~ getAllBudgets error:", error);
+    }
+  },
+});
+
+export const getBudgetByDate = query({
+  args: {},
+  handler: async (ctx, args) => {
+    try {
+    } catch (error) {
+      console.log("🚀 ~ getBudgetByDate error:", error);
     }
   },
 });
