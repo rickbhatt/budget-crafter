@@ -1,5 +1,10 @@
 import { v } from "convex/values";
-import { internalMutation, query, QueryCtx } from "./_generated/server";
+import {
+  internalMutation,
+  mutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 
 export const createUser = internalMutation({
   args: {
@@ -69,5 +74,29 @@ export const getAuthenticatedUserProfile = query({
   handler: async (ctx) => {
     const user = await getAuthenticatedUser(ctx);
     return user;
+  },
+});
+
+export const updateCurrencyDetails = mutation({
+  args: {
+    currencyCode: v.string(),
+    currencySymbol: v.string(),
+    decimalSeparator: v.string(),
+    digitGroupingSeparator: v.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const user = await getAuthenticatedUser(ctx);
+
+      if (!user) return;
+
+      const updatedUser = await ctx.db.patch(user._id, {
+        currency: {
+          ...args,
+        },
+      });
+    } catch (error) {
+      console.log("🚀 error in updateCurrencyDetails", error);
+    }
   },
 });

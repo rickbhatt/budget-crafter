@@ -8,14 +8,20 @@ export const User = {
   lastName: v.optional(v.string()),
   imageUrl: v.optional(v.string()),
   updatedAt: v.optional(v.number()),
-  primaryCurrency: v.optional(v.string()),
+  currency: v.optional(
+    v.object({
+      currencyCode: v.string(),
+      currencySymbol: v.string(),
+      decimalSeparator: v.string(),
+      digitGroupingSeparator: v.string(),
+    })
+  ),
 };
 
 export const Budgets = {
   userId: v.id("users"),
   budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
   budgetAmount: v.number(),
-  currency: v.string(),
   periodStartDate: v.number(),
   periodEndDate: v.number(),
   updatedAt: v.optional(v.number()),

@@ -1,10 +1,13 @@
 import { paperTheme } from "@/theme";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
-import { ConvexReactClient } from "convex/react";
+import { api } from "convex/_generated/api";
+import { ConvexReactClient, useMutation, useQuery } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { useLocales } from "expo-localization";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -23,6 +26,24 @@ const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
 
 const InitialLayout = () => {
   const { isSignedIn } = useAuth();
+
+  const locales = useLocales();
+
+  const user = useQuery(api.users.getAuthenticatedUserProfile);
+  const updateCurrency = useMutation(api.users.updateCurrencyDetails);
+
+  useEffect(() => {
+    if (user) {
+      if (!user?.currency) {
+        updateCurrency({
+          currencyCode: locales[0].currencyCode || "INR",
+          currencySymbol: locales[0].currencySymbol || "₹",
+          decimalSeparator: locales[0].decimalSeparator || ".",
+          digitGroupingSeparator: locales[0].digitGroupingSeparator || ",",
+        });
+      }
+    }
+  }, [user]);
 
   return (
     <>

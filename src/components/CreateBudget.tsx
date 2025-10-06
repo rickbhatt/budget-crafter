@@ -1,7 +1,8 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -58,6 +59,7 @@ type BudgetFormData = z.infer<typeof budgetFormSchema>;
 
 const CreateBudget = () => {
   const createBudget = useMutation(api.budget.createBudget);
+  const user = useQuery(api.users.getAuthenticatedUserProfile);
 
   const {
     control,
@@ -147,7 +149,11 @@ const CreateBudget = () => {
           labelName="Budget Amount"
           autoFocus={true}
           inputName="budgetAmount"
-          icon={<Text className="text-3xl text-text-light">₹</Text>}
+          icon={
+            <Text className="text-3xl text-text-light">
+              {user?.currency?.currencySymbol || "₹"}
+            </Text>
+          }
           keyboardType="numeric"
           error={errors.budgetAmount?.message}
           control={control}
