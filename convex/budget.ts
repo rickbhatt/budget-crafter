@@ -161,12 +161,39 @@ export const getAllBudgets = query({
   },
 });
 
-export const getBudgetByDate = query({
-  args: {},
+export const getCurrentActiveBudget = query({
+  args: {
+    timestamp: v.number(),
+    budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
+  },
   handler: async (ctx, args) => {
     try {
+      const user = await getAuthenticatedUser(ctx);
+
+      if (!user) {
+        throw new ConvexError({
+          code: "UNAUTHORIZED",
+          message: "User not authenticated",
+        });
+      }
+
+      const budget = await ctx.db
+        .query("budgets")
+        .withIndex("byUserTypeStartDate", (q) =>
+          q
+            .eq("userId", user._id)
+            .eq("budgetType", args.budgetType)
+            .lte("periodStartDate", args.timestamp)
+        )
+        .filter((q) => q.gte(q.field("periodEndDate"), args.timestamp))
+        .first();
+
+      return budget;
     } catch (error) {
-      console.log("🚀 ~ getBudgetByDate error:", error);
+      throw new ConvexError({
+        code: "BUDGET_NOT_FOUND",
+        message: "Budget not found",
+      });
     }
   },
 });
