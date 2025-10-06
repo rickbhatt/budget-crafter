@@ -64,7 +64,7 @@ export default defineSchema({
     .index("byUser", ["userId"])
     .index("byUserAndType", ["userId", "budgetType"])
     .index("byUserAndPeriodStart", ["userId", "periodStartDate"])
-    .index("byUserTypePeriod", ["userId", "budgetType", "periodStartDate"])
+    .index("byUserTypeStartDate", ["userId", "budgetType", "periodStartDate"])
     .index("byPeriodRange", ["periodStartDate", "periodEndDate"]),
   categories: defineTable(Categories)
     .index("byUser", ["userId"])

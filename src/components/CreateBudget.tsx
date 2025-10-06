@@ -155,18 +155,29 @@ const CreateBudget = () => {
         swipeable: true,
       });
       reset();
-    } catch (error) {
+    } catch (error: any) {
+      // Parse ConvexError from the mutation
+      const errorData = error?.data;
+      let errorMessage = "Something went wrong!";
+
+      if (errorData?.code === "BUDGET_OVERLAP") {
+        errorMessage = errorData.message;
+      } else if (errorData?.code === "UNAUTHORIZED") {
+        errorMessage = "Please log in to create a budget";
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: "Something went wrong!",
+        text2: errorMessage,
         position: "top",
         visibilityTime: 5000,
         autoHide: true,
         topOffset: 80,
         swipeable: true,
       });
-      console.log("🚀 ~ create budget onSubmit ~ error:", error);
     }
   };
 
