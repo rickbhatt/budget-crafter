@@ -109,7 +109,7 @@ export const getAllBudgets = query({
 
       const budgets = ctx.db
         .query("budgets")
-        .withIndex("by_user", (q) => q.eq("userId", user._id))
+        .withIndex("byUser", (q) => q.eq("userId", user._id))
         .collect();
 
       return budgets;

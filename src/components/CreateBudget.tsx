@@ -6,11 +6,12 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
@@ -91,13 +92,28 @@ const CreateBudget = () => {
         periodEndDate: data.periodEndDate!,
       });
       reset();
-      //! Add toast alerts
-      Alert.alert("Success", "Budget created successfully");
+
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Budget created successfully!",
+        position: "bottom",
+        visibilityTime: 5000,
+        autoHide: true,
+        bottomOffset: 80,
+        swipeable: true,
+      });
     } catch (error) {
-      Alert.alert(
-        "Error",
-        "We are facing some issues. Please try again later."
-      );
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Something went wrong!",
+        position: "bottom",
+        visibilityTime: 5000,
+        autoHide: true,
+        bottomOffset: 80,
+        swipeable: true,
+      });
       console.log("🚀 ~ create budget onSubmit ~ error:", error);
     }
   };

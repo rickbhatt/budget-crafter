@@ -1,3 +1,4 @@
+import { paperTheme } from "@/theme";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { ConvexReactClient } from "convex/react";
@@ -6,9 +7,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { PaperProvider } from "react-native-paper";
-
-import { paperTheme } from "@/theme";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import "./global.css";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -57,6 +57,7 @@ export default function RootLayout() {
           </PaperProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>
+      <Toast />
     </ClerkProvider>
   );
 }

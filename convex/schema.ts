@@ -40,8 +40,9 @@ export const Expenses = {
   paymentMethod: v.union(
     v.literal("cash"),
     v.literal("upi"),
-    v.literal("debit_card"),
-    v.literal("credit_card")
+    v.literal("digitalPayment"),
+    v.literal("debitCard"),
+    v.literal("creditCard")
   ),
   expenseDate: v.number(), // timestamp
   updatedAt: v.number(),
@@ -52,19 +53,19 @@ export default defineSchema({
     .index("byEmail", ["email"])
     .index("byClerkId", ["clerkId"]),
   budgets: defineTable(Budgets)
-    .index("by_user", ["userId"])
-    .index("by_user_and_type", ["userId", "budgetType"])
-    .index("by_user_and_period_start", ["userId", "periodStartDate"])
-    .index("by_user_type_period", ["userId", "budgetType", "periodStartDate"])
-    .index("by_period_range", ["periodStartDate", "periodEndDate"]),
+    .index("byUser", ["userId"])
+    .index("byUserAndType", ["userId", "budgetType"])
+    .index("byUserAndPeriodStart", ["userId", "periodStartDate"])
+    .index("byUserTypePeriod", ["userId", "budgetType", "periodStartDate"])
+    .index("byPeriodRange", ["periodStartDate", "periodEndDate"]),
   categories: defineTable(Categories)
-    .index("by_user", ["userId"])
-    .index("by_user_and_default", ["userId", "isDefault"]),
+    .index("byUser", ["userId"])
+    .index("byUserAndDefault", ["userId", "isDefault"]),
   expenses: defineTable(Expenses)
-    .index("by_user", ["userId"])
-    .index("by_user_and_budget", ["userId", "budgetId"])
-    .index("by_user_and_date", ["userId", "expenseDate"])
-    .index("by_user_and_category", ["userId", "categoryId"])
-    .index("by_user_and_payment_method", ["userId", "paymentMethod"])
-    .index("by_budget_and_date", ["budgetId", "expenseDate"]),
+    .index("byUser", ["userId"])
+    .index("byUserAndBudget", ["userId", "budgetId"])
+    .index("byUserAndDate", ["userId", "expenseDate"])
+    .index("byUserAndCategory", ["userId", "categoryId"])
+    .index("byUserAndPaymentMethod", ["userId", "paymentMethod"])
+    .index("byBudgetAndDate", ["budgetId", "expenseDate"]),
 });
