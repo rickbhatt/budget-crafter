@@ -1,7 +1,7 @@
-import Entypo from "@expo/vector-icons/Entypo";
 import cn from "clsx";
 import React from "react";
 import { View } from "react-native";
+import DynamicIcon from "./DynamicIcon";
 
 const CustomCreateExpenseBtn = ({ focused }: { focused: boolean }) => {
   return (
@@ -11,7 +11,12 @@ const CustomCreateExpenseBtn = ({ focused }: { focused: boolean }) => {
         focused ? "bg-active-tint" : "bg-bg-dark"
       )}
     >
-      <Entypo name="add-to-list" size={25} color={"#FFFFFF"} />
+      <DynamicIcon
+        family="Entypo"
+        name="add-to-list"
+        size={25}
+        color={"#FFFFFF"}
+      />
     </View>
   );
 };

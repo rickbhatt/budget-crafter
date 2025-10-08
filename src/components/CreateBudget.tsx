@@ -1,6 +1,3 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
@@ -17,6 +14,7 @@ import Toast from "react-native-toast-message";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
+import DynamicIcon from "./DynamicIcon";
 import ScreenHeader from "./ScreenHeader";
 
 // Zod validation schema - input schema for form fields
@@ -228,7 +226,8 @@ const CreateBudget = () => {
           inputName="budgetType"
           control={control}
           icon={
-            <MaterialCommunityIcons
+            <DynamicIcon
+              family="MaterialCommunityIcons"
               name="sack-outline"
               size={28}
               color="#FFFFFF"
@@ -243,7 +242,14 @@ const CreateBudget = () => {
               labelName="Card Name"
               placeholder="HDFC card, SBI card"
               inputName="cardName"
-              icon={<AntDesign name="credit-card" size={28} color="#FFFFFF" />}
+              icon={
+                <DynamicIcon
+                  family="AntDesign"
+                  name="credit-card"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              }
               keyboardType="default"
               error={errors.cardName?.message}
               control={control}
@@ -255,7 +261,8 @@ const CreateBudget = () => {
               inputName="cardLastFourDigits"
               maxLength={4}
               icon={
-                <MaterialCommunityIcons
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
                   name="numeric"
                   size={28}
                   color="#FFFFFF"

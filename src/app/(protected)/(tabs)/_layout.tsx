@@ -1,6 +1,5 @@
 import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import DynamicIcon from "@/components/DynamicIcon";
 import cn from "clsx";
 import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
@@ -62,7 +61,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Dashboard"
               icon={
-                <MaterialCommunityIcons
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
                   name="view-dashboard"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -81,7 +81,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Expenses"
               icon={
-                <Ionicons
+                <DynamicIcon
+                  family="Ionicons"
                   name="receipt"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -109,7 +110,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Analytics"
               icon={
-                <Ionicons
+                <DynamicIcon
+                  family="Ionicons"
                   name="stats-chart"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -128,7 +130,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Budgets"
               icon={
-                <MaterialCommunityIcons
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
                   name="sack"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}

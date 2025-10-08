@@ -1,3 +1,10 @@
+import {
+  AntDesign,
+  Entypo,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Href } from "expo-router";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
@@ -106,3 +113,35 @@ interface CustomInputProps {
   placeholder?: string;
   maxLength?: number | undefined;
 }
+
+type DynamicIconProps =
+  | {
+      family: "MaterialCommunityIcons";
+      name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: "Ionicons";
+      name: React.ComponentProps<typeof Ionicons>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: "AntDesign";
+      name: React.ComponentProps<typeof AntDesign>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: "FontAwesome";
+      name: React.ComponentProps<typeof FontAwesome>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: "Entypo";
+      name: React.ComponentProps<typeof Entypo>["name"];
+      size?: number;
+      color?: string;
+    };

@@ -1,21 +1,29 @@
 import CustomButton from "@/components/CustomButton";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
+import { format } from "date-fns";
 import { Stack, useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
+import DynamicIcon from "src/components/DynamicIcon";
 import { ExpenseCardProps } from "type";
 
 const Dashboard = () => {
+  const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
+    "monthly"
+  );
+
   const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
 
-  const date = new Date();
-  const month = date.toLocaleString("default", { month: "long" });
-  const year = date.getFullYear();
+  const currentDate = useMemo(() => new Date().getTime(), []);
+
+  const budget = useQuery(api.budget.getCurrentActiveBudget, {
+    timestamp: currentDate,
+    budgetType: budgetType,
+  });
 
   const pieData = [
     { value: 60, color: "#151515", text: "60%" },
@@ -27,7 +35,9 @@ const Dashboard = () => {
       category: "Groceries",
       amount: 2000,
       description: "Groceries for the week and also for the next three months.",
-      icon: <Ionicons name="cart" size={24} color="white" />,
+      icon: (
+        <DynamicIcon family="Ionicons" name="cart" size={24} color="white" />
+      ),
       date: "16-09-2025",
       expenseId: "1",
     },
@@ -35,7 +45,9 @@ const Dashboard = () => {
       category: "Entertainment",
       amount: 750,
       description: "Entertainment for the week",
-      icon: <Ionicons name="film" size={24} color="white" />,
+      icon: (
+        <DynamicIcon family="Ionicons" name="film" size={24} color="white" />
+      ),
       date: "16-09-2025",
       expenseId: "1",
     },
@@ -43,7 +55,9 @@ const Dashboard = () => {
       category: "Utilities",
       amount: 900,
       description: "Electricity bill",
-      icon: <Ionicons name="bulb" size={24} color="white" />,
+      icon: (
+        <DynamicIcon family="Ionicons" name="bulb" size={24} color="white" />
+      ),
       date: "16-09-2025",
       expenseId: "1",
     },
@@ -51,7 +65,9 @@ const Dashboard = () => {
       category: "Utilities",
       amount: 1006,
       description: "Wifi bill",
-      icon: <Ionicons name="wifi" size={24} color="white" />,
+      icon: (
+        <DynamicIcon family="Ionicons" name="wifi" size={24} color="white" />
+      ),
       date: "16-09-2025",
       expenseId: "1",
     },
@@ -59,7 +75,14 @@ const Dashboard = () => {
       category: "Travel",
       amount: 800,
       description: "Travel for the week",
-      icon: <Ionicons name="airplane" size={24} color="white" />,
+      icon: (
+        <DynamicIcon
+          family="Ionicons"
+          name="airplane"
+          size={24}
+          color="white"
+        />
+      ),
       date: "16-09-2025",
       expenseId: "1",
     },
@@ -96,7 +119,13 @@ const Dashboard = () => {
         <View className="flex-center flex-col px-6 mt-10 bg-yellow gap-y-8 pt-10 pb-8 rounded-t-[32px]">
           {/* current month and budget toggle */}
           <View className="w-full flex-between flex-row">
-            <Text className="base-bold">{`${month} ${year}`}</Text>
+            <Text className="base-bold">
+              {budget !== undefined &&
+              budget?.periodStartDate &&
+              budget?.periodEndDate
+                ? `${format(budget.periodStartDate, "d MMM")} - ${format(budget.periodEndDate, "d MMM")}`
+                : ""}
+            </Text>
             <Text>Monthly Budget</Text>
           </View>
           {/* chart */}
@@ -111,7 +140,8 @@ const Dashboard = () => {
               centerLabelComponent={() => (
                 <View className="flex-center flex-col gap-y-1 p-2.5">
                   <Text className="text-4xl font-quicksand-bold text-center">
-                    ₹5000
+                    {userProfile?.currency?.currencySymbol}{" "}
+                    {budget?.budgetAmount}
                   </Text>
                   <Text className="h3-bold text-center">of ₹22000</Text>
                 </View>

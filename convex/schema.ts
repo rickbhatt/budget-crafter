@@ -33,8 +33,15 @@ export const Budgets = {
 export const Categories = {
   userId: v.id("users"),
   name: v.string(),
-  icon: v.string(),
-  color: v.string(),
+  icon: v.object({
+    name: v.string(),
+    family: v.union(
+      v.literal("MaterialCommunityIcons"),
+      v.literal("Ionicons"),
+      v.literal("FontAwesome"),
+      v.literal("AntDesign")
+    ),
+  }),
   isDefault: v.boolean(),
   updatedAt: v.number(),
 };
