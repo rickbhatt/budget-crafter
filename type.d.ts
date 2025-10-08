@@ -1,5 +1,6 @@
 import {
   AntDesign,
+  Entypo,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -135,6 +136,12 @@ type DynamicIconProps =
   | {
       family: "FontAwesome";
       name: React.ComponentProps<typeof FontAwesome>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: "Entypo";
+      name: React.ComponentProps<typeof Entypo>["name"];
       size?: number;
       color?: string;
     };

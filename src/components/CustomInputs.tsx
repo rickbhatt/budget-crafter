@@ -1,4 +1,3 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
@@ -8,6 +7,7 @@ import cn from "clsx";
 import { Controller } from "react-hook-form";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { CustomInputProps } from "type";
+import DynamicIcon from "./DynamicIcon";
 
 const CustomInputs = ({
   type,
@@ -79,7 +79,8 @@ const CustomInputs = ({
                   <Text className="form-label">{labelName}</Text>
                   <View className="form-input">
                     <View className="icon-wrapper">
-                      <Ionicons
+                      <DynamicIcon
+                        family="Ionicons"
                         name="calendar-outline"
                         size={28}
                         color="#FFFFFF"

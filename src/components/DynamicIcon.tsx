@@ -1,5 +1,6 @@
 import {
   AntDesign,
+  Entypo,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -12,6 +13,7 @@ const ICON_FAMILIES = {
   Ionicons,
   FontAwesome,
   AntDesign,
+  Entypo,
 };
 
 const DynamicIcon = ({

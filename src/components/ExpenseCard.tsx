@@ -1,9 +1,9 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import cn from "clsx";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { ExpenseCardProps } from "type";
+import DynamicIcon from "./DynamicIcon";
 
 const ExpenseCard = ({
   category,
@@ -49,7 +49,12 @@ const ExpenseCard = ({
         <Text className="text-text-light h2-bold">₹{amount}</Text>
         {/* details button view */}
         <View>
-          <Ionicons name="chevron-forward" size={24} color="white" />
+          <DynamicIcon
+            family="Ionicons"
+            name="chevron-forward"
+            size={24}
+            color="white"
+          />
         </View>
       </View>
     </Pressable>
