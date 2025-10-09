@@ -1,14 +1,14 @@
 import CustomButton from "@/components/CustomButton";
+import DynamicIcon from "@/components/DynamicIcon";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
+import { formatDateTime } from "@/utils/formatDate";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { format } from "date-fns";
 import { Stack, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import DynamicIcon from "src/components/DynamicIcon";
 import { ExpenseCardProps } from "type";
 
 const Dashboard = () => {
@@ -123,7 +123,7 @@ const Dashboard = () => {
               {budget !== undefined &&
               budget?.periodStartDate &&
               budget?.periodEndDate
-                ? `${format(budget.periodStartDate, "d MMM")} - ${format(budget.periodEndDate, "d MMM")}`
+                ? `${formatDateTime(budget.periodStartDate).dateMonthForRange} - ${formatDateTime(budget.periodEndDate).dateMonthForRange}`
                 : ""}
             </Text>
             <Text>Monthly Budget</Text>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
+import { formatDateTime } from "@/utils/formatDate";
 import cn from "clsx";
 import { Controller } from "react-hook-form";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -98,7 +99,7 @@ const CustomInputs = ({
                           )}
                         >
                           {value
-                            ? new Date(value).toLocaleDateString()
+                            ? formatDateTime(value).intlDateFormat
                             : "Select Date"}
                         </Text>
                       </Pressable>

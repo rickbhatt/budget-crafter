@@ -145,3 +145,10 @@ type DynamicIconProps =
       size?: number;
       color?: string;
     };
+
+interface NetworkState {
+  isConnected: boolean | null;
+  isInternetReachable: boolean | null;
+  connectionType: string;
+  details: NetInfoState | null;
+}
