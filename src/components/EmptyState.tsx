@@ -1,17 +1,8 @@
 import cn from "clsx";
 import React from "react";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import { EmptyStateProps } from "type";
 import CustomButton from "./CustomButton";
-
-interface EmptyStateProps {
-  imageSource: ImageSourcePropType;
-  title: string;
-  description?: string;
-  actionLabel?: string;
-  onAction?: () => void;
-  containerStyle?: string;
-  imageStyle?: string;
-}
 
 const EmptyState = ({
   imageSource,

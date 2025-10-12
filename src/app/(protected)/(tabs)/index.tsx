@@ -3,6 +3,7 @@ import EmptyState from "@/components/EmptyState";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
+import { calculateBudgetPercentages } from "@/utils/budgetCalculations";
 import { formatDateTime } from "@/utils/formatDate";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -35,6 +36,13 @@ const Dashboard = () => {
     return expenses.reduce((acc, expense) => acc + expense.amount, 0);
   }, [expenses]);
 
+  // Calculate budget percentages - now accessible throughout the component
+  const { expensePercentage, remainingPercentage, isOverBudget } =
+    useMemo(() => {
+      const budgetAmount = budget?.budgetAmount ?? 0;
+      return calculateBudgetPercentages(totalExpense, budgetAmount);
+    }, [totalExpense, budget?.budgetAmount]);
+
   const pieData = useMemo(() => {
     const budgetAmount = budget?.budgetAmount ?? 0;
 
@@ -43,19 +51,8 @@ const Dashboard = () => {
       return [{ value: 100, color: "#151515", text: "0%" }];
     }
 
-    // Calculate percentages
-    // If total expense is greater than budget amount, show 100%
-    const expensePercentage = Math.min(
-      (totalExpense / budgetAmount) * 100,
-      100
-    );
-
-    // Calculate remaining percentage
-    // If total expense is less than budget amount, show remaining percentage
-    const remainingPercentage = Math.max(100 - expensePercentage, 0);
-
     // Handle over-budget case (100% expenses)
-    if (expensePercentage >= 100) {
+    if (isOverBudget) {
       return [{ value: 100, color: "#3B82F6", text: "100%", focused: true }];
     }
 
@@ -72,7 +69,12 @@ const Dashboard = () => {
         focused: true,
       },
     ];
-  }, [totalExpense, budget?.budgetAmount]);
+  }, [
+    expensePercentage,
+    remainingPercentage,
+    isOverBudget,
+    budget?.budgetAmount,
+  ]);
 
   const router = useRouter();
 
@@ -138,13 +140,25 @@ const Dashboard = () => {
             />
           </View>
           <View className="w-full flex-row flex-between">
+            {/* expense legend */}
             <View className="flex flex-row items-center gap-x-2">
               <View className="bg-blue w-5 h-5 rounded-full" />
               <Text className="base-bold">Expense</Text>
+              {expensePercentage > 0 && (
+                <Text className="base-bold">
+                  {expensePercentage.toFixed(0)}%
+                </Text>
+              )}
             </View>
+            {/* budget legend */}
             <View className="flex flex-row items-center gap-x-2">
               <View className="bg-bg-dark w-5 h-5 rounded-full" />
               <Text className="base-bold">Budget</Text>
+              {expensePercentage > 0 && (
+                <Text className="base-bold">
+                  {remainingPercentage.toFixed(0)}%
+                </Text>
+              )}
             </View>
           </View>
         </View>

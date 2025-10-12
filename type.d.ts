@@ -152,3 +152,13 @@ interface NetworkState {
   connectionType: string;
   details: NetInfoState | null;
 }
+
+interface EmptyStateProps {
+  imageSource: ImageSourcePropType;
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  containerStyle?: string;
+  imageStyle?: string;
+}
