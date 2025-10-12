@@ -50,8 +50,8 @@ interface ExpenseCardProps {
   category: string;
   amount: number;
   description: string;
-  icon: React.ReactNode;
-  date: string;
+  icon: Doc<"categories">["icon"];
+  date: number;
   expenseId: string;
 }
 
@@ -145,3 +145,20 @@ type DynamicIconProps =
       size?: number;
       color?: string;
     };
+
+interface NetworkState {
+  isConnected: boolean | null;
+  isInternetReachable: boolean | null;
+  connectionType: string;
+  details: NetInfoState | null;
+}
+
+interface EmptyStateProps {
+  imageSource: ImageSourcePropType;
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  containerStyle?: string;
+  imageStyle?: string;
+}

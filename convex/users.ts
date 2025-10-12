@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import {
   internalMutation,
   mutation,
@@ -63,10 +63,22 @@ const getUserByClerkId = async ({
   return user;
 };
 
-export const getAuthenticatedUser = async (ctx: QueryCtx) => {
+const getAuthenticatedUser = async (ctx: QueryCtx) => {
   const identity = await ctx.auth.getUserIdentity();
+
   if (!identity) return null;
   const user = await getUserByClerkId({ ctx, clerkId: identity.subject });
+  return user;
+};
+
+export const getAuthUserOrThrow = async (ctx: QueryCtx) => {
+  const user = await getAuthenticatedUser(ctx);
+  if (!user) {
+    throw new ConvexError({
+      code: "UNAUTHORIZED",
+      message: "User not authenticated",
+    });
+  }
   return user;
 };
 
