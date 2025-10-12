@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { Id } from "./_generated/dataModel";
 import { mutation, query, QueryCtx } from "./_generated/server";
-import { getAuthenticatedUser } from "./users";
+import { getAuthUserOrThrow } from "./users";
 
 const checkOverllapingMonthlyBudgets = async ({
   ctx,
@@ -41,14 +41,7 @@ export const createBudget = mutation({
     periodEndDate: v.number(),
   },
   handler: async (ctx, args) => {
-    const user = await getAuthenticatedUser(ctx);
-
-    if (!user) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "User not authenticated",
-      });
-    }
+    const user = await getAuthUserOrThrow(ctx);
 
     const isOverlapping = await checkOverllapingMonthlyBudgets({
       ctx,
@@ -127,10 +120,7 @@ export const getBudgetById = query({
   },
   handler: async (ctx, args) => {
     try {
-      const user = await getAuthenticatedUser(ctx);
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
+      const user = await getAuthUserOrThrow(ctx);
 
       const budget = await ctx.db.get(args.budgetId);
 
@@ -144,10 +134,7 @@ export const getBudgetById = query({
 export const getAllBudgets = query({
   handler: async (ctx) => {
     try {
-      const user = await getAuthenticatedUser(ctx);
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
+      const user = await getAuthUserOrThrow(ctx);
 
       const budgets = ctx.db
         .query("budgets")
@@ -168,7 +155,7 @@ export const getCurrentActiveBudget = query({
   },
   handler: async (ctx, args) => {
     try {
-      const user = await getAuthenticatedUser(ctx);
+      const user = await getAuthUserOrThrow(ctx);
 
       if (!user) {
         throw new ConvexError({

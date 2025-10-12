@@ -31,7 +31,7 @@ export const Budgets = {
 };
 
 export const Categories = {
-  userId: v.id("users"),
+  userId: v.union(v.id("users"), v.null()),
   name: v.string(),
   icon: v.object({
     name: v.string(),
@@ -43,7 +43,7 @@ export const Categories = {
     ),
   }),
   isDefault: v.boolean(),
-  updatedAt: v.number(),
+  updatedAt: v.optional(v.number()),
 };
 
 export const Expenses = {
@@ -60,7 +60,7 @@ export const Expenses = {
     v.literal("creditCard")
   ),
   expenseDate: v.number(), // timestamp
-  updatedAt: v.number(),
+  updatedAt: v.optional(v.number()),
 };
 
 export default defineSchema({

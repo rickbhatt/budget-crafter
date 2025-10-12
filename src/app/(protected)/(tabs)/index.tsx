@@ -1,7 +1,8 @@
 import CustomButton from "@/components/CustomButton";
-import DynamicIcon from "@/components/DynamicIcon";
+import EmptyState from "@/components/EmptyState";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
+import { images } from "@/constants";
 import { formatDateTime } from "@/utils/formatDate";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -9,84 +10,69 @@ import { Stack, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
-import { ExpenseCardProps } from "type";
 
 const Dashboard = () => {
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
     "monthly"
   );
 
-  const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
-
   const currentDate = useMemo(() => new Date().getTime(), []);
 
-  const budget = useQuery(api.budget.getCurrentActiveBudget, {
-    timestamp: currentDate,
-    budgetType: budgetType,
-  });
+  const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
 
-  const pieData = [
-    { value: 60, color: "#151515", text: "60%" },
-    { value: 40, color: "#3B82F6", text: "40%", focused: true },
-  ];
+  const budget = useQuery(
+    api.budget.getCurrentActiveBudget,
+    userProfile?._id !== null ? { timestamp: currentDate, budgetType } : "skip"
+  );
 
-  const expenseData: ExpenseCardProps[] = [
-    {
-      category: "Groceries",
-      amount: 2000,
-      description: "Groceries for the week and also for the next three months.",
-      icon: (
-        <DynamicIcon family="Ionicons" name="cart" size={24} color="white" />
-      ),
-      date: "16-09-2025",
-      expenseId: "1",
-    },
-    {
-      category: "Entertainment",
-      amount: 750,
-      description: "Entertainment for the week",
-      icon: (
-        <DynamicIcon family="Ionicons" name="film" size={24} color="white" />
-      ),
-      date: "16-09-2025",
-      expenseId: "1",
-    },
-    {
-      category: "Utilities",
-      amount: 900,
-      description: "Electricity bill",
-      icon: (
-        <DynamicIcon family="Ionicons" name="bulb" size={24} color="white" />
-      ),
-      date: "16-09-2025",
-      expenseId: "1",
-    },
-    {
-      category: "Utilities",
-      amount: 1006,
-      description: "Wifi bill",
-      icon: (
-        <DynamicIcon family="Ionicons" name="wifi" size={24} color="white" />
-      ),
-      date: "16-09-2025",
-      expenseId: "1",
-    },
-    {
-      category: "Travel",
-      amount: 800,
-      description: "Travel for the week",
-      icon: (
-        <DynamicIcon
-          family="Ionicons"
-          name="airplane"
-          size={24}
-          color="white"
-        />
-      ),
-      date: "16-09-2025",
-      expenseId: "1",
-    },
-  ];
+  const expenses = useQuery(
+    api.expense.getAllExpenses,
+    budget?._id != null ? { budgetId: budget._id, limit: 6 } : "skip"
+  );
+
+  const totalExpense = useMemo(() => {
+    if (!expenses || expenses.length === 0) return 0;
+    return expenses.reduce((acc, expense) => acc + expense.amount, 0);
+  }, [expenses]);
+
+  const pieData = useMemo(() => {
+    const budgetAmount = budget?.budgetAmount ?? 0;
+
+    // If no budget, show empty state
+    if (budgetAmount === 0) {
+      return [{ value: 100, color: "#151515", text: "0%" }];
+    }
+
+    // Calculate percentages
+    // If total expense is greater than budget amount, show 100%
+    const expensePercentage = Math.min(
+      (totalExpense / budgetAmount) * 100,
+      100
+    );
+
+    // Calculate remaining percentage
+    // If total expense is less than budget amount, show remaining percentage
+    const remainingPercentage = Math.max(100 - expensePercentage, 0);
+
+    // Handle over-budget case (100% expenses)
+    if (expensePercentage >= 100) {
+      return [{ value: 100, color: "#3B82F6", text: "100%", focused: true }];
+    }
+
+    return [
+      {
+        value: remainingPercentage,
+        color: "#151515",
+        text: `${remainingPercentage.toFixed(0)}%`,
+      },
+      {
+        value: expensePercentage,
+        color: "#3B82F6",
+        text: `${expensePercentage.toFixed(0)}%`,
+        focused: true,
+      },
+    ];
+  }, [totalExpense, budget?.budgetAmount]);
 
   const router = useRouter();
 
@@ -140,10 +126,13 @@ const Dashboard = () => {
               centerLabelComponent={() => (
                 <View className="flex-center flex-col gap-y-1 p-2.5">
                   <Text className="text-4xl font-quicksand-bold text-center">
-                    {userProfile?.currency?.currencySymbol}{" "}
+                    {userProfile?.currency?.currencySymbol}
+                    {totalExpense}
+                  </Text>
+                  <Text className="h3-bold text-center">
+                    of {userProfile?.currency?.currencySymbol}
                     {budget?.budgetAmount}
                   </Text>
-                  <Text className="h3-bold text-center">of ₹22000</Text>
                 </View>
               )}
             />
@@ -161,47 +150,50 @@ const Dashboard = () => {
         </View>
 
         {/* expense list fiew */}
-        <View className="flex flex-col bg-bg-dark pt-3">
-          {/* section heading and button */}
-          <View className="screen-x-padding flex-between flex-row">
-            <Text className="h3-bold text-text-light">Expenses</Text>
-            <CustomButton
-              title="View All"
-              style="bg-bg-primary w-32 py-3 rounded-xl"
-              textStyle="text-text-primary text-base"
-              onPress={() =>
-                router.push({
-                  pathname: "/expense/[id]",
-                  params: { id: "1" },
-                })
-              }
-            />
-          </View>
+        {expenses && expenses.length > 0 ? (
+          <View className="flex flex-col bg-bg-dark pt-3">
+            {/* section heading and button */}
+            <View className="screen-x-padding flex-between flex-row">
+              <Text className="h3-bold text-text-light">Expenses</Text>
+              <CustomButton
+                title="View All"
+                style="bg-bg-primary w-32 py-3 rounded-xl"
+                textStyle="text-text-primary text-base"
+                onPress={() =>
+                  router.push({
+                    pathname: "/expense/[id]",
+                    params: { id: "1" },
+                  })
+                }
+              />
+            </View>
 
-          {/* expense cards */}
-          {expenseData && expenseData.length > 0 ? (
+            {/* expense cards */}
             <View className="flex-col flex mt-5">
-              {expenseData.map((expense, index) => (
+              {expenses.map((expense, index) => (
                 <ExpenseCard
                   key={index}
-                  expenseId={expense.expenseId}
-                  category={expense.category}
+                  expenseId={expense._id}
+                  category={expense.category?.name!}
                   amount={expense.amount}
                   description={expense.description}
-                  icon={expense.icon}
-                  date={expense.date}
-                  isLast={index == expenseData.length - 1}
+                  icon={expense.category?.icon!}
+                  date={expense.expenseDate}
+                  isLast={index == expenses.length - 1}
                 />
               ))}
             </View>
-          ) : (
-            <View className="flex-center flex-row mt-3">
-              <Text className="paragraph-semibold text-text-light">
-                No Expenses Found
-              </Text>
-            </View>
-          )}
-        </View>
+          </View>
+        ) : (
+          <View className="pt-3">
+            <EmptyState
+              imageSource={images.wallet}
+              title="No Expenses Yet"
+              description="Start tracking your spending to see insights and stay within your budget"
+              imageStyle="w-44 h-44"
+            />
+          </View>
+        )}
       </ScrollView>
     </>
   );

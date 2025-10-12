@@ -50,8 +50,8 @@ interface ExpenseCardProps {
   category: string;
   amount: number;
   description: string;
-  icon: React.ReactNode;
-  date: string;
+  icon: Doc<"categories">["icon"];
+  date: number;
   expenseId: string;
 }
 
