@@ -2,7 +2,7 @@ import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
 import DynamicIcon from "@/components/DynamicIcon";
 import cn from "clsx";
 import * as Haptics from "expo-haptics";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 import { GestureResponderEvent, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -29,6 +29,8 @@ const TabBarIcon = ({ focused, icon, title }: TabBarIconProps) => (
 
 const TabsLayout = () => {
   const { bottom } = useSafeAreaInsets();
+
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -93,9 +95,15 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="add-transaction"
+        name="dummy-expense"
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/expense/create");
+          },
+        })}
         options={{
-          title: "Some Transaction",
+          title: "Some Expense",
           tabBarIcon: ({ focused }) => (
             <CustomCreateExpenseBtn focused={focused} />
           ),

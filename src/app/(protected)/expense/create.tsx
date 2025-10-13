@@ -43,7 +43,7 @@ const expenseFormSchema = z.object({
 export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
 
 const CreateExpense = () => {
-  const createExpense = useMutation(api.expense.createExpense);
+  const createExpense = useMutation(api.expenses.mutations.createExpense);
 
   const {
     control,
@@ -108,7 +108,7 @@ const CreateExpense = () => {
 
   return (
     <View>
-      <Text>CreateExpense for rick</Text>
+      <Text>This is a different route with custom action</Text>
     </View>
   );
 };

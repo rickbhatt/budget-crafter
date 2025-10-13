@@ -29,8 +29,8 @@ const InitialLayout = () => {
 
   const locales = useLocales();
 
-  const user = useQuery(api.users.getAuthenticatedUserProfile);
-  const updateCurrency = useMutation(api.users.updateCurrencyDetails);
+  const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
+  const updateCurrency = useMutation(api.users.mutations.updateCurrencyDetails);
 
   useEffect(() => {
     if (user) {
