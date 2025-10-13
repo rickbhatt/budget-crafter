@@ -90,8 +90,8 @@ const budgetFormSchema = z
 type BudgetFormData = z.infer<typeof budgetFormSchema>;
 
 const CreateBudget = () => {
-  const createBudget = useMutation(api.budget.createBudget);
-  const user = useQuery(api.users.getAuthenticatedUserProfile);
+  const createBudget = useMutation(api.budgets.mutations.createBudget);
+  const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
   const budgetTypeOptions = [
     { label: "Monthly", value: "monthly" },

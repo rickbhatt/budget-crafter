@@ -9,7 +9,7 @@ export const handleClerkWebhook = httpAction(async (ctx, req) => {
 
   switch (type) {
     case "user.created":
-      await ctx.runMutation(internal.users.createUser, {
+      await ctx.runMutation(internal.users.mutations.createUser, {
         clerkId: data.id,
         email: data.email_addresses[0].email_address,
         firstName: data.first_name,
@@ -22,7 +22,7 @@ export const handleClerkWebhook = httpAction(async (ctx, req) => {
       console.log("user updated");
       break;
     case "user.deleted":
-      await ctx.runMutation(internal.users.deleteUser, {
+      await ctx.runMutation(internal.users.mutations.deleteUser, {
         clerkId: data.id,
       });
 

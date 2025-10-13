@@ -31,7 +31,7 @@ const EmptyState = ({
 
       {/* Description */}
       {description && (
-        <Text className="paragraph-regular text-text-secondary text-center mb-6 max-w-[280px]">
+        <Text className="paragraph-semibold text-text-secondary text-center mb-6 max-w-[75%]">
           {description}
         </Text>
       )}

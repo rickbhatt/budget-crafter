@@ -7,6 +7,7 @@ import { formatDateTime } from "@/utils/formatDate";
 import cn from "clsx";
 import { Controller } from "react-hook-form";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { convertToDateUnix } from "src/utils/date";
 import { CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
 
@@ -121,9 +122,8 @@ const CustomInputs = ({
                   onChange={(event, selectedDate) => {
                     setDatePickerOpen(false);
                     if (selectedDate) {
-                      const timestamp = new Date(selectedDate);
-                      timestamp.setHours(0, 0, 0, 0);
-                      onChange(timestamp.getTime());
+                      let timestamp = convertToDateUnix(selectedDate);
+                      onChange(timestamp);
                     }
                   }}
                 />
