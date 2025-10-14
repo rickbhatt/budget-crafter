@@ -156,7 +156,7 @@ const CustomInputs = ({
                         onChange(val.value);
                       }}
                       listMode="SCROLLVIEW"
-                      placeholder="Select a type"
+                      placeholder={placeholder}
                       dropDownContainerStyle={{
                         backgroundColor: "#151515",
                         borderColor: "#FFFFFF",
