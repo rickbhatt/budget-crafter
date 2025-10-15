@@ -225,6 +225,7 @@ const CreateBudget = () => {
           selectOptions={budgetTypeOptions}
           inputName="budgetType"
           control={control}
+          placeholder="Select type"
           icon={
             <DynamicIcon
               family="MaterialCommunityIcons"

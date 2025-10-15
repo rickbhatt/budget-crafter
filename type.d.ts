@@ -100,7 +100,7 @@ export type NewExpense = Omit<
 type PrimitiveValue = string | number | boolean | Date | null | undefined;
 
 interface CustomInputProps {
-  type: "amount" | "text" | "date" | "password" | "select";
+  type: "amount" | "text" | "date" | "password" | "select" | "paymentCategory";
   selectOptions?: any[];
   autoFocus?: boolean;
   labelName: string;
@@ -161,4 +161,11 @@ interface EmptyStateProps {
   onAction?: () => void;
   containerStyle?: string;
   imageStyle?: string;
+}
+
+export interface ExpenseFormProps {
+  onSubmit: (data: ExpenseFormData) => Promise<void>;
+  initialValues?: Partial<ExpenseFormData>;
+  submitButtonText: string;
+  isSubmitting?: boolean;
 }

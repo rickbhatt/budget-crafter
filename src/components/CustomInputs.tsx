@@ -1,15 +1,18 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useRef, useState } from "react";
+import { Pressable, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 import { formatDateTime } from "@/utils/formatDate";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import cn from "clsx";
 import { Controller } from "react-hook-form";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { convertToDateUnix } from "src/utils/date";
 import { CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
+
+const ICON_SIZE = 28;
 
 const CustomInputs = ({
   type,
@@ -27,6 +30,8 @@ const CustomInputs = ({
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   switch (type) {
     case "text":
@@ -84,7 +89,7 @@ const CustomInputs = ({
                       <DynamicIcon
                         family="Ionicons"
                         name="calendar-outline"
-                        size={28}
+                        size={ICON_SIZE}
                         color="#FFFFFF"
                       />
                     </View>
@@ -205,16 +210,56 @@ const CustomInputs = ({
         />
       );
 
+    case "paymentCategory":
+      return (
+        <Controller
+          control={control}
+          name={inputName}
+          render={({ field: { onChange, value } }) => (
+            <>
+              <View className="form-wrapper">
+                <View className="form-group">
+                  <Text className="form-label">{labelName}</Text>
+                  <View className="form-input">
+                    <View className="icon-wrapper">
+                      <DynamicIcon
+                        family="Ionicons"
+                        name="pricetag-outline"
+                        size={ICON_SIZE}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                    <View className="input-wrapper">
+                      <Pressable
+                        className="py-3 w-full"
+                        onPress={() => bottomSheetRef.current?.expand()}
+                      >
+                        <Text
+                          className={cn(
+                            "text-3xl",
+                            value ? "text-text-light" : "text-text-tertiary"
+                          )}
+                        >
+                          {value ? value : placeholder}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <BottomSheet ref={bottomSheetRef} snapPoints={["15%"]} index={-1}>
+                <BottomSheetView>
+                  <Text>This is payment category</Text>
+                </BottomSheetView>
+              </BottomSheet>
+            </>
+          )}
+        />
+      );
+
     default:
       return null;
   }
 };
 
 export default CustomInputs;
-
-const styles = StyleSheet.create({
-  inputStyle: {
-    backgroundColor: "#151515",
-    color: "#ffffff",
-  },
-});

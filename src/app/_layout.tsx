@@ -1,4 +1,3 @@
-import { paperTheme } from "@/theme";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { api } from "convex/_generated/api";
@@ -8,8 +7,8 @@ import { useLocales } from "expo-localization";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import "./global.css";
@@ -69,13 +68,13 @@ export default function RootLayout() {
     <ClerkProvider tokenCache={tokenCache} publishableKey={clerkPublishableKey}>
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-          <PaperProvider theme={paperTheme}>
-            <SafeAreaProvider>
+          <SafeAreaProvider>
+            <GestureHandlerRootView className="flex-1">
               <KeyboardProvider>
                 <InitialLayout />
               </KeyboardProvider>
-            </SafeAreaProvider>
-          </PaperProvider>
+            </GestureHandlerRootView>
+          </SafeAreaProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>
       <Toast />

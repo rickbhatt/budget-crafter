@@ -10,6 +10,7 @@ import {
   KeyboardAwareScrollView,
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
+import { ExpenseFormProps } from "type";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
@@ -34,7 +35,7 @@ const expenseFormSchema = z.object({
       }
     )
     .nullable(),
-  description: z.string().min(1, "Description is required").nullable(),
+  notes: z.string().optional(),
   paymentMethod: z
     .enum(["cash", "upi", "digitalPayment", "debitCard", "creditCard"], {
       message: "Payment method is required",
@@ -50,12 +51,6 @@ const expenseFormSchema = z.object({
 export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
 
 // Props interface for the ExpenseForm component
-export interface ExpenseFormProps {
-  onSubmit: (data: ExpenseFormData) => Promise<void>;
-  initialValues?: Partial<ExpenseFormData>;
-  submitButtonText: string;
-  isSubmitting?: boolean;
-}
 
 const ExpenseForm = ({
   onSubmit,
@@ -80,7 +75,7 @@ const ExpenseForm = ({
     defaultValues: initialValues || {
       categoryId: null,
       amount: null,
-      description: null,
+      notes: null,
       paymentMethod: null,
       expenseDate: null,
     },
@@ -96,10 +91,9 @@ const ExpenseForm = ({
   // Payment method options
   const paymentMethodOptions = [
     { label: "Cash", value: "cash" },
-    {
-      label: `${locales.languageRegionCode === "IN" ? "UPI" : "Digital Payment"}`,
-      value: `${locales.languageRegionCode === "IN" ? "upi" : "digitalPayment"}`,
-    },
+    locales.languageRegionCode === "IN"
+      ? { label: "UPI", value: "upi" }
+      : { label: "Digital Payment", value: "digitalPayment" },
     { label: "Debit Card", value: "debitCard" },
     { label: "Credit Card", value: "creditCard" },
   ];
@@ -131,12 +125,12 @@ const ExpenseForm = ({
           control={control}
         />
         <CustomInputs
-          type="select"
+          type="paymentCategory"
           labelName="Category"
           selectOptions={categoryOptions}
           inputName="categoryId"
           control={control}
-          placeholder="Select a category"
+          placeholder="What did you spend on?"
           icon={
             <DynamicIcon
               family="MaterialCommunityIcons"
@@ -150,9 +144,9 @@ const ExpenseForm = ({
 
         <CustomInputs
           type="text"
-          labelName="Description"
-          placeholder="What did you spend on?"
-          inputName="description"
+          labelName="Notes"
+          placeholder="Add notes (optional)"
+          inputName="notes"
           icon={
             <DynamicIcon
               family="MaterialCommunityIcons"
@@ -162,7 +156,7 @@ const ExpenseForm = ({
             />
           }
           keyboardType="default"
-          error={errors.description?.message}
+          error={errors.notes?.message}
           control={control}
         />
 

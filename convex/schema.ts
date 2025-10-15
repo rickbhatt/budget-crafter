@@ -51,7 +51,7 @@ export const Expenses = {
   budgetId: v.id("budgets"), // Foreign key to budgets table
   categoryId: v.id("categories"), // Foreign key to budgets table
   amount: v.float64(),
-  description: v.string(),
+  notes: v.optional(v.string()),
   paymentMethod: v.union(
     v.literal("cash"),
     v.literal("upi"),
