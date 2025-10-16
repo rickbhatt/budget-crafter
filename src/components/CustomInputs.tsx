@@ -1,13 +1,10 @@
+import { formatDateTime } from "@/utils/formatDate";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useRef, useState } from "react";
+import cn from "clsx";
+import { useState } from "react";
+import { Controller } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-
-import { formatDateTime } from "@/utils/formatDate";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import cn from "clsx";
-import { Controller } from "react-hook-form";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { convertToDateUnix } from "src/utils/date";
 import { CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
@@ -25,13 +22,12 @@ const CustomInputs = ({
   keyboardType = "default",
   placeholder = "",
   error,
+  onPressPaymentCategory,
   maxLength = undefined,
 }: CustomInputProps) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
 
   switch (type) {
     case "text":
@@ -191,10 +187,20 @@ const CustomInputs = ({
                         fontSize: 30,
                       }}
                       ArrowDownIconComponent={({ style }) => (
-                        <Icon name="arrow-down" size={18} color="#FFFFFF" />
+                        <DynamicIcon
+                          family="FontAwesome"
+                          name="arrow-down"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       )}
                       ArrowUpIconComponent={({ style }) => (
-                        <Icon name="arrow-up" size={18} color="#FFFFFF" />
+                        <DynamicIcon
+                          family="FontAwesome"
+                          name="arrow-up"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       )}
                     />
                   </View>
@@ -232,7 +238,7 @@ const CustomInputs = ({
                     <View className="input-wrapper">
                       <Pressable
                         className="py-3 w-full"
-                        onPress={() => bottomSheetRef.current?.expand()}
+                        onPress={onPressPaymentCategory}
                       >
                         <Text
                           className={cn(
@@ -247,11 +253,6 @@ const CustomInputs = ({
                   </View>
                 </View>
               </View>
-              <BottomSheet ref={bottomSheetRef} snapPoints={["15%"]} index={-1}>
-                <BottomSheetView>
-                  <Text>This is payment category</Text>
-                </BottomSheetView>
-              </BottomSheet>
             </>
           )}
         />

@@ -1,15 +1,17 @@
+import BottomSheet from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useLocales } from "expo-localization";
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
+import PaymentCategoryBottomSheet from "src/components/PaymentCategoryBottomSheet";
 import { ExpenseFormProps } from "type";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
@@ -58,6 +60,8 @@ const ExpenseForm = ({
   submitButtonText,
   isSubmitting = false,
 }: ExpenseFormProps) => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
   // Fetch categories and user data
   const categories = useQuery(api.categories.queries.getAllCategories);
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
@@ -98,6 +102,10 @@ const ExpenseForm = ({
     { label: "Credit Card", value: "creditCard" },
   ];
 
+  const handlePaymentCategoryTrigger = () => {
+    bottomSheetRef.current?.expand();
+  };
+
   const handleClearAllPress = () => {
     reset();
   };
@@ -130,6 +138,7 @@ const ExpenseForm = ({
           selectOptions={categoryOptions}
           inputName="categoryId"
           control={control}
+          onPressPaymentCategory={handlePaymentCategoryTrigger}
           placeholder="What did you spend on?"
           icon={
             <DynamicIcon
@@ -186,23 +195,24 @@ const ExpenseForm = ({
           error={errors.expenseDate?.message}
         />
 
-        <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
+        <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding border-red-500">
           <CustomButton
             title="Clear All"
             onPress={handleClearAllPress}
-            style="w-1/2 bg-transparent border-border-light border"
+            style="bg-transparent border-border-light border flex-1 basis-0" //! fix the styles
             textStyle="text-text-light"
           />
           <CustomButton
             title={submitButtonText}
             onPress={handleSubmit(onSubmit)}
-            style="bg-emerald w-1/2"
+            style="bg-emerald flex-1 basis-0" //! fix the styles
             textStyle="text-text-light"
             isLoading={isSubmitting}
           />
         </View>
       </KeyboardAwareScrollView>
       <KeyboardToolbar />
+      <PaymentCategoryBottomSheet bottomSheetRef={bottomSheetRef} />
     </>
   );
 };
