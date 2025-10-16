@@ -294,16 +294,11 @@ const CreateBudget = () => {
 
         <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
           <CustomButton
-            title="Clear All"
-            onPress={handleClearAllPress}
-            style="w-1/2 bg-transparent border-border-light border"
-            textStyle="text-text-light"
-          />
-          <CustomButton
             title="Create Budget"
             onPress={handleSubmit(onSubmit)}
-            style="bg-emerald w-1/2"
+            style="bg-emerald w-full"
             textStyle="text-text-light"
+            leftIcon={<DynamicIcon name="save" family="FontAwesome" />}
           />
         </View>
       </KeyboardAwareScrollView>

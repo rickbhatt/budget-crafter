@@ -188,7 +188,7 @@ const Dashboard = () => {
                   expenseId={expense._id}
                   category={expense.category?.name!}
                   amount={expense.amount}
-                  description={expense.description}
+                  notes={expense.notes ?? null}
                   icon={expense.category?.icon!}
                   date={expense.expenseDate}
                   isLast={index == expenses.length - 1}

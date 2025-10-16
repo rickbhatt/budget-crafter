@@ -6,7 +6,7 @@ import { Controller } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { convertToDateUnix } from "src/utils/date";
-import { CustomInputProps } from "type";
+import { Category, CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
 
 const ICON_SIZE = 28;
@@ -22,9 +22,14 @@ const CustomInputs = ({
   keyboardType = "default",
   placeholder = "",
   error,
-  onPressPaymentCategory,
+  onPressPaymentCategoryTrigger,
+  selectedPaymentCategoryValue,
   maxLength = undefined,
 }: CustomInputProps) => {
+  console.log(
+    "🚀 ~ CustomInputs ~ selectedPaymentCategoryValue:",
+    selectedPaymentCategoryValue
+  );
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -218,44 +223,53 @@ const CustomInputs = ({
 
     case "paymentCategory":
       return (
-        <Controller
-          control={control}
-          name={inputName}
-          render={({ field: { onChange, value } }) => (
-            <>
-              <View className="form-wrapper">
-                <View className="form-group">
-                  <Text className="form-label">{labelName}</Text>
-                  <View className="form-input">
-                    <View className="icon-wrapper">
-                      <DynamicIcon
-                        family="Ionicons"
-                        name="pricetag-outline"
-                        size={ICON_SIZE}
-                        color="#FFFFFF"
-                      />
-                    </View>
-                    <View className="input-wrapper">
-                      <Pressable
-                        className="py-3 w-full"
-                        onPress={onPressPaymentCategory}
-                      >
-                        <Text
-                          className={cn(
-                            "text-3xl",
-                            value ? "text-text-light" : "text-text-tertiary"
-                          )}
-                        >
-                          {value ? value : placeholder}
-                        </Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                </View>
+        <View className="form-wrapper">
+          <View className="form-group">
+            <Text className="form-label">{labelName}</Text>
+            <View className="form-input">
+              <View className="icon-wrapper">
+                <DynamicIcon
+                  family={
+                    selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue?.icon?.family
+                      : "Ionicons"
+                  }
+                  name={
+                    selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue?.icon?.name
+                      : "pricetag-outline"
+                  }
+                  size={ICON_SIZE}
+                  color="#FFFFFF"
+                />
               </View>
-            </>
+              <View className="input-wrapper">
+                <Pressable
+                  className="py-3 w-full"
+                  onPress={onPressPaymentCategoryTrigger}
+                >
+                  <Text
+                    className={cn(
+                      "text-3xl",
+                      selectedPaymentCategoryValue
+                        ? "text-text-light"
+                        : "text-text-tertiary"
+                    )}
+                  >
+                    {selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue.name
+                      : placeholder}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+          {error && (
+            <View className="error-message-container">
+              <Text className="error-text">{error}</Text>
+            </View>
           )}
-        />
+        </View>
       );
 
     default:

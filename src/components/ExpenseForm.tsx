@@ -1,10 +1,10 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { Id } from "convex/_generated/dataModel";
+import { Doc, Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useLocales } from "expo-localization";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -12,7 +12,7 @@ import {
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
 import PaymentCategoryBottomSheet from "src/components/PaymentCategoryBottomSheet";
-import { ExpenseFormProps } from "type";
+import { Category, ExpenseFormProps } from "type";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
 import CustomInputs from "./CustomInputs";
@@ -52,8 +52,6 @@ const expenseFormSchema = z.object({
 
 export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
 
-// Props interface for the ExpenseForm component
-
 const ExpenseForm = ({
   onSubmit,
   initialValues,
@@ -62,8 +60,10 @@ const ExpenseForm = ({
 }: ExpenseFormProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  // Fetch categories and user data
-  const categories = useQuery(api.categories.queries.getAllCategories);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
   const locales = useLocales()[0];
@@ -71,8 +71,8 @@ const ExpenseForm = ({
   const {
     control,
     handleSubmit,
-    reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema),
@@ -84,13 +84,6 @@ const ExpenseForm = ({
       expenseDate: null,
     },
   });
-
-  // Transform categories into select options
-  const categoryOptions =
-    categories?.map((category) => ({
-      label: category.name,
-      value: category._id,
-    })) || [];
 
   // Payment method options
   const paymentMethodOptions = [
@@ -106,8 +99,11 @@ const ExpenseForm = ({
     bottomSheetRef.current?.expand();
   };
 
-  const handleClearAllPress = () => {
-    reset();
+  const handleOnPaymentCategorySelect = (params: Category) => {
+    console.log("🚀 ~ handleOnPaymentCategorySelect ~ params:", params);
+    setValue("categoryId", params._id);
+    setSelectedCategory(params);
+    bottomSheetRef.current?.close();
   };
 
   return (
@@ -135,10 +131,10 @@ const ExpenseForm = ({
         <CustomInputs
           type="paymentCategory"
           labelName="Category"
-          selectOptions={categoryOptions}
           inputName="categoryId"
           control={control}
-          onPressPaymentCategory={handlePaymentCategoryTrigger}
+          selectedPaymentCategoryValue={selectedCategory}
+          onPressPaymentCategoryTrigger={handlePaymentCategoryTrigger}
           placeholder="What did you spend on?"
           icon={
             <DynamicIcon
@@ -195,24 +191,23 @@ const ExpenseForm = ({
           error={errors.expenseDate?.message}
         />
 
-        <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding border-red-500">
-          <CustomButton
-            title="Clear All"
-            onPress={handleClearAllPress}
-            style="bg-transparent border-border-light border flex-1 basis-0" //! fix the styles
-            textStyle="text-text-light"
-          />
+        <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding">
           <CustomButton
             title={submitButtonText}
             onPress={handleSubmit(onSubmit)}
-            style="bg-emerald flex-1 basis-0" //! fix the styles
+            style="bg-emerald w-full"
             textStyle="text-text-light"
             isLoading={isSubmitting}
+            leftIcon={<DynamicIcon name="save" family="FontAwesome" />}
           />
         </View>
       </KeyboardAwareScrollView>
       <KeyboardToolbar />
-      <PaymentCategoryBottomSheet bottomSheetRef={bottomSheetRef} />
+      <PaymentCategoryBottomSheet
+        selectedCategory={watch("categoryId")}
+        bottomSheetRef={bottomSheetRef}
+        onSelect={handleOnPaymentCategorySelect}
+      />
     </>
   );
 };

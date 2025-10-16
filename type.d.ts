@@ -49,7 +49,7 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
-  description: string;
+  notes?: string | null;
   icon: Doc<"categories">["icon"];
   date: number;
   expenseId: string;
@@ -109,10 +109,11 @@ interface CustomInputProps {
   keyboardType?: KeyboardTypeOptions;
   error?: string;
   // React Hook Form props
-  control: any; // Control object from useForm
+  control?: any; // Control object from useForm
   placeholder?: string;
-  onPressPaymentCategory?: () => void;
+  onPressPaymentCategoryTrigger?: () => void;
   maxLength?: number | undefined;
+  selectedPaymentCategoryValue?: any;
 }
 
 type DynamicIconProps =
