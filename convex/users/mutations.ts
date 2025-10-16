@@ -1,10 +1,6 @@
-import { ConvexError, v } from "convex/values";
-import {
-  internalMutation,
-  mutation,
-  query,
-  QueryCtx,
-} from "./_generated/server";
+import { v } from "convex/values";
+import { internalMutation, mutation } from "../_generated/server";
+import { getAuthenticatedUser } from "../models/users.helpers";
 
 export const createUser = internalMutation({
   args: {
@@ -45,47 +41,6 @@ export const deleteUser = internalMutation({
     } catch (error) {
       console.log("error in deleteUser", error);
     }
-  },
-});
-
-const getUserByClerkId = async ({
-  ctx,
-  clerkId,
-}: {
-  ctx: QueryCtx;
-  clerkId: string;
-}) => {
-  const user = await ctx.db
-    .query("users")
-    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
-
-  return user;
-};
-
-const getAuthenticatedUser = async (ctx: QueryCtx) => {
-  const identity = await ctx.auth.getUserIdentity();
-
-  if (!identity) return null;
-  const user = await getUserByClerkId({ ctx, clerkId: identity.subject });
-  return user;
-};
-
-export const getAuthUserOrThrow = async (ctx: QueryCtx) => {
-  const user = await getAuthenticatedUser(ctx);
-  if (!user) {
-    throw new ConvexError({
-      code: "UNAUTHORIZED",
-      message: "User not authenticated",
-    });
-  }
-  return user;
-};
-
-export const getAuthenticatedUserProfile = query({
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    return user;
   },
 });
 

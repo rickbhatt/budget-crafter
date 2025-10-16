@@ -90,8 +90,8 @@ const budgetFormSchema = z
 type BudgetFormData = z.infer<typeof budgetFormSchema>;
 
 const CreateBudget = () => {
-  const createBudget = useMutation(api.budget.createBudget);
-  const user = useQuery(api.users.getAuthenticatedUserProfile);
+  const createBudget = useMutation(api.budgets.mutations.createBudget);
+  const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
   const budgetTypeOptions = [
     { label: "Monthly", value: "monthly" },
@@ -225,6 +225,7 @@ const CreateBudget = () => {
           selectOptions={budgetTypeOptions}
           inputName="budgetType"
           control={control}
+          placeholder="Select type"
           icon={
             <DynamicIcon
               family="MaterialCommunityIcons"
@@ -293,16 +294,11 @@ const CreateBudget = () => {
 
         <View className="flex-between gap-x-2.5 flex-row mt-8 screen-x-padding">
           <CustomButton
-            title="Clear All"
-            onPress={handleClearAllPress}
-            style="w-1/2 bg-transparent border-border-light border"
-            textStyle="text-text-light"
-          />
-          <CustomButton
             title="Create Budget"
             onPress={handleSubmit(onSubmit)}
-            style="bg-emerald w-1/2"
+            style="bg-emerald w-full"
             textStyle="text-text-light"
+            leftIcon={<DynamicIcon name="save" family="FontAwesome" />}
           />
         </View>
       </KeyboardAwareScrollView>

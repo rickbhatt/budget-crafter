@@ -49,7 +49,7 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
-  description: string;
+  notes?: string | null;
   icon: Doc<"categories">["icon"];
   date: number;
   expenseId: string;
@@ -100,7 +100,7 @@ export type NewExpense = Omit<
 type PrimitiveValue = string | number | boolean | Date | null | undefined;
 
 interface CustomInputProps {
-  type: "amount" | "text" | "date" | "password" | "select";
+  type: "amount" | "text" | "date" | "password" | "select" | "paymentCategory";
   selectOptions?: any[];
   autoFocus?: boolean;
   labelName: string;
@@ -109,9 +109,11 @@ interface CustomInputProps {
   keyboardType?: KeyboardTypeOptions;
   error?: string;
   // React Hook Form props
-  control: any; // Control object from useForm
+  control?: any; // Control object from useForm
   placeholder?: string;
+  onPressPaymentCategoryTrigger?: () => void;
   maxLength?: number | undefined;
+  selectedPaymentCategoryValue?: any;
 }
 
 type DynamicIconProps =
@@ -161,4 +163,11 @@ interface EmptyStateProps {
   onAction?: () => void;
   containerStyle?: string;
   imageStyle?: string;
+}
+
+export interface ExpenseFormProps {
+  onSubmit: (data: ExpenseFormData) => Promise<void>;
+  initialValues?: Partial<ExpenseFormData>;
+  submitButtonText: string;
+  isSubmitting?: boolean;
 }

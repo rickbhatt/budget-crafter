@@ -8,7 +8,7 @@ import DynamicIcon from "./DynamicIcon";
 const ExpenseCard = ({
   category,
   amount,
-  description,
+  notes,
   icon,
   date,
   isLast,
@@ -29,14 +29,15 @@ const ExpenseCard = ({
       <View className="flex-row flex items-center gap-x-4 flex-1 mr-6">
         <DynamicIcon family={icon.family} name={icon.name} size={24} />
         <View className="flex-col flex gap-y-1 flex-1">
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            className="text-text-light paragraph-semibold"
-          >
-            {description}
-          </Text>
-
+          {notes && (
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="text-text-light paragraph-semibold"
+            >
+              {notes}
+            </Text>
+          )}
           <Text className="text-text-light text-sm font-quicksand">
             {category}
           </Text>

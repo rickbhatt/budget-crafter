@@ -1,34 +1,7 @@
 import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
-import { getAuthUserOrThrow } from "./users";
-
-export const createExpense = mutation({
-  args: {
-    budgetId: v.id("budgets"),
-    categoryId: v.id("categories"),
-    amount: v.float64(),
-    description: v.string(),
-    paymentMethod: v.union(
-      v.literal("cash"),
-      v.literal("upi"),
-      v.literal("digitalPayment"),
-      v.literal("debitCard"),
-      v.literal("creditCard")
-    ),
-    expenseDate: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const user = await getAuthUserOrThrow(ctx);
-
-    const expense = await ctx.db.insert("expenses", {
-      ...args,
-      userId: user._id,
-    });
-
-    return expense;
-  },
-});
+import { query } from "../_generated/server";
+import { getAuthUserOrThrow } from "../models/users.helpers";
 
 export const getAllExpenses = query({
   args: {

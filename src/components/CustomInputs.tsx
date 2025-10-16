@@ -1,14 +1,15 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
-
 import { formatDateTime } from "@/utils/formatDate";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import cn from "clsx";
+import { useState } from "react";
 import { Controller } from "react-hook-form";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { CustomInputProps } from "type";
+import { Pressable, Text, TextInput, View } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
+import { convertToDateUnix } from "src/utils/date";
+import { Category, CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
+
+const ICON_SIZE = 28;
 
 const CustomInputs = ({
   type,
@@ -21,8 +22,14 @@ const CustomInputs = ({
   keyboardType = "default",
   placeholder = "",
   error,
+  onPressPaymentCategoryTrigger,
+  selectedPaymentCategoryValue,
   maxLength = undefined,
 }: CustomInputProps) => {
+  console.log(
+    "🚀 ~ CustomInputs ~ selectedPaymentCategoryValue:",
+    selectedPaymentCategoryValue
+  );
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -83,7 +90,7 @@ const CustomInputs = ({
                       <DynamicIcon
                         family="Ionicons"
                         name="calendar-outline"
-                        size={28}
+                        size={ICON_SIZE}
                         color="#FFFFFF"
                       />
                     </View>
@@ -121,9 +128,8 @@ const CustomInputs = ({
                   onChange={(event, selectedDate) => {
                     setDatePickerOpen(false);
                     if (selectedDate) {
-                      const timestamp = new Date(selectedDate);
-                      timestamp.setHours(0, 0, 0, 0);
-                      onChange(timestamp.getTime());
+                      let timestamp = convertToDateUnix(selectedDate);
+                      onChange(timestamp);
                     }
                   }}
                 />
@@ -156,7 +162,7 @@ const CustomInputs = ({
                         onChange(val.value);
                       }}
                       listMode="SCROLLVIEW"
-                      placeholder="Select a type"
+                      placeholder={placeholder}
                       dropDownContainerStyle={{
                         backgroundColor: "#151515",
                         borderColor: "#FFFFFF",
@@ -186,10 +192,20 @@ const CustomInputs = ({
                         fontSize: 30,
                       }}
                       ArrowDownIconComponent={({ style }) => (
-                        <Icon name="arrow-down" size={18} color="#FFFFFF" />
+                        <DynamicIcon
+                          family="FontAwesome"
+                          name="arrow-down"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       )}
                       ArrowUpIconComponent={({ style }) => (
-                        <Icon name="arrow-up" size={18} color="#FFFFFF" />
+                        <DynamicIcon
+                          family="FontAwesome"
+                          name="arrow-up"
+                          size={18}
+                          color="#FFFFFF"
+                        />
                       )}
                     />
                   </View>
@@ -205,16 +221,60 @@ const CustomInputs = ({
         />
       );
 
+    case "paymentCategory":
+      return (
+        <View className="form-wrapper">
+          <View className="form-group">
+            <Text className="form-label">{labelName}</Text>
+            <View className="form-input">
+              <View className="icon-wrapper">
+                <DynamicIcon
+                  family={
+                    selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue?.icon?.family
+                      : "Ionicons"
+                  }
+                  name={
+                    selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue?.icon?.name
+                      : "pricetag-outline"
+                  }
+                  size={ICON_SIZE}
+                  color="#FFFFFF"
+                />
+              </View>
+              <View className="input-wrapper">
+                <Pressable
+                  className="py-3 w-full"
+                  onPress={onPressPaymentCategoryTrigger}
+                >
+                  <Text
+                    className={cn(
+                      "text-3xl",
+                      selectedPaymentCategoryValue
+                        ? "text-text-light"
+                        : "text-text-tertiary"
+                    )}
+                  >
+                    {selectedPaymentCategoryValue
+                      ? selectedPaymentCategoryValue.name
+                      : placeholder}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+          {error && (
+            <View className="error-message-container">
+              <Text className="error-text">{error}</Text>
+            </View>
+          )}
+        </View>
+      );
+
     default:
       return null;
   }
 };
 
 export default CustomInputs;
-
-const styles = StyleSheet.create({
-  inputStyle: {
-    backgroundColor: "#151515",
-    color: "#ffffff",
-  },
-});

@@ -17,17 +17,15 @@ const Dashboard = () => {
     "monthly"
   );
 
-  const currentDate = useMemo(() => new Date().getTime(), []);
-
-  const userProfile = useQuery(api.users.getAuthenticatedUserProfile);
+  const userProfile = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
   const budget = useQuery(
-    api.budget.getCurrentActiveBudget,
-    userProfile?._id !== null ? { timestamp: currentDate, budgetType } : "skip"
+    api.budgets.queries.getCurrentActiveBudget,
+    userProfile?._id !== null ? { budgetType } : "skip"
   );
 
   const expenses = useQuery(
-    api.expense.getAllExpenses,
+    api.expenses.queries.getAllExpenses,
     budget?._id != null ? { budgetId: budget._id, limit: 6 } : "skip"
   );
 
@@ -190,7 +188,7 @@ const Dashboard = () => {
                   expenseId={expense._id}
                   category={expense.category?.name!}
                   amount={expense.amount}
-                  description={expense.description}
+                  notes={expense.notes ?? null}
                   icon={expense.category?.icon!}
                   date={expense.expenseDate}
                   isLast={index == expenses.length - 1}

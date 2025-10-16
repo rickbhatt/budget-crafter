@@ -1,5 +1,5 @@
-import { query } from "./_generated/server";
-import { getAuthUserOrThrow } from "./users";
+import { query } from "../_generated/server";
+import { getAuthUserOrThrow } from "../models/users.helpers";
 
 export const getAllCategories = query({
   handler: async (ctx) => {
