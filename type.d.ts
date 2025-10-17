@@ -171,3 +171,9 @@ export interface ExpenseFormProps {
   submitButtonText: string;
   isSubmitting?: boolean;
 }
+
+interface PaymentCategoryBottomSheetProps {
+  bottomSheetRef: RefObject<BottomSheet | null>;
+  selectedCategory: Id<"categories"> | null;
+  onSelect: (params: Category) => void;
+}
