@@ -92,6 +92,13 @@ export const seedCategories = internalMutation({
           family: "MaterialCommunityIcons" as const,
         },
       },
+      {
+        name: "Loans & EMIs",
+        icon: {
+          name: "bank",
+          family: "MaterialCommunityIcons" as const,
+        },
+      },
     ];
 
     const results = [];
@@ -163,5 +170,43 @@ export const createCategory = internalMutation({
       message: "Category created successfully",
       category,
     };
+  },
+});
+
+export const updateCategory = internalMutation({
+  args: {
+    id: v.id("categories"),
+    name: v.string(),
+    icon: v.object({
+      name: v.string(),
+      family: v.union(
+        v.literal("MaterialCommunityIcons"),
+        v.literal("Ionicons"),
+        v.literal("FontAwesome"),
+        v.literal("AntDesign")
+      ),
+    }),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      name: args.name,
+      icon: args.icon,
+      updatedAt: getCurrentDateTimeUnix(),
+    });
+
+    const category = await ctx.db.get(args.id);
+
+    return {
+      message: "Category updated successfully",
+      category,
+    };
+  },
+});
+
+export const deleteCategory = internalMutation({
+  args: { id: v.id("categories") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+    return { message: "Category deleted successfully" };
   },
 });

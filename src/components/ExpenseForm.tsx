@@ -101,7 +101,6 @@ const ExpenseForm = ({
 
   const handleOnPaymentCategorySelect = useCallback(
     (params: Category) => {
-      console.log("🚀 ~ handleOnPaymentCategorySelect ~ params:", params);
       setValue("categoryId", params._id);
       setSelectedCategory(params);
       bottomSheetRef.current?.close();
