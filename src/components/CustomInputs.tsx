@@ -11,6 +11,19 @@ import DynamicIcon from "./DynamicIcon";
 
 const ICON_SIZE = 28;
 
+const ArrowDownIcon = () => (
+  <DynamicIcon
+    family="FontAwesome"
+    name="arrow-down"
+    size={18}
+    color="#FFFFFF"
+  />
+);
+
+const ArrowUpIcon = () => (
+  <DynamicIcon family="FontAwesome" name="arrow-up" size={18} color="#FFFFFF" />
+);
+
 const CustomInputs = ({
   type,
   control,
@@ -26,10 +39,6 @@ const CustomInputs = ({
   selectedPaymentCategoryValue,
   maxLength = undefined,
 }: CustomInputProps) => {
-  console.log(
-    "🚀 ~ CustomInputs ~ selectedPaymentCategoryValue:",
-    selectedPaymentCategoryValue
-  );
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -191,22 +200,8 @@ const CustomInputs = ({
                         color: "#9CA3AF",
                         fontSize: 30,
                       }}
-                      ArrowDownIconComponent={({ style }) => (
-                        <DynamicIcon
-                          family="FontAwesome"
-                          name="arrow-down"
-                          size={18}
-                          color="#FFFFFF"
-                        />
-                      )}
-                      ArrowUpIconComponent={({ style }) => (
-                        <DynamicIcon
-                          family="FontAwesome"
-                          name="arrow-up"
-                          size={18}
-                          color="#FFFFFF"
-                        />
-                      )}
+                      ArrowDownIconComponent={ArrowDownIcon}
+                      ArrowUpIconComponent={ArrowUpIcon}
                     />
                   </View>
                 </View>
@@ -230,14 +225,11 @@ const CustomInputs = ({
               <View className="icon-wrapper">
                 <DynamicIcon
                   family={
-                    selectedPaymentCategoryValue
-                      ? selectedPaymentCategoryValue?.icon?.family
-                      : "Ionicons"
+                    selectedPaymentCategoryValue?.icon?.family ?? "Ionicons"
                   }
                   name={
-                    selectedPaymentCategoryValue
-                      ? selectedPaymentCategoryValue?.icon?.name
-                      : "pricetag-outline"
+                    selectedPaymentCategoryValue?.icon?.name ??
+                    "pricetag-outline"
                   }
                   size={ICON_SIZE}
                   color="#FFFFFF"

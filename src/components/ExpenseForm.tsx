@@ -1,10 +1,10 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { Doc, Id } from "convex/_generated/dataModel";
+import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useLocales } from "expo-localization";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -99,12 +99,15 @@ const ExpenseForm = ({
     bottomSheetRef.current?.expand();
   };
 
-  const handleOnPaymentCategorySelect = (params: Category) => {
-    console.log("🚀 ~ handleOnPaymentCategorySelect ~ params:", params);
-    setValue("categoryId", params._id);
-    setSelectedCategory(params);
-    bottomSheetRef.current?.close();
-  };
+  const handleOnPaymentCategorySelect = useCallback(
+    (params: Category) => {
+      console.log("🚀 ~ handleOnPaymentCategorySelect ~ params:", params);
+      setValue("categoryId", params._id);
+      setSelectedCategory(params);
+      bottomSheetRef.current?.close();
+    },
+    [setValue]
+  );
 
   return (
     <>
@@ -204,7 +207,7 @@ const ExpenseForm = ({
       </KeyboardAwareScrollView>
       <KeyboardToolbar />
       <PaymentCategoryBottomSheet
-        selectedCategory={watch("categoryId")}
+        selectedCategory={selectedCategory?._id ?? null}
         bottomSheetRef={bottomSheetRef}
         onSelect={handleOnPaymentCategorySelect}
       />

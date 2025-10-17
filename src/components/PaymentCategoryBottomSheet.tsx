@@ -5,15 +5,20 @@ import BottomSheet, {
 import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { RefObject, useCallback, useMemo } from "react";
+import { memo, RefObject, useCallback, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Category } from "type";
 
 interface PaymentCategoryBottomSheetProps {
   bottomSheetRef: RefObject<BottomSheet | null>;
   selectedCategory: Id<"categories"> | null;
-  onSelect: (params: any) => void;
+  onSelect: (params: Category) => void;
 }
+
+const renderBackdrop = (props: any) => (
+  <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
+);
 
 const PaymentCategoryBottomSheet = ({
   bottomSheetRef,
@@ -21,23 +26,16 @@ const PaymentCategoryBottomSheet = ({
   onSelect,
 }: PaymentCategoryBottomSheetProps) => {
   const { bottom } = useSafeAreaInsets();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const categories = useQuery(api.categories.queries.getAllCategories);
-
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    ),
-    []
+  const categories = useQuery(
+    api.categories.queries.getAllCategories,
+    isOpen ? undefined : "skip"
   );
 
   return (
     <BottomSheet
-      onChange={(index) => console.log("sheet changed", index)}
+      onChange={(index) => setIsOpen(index !== -1)}
       ref={bottomSheetRef}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
@@ -47,8 +45,8 @@ const PaymentCategoryBottomSheet = ({
       <BottomSheetView className="flex-1 pb-safe p-4 flex flex-col">
         <Text className="h2-bold">Pick a Category</Text>
         <View className="flex flex-1 flex-row flex-wrap">
-          {categories &&
-            categories.map((category) => (
+          {
+            categories?.map((category) => (
               <Pressable key={category._id} onPress={() => onSelect(category)}>
                 <Text>{category.name}</Text>
               </Pressable>
@@ -59,4 +57,4 @@ const PaymentCategoryBottomSheet = ({
   );
 };
 
-export default PaymentCategoryBottomSheet;
+export default memo(PaymentCategoryBottomSheet);

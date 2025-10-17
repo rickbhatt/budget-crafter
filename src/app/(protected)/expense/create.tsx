@@ -17,7 +17,7 @@ const CreateExpense = () => {
       await createExpense({
         categoryId: data.categoryId!,
         amount: parseFloat(data.amount!),
-        description: data.description!,
+        notes: data.notes!,
         paymentMethod: data.paymentMethod!,
         expenseDate: data.expenseDate!,
       });
