@@ -1,3 +1,4 @@
+import { formatNumber } from "@/utils/formatNumber";
 import cn from "clsx";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -47,7 +48,7 @@ const ExpenseCard = ({
 
       {/* Right Side: amount view */}
       <View className="flex flex-row items-center gap-x-4">
-        <Text className="text-text-light h2-bold">₹{amount}</Text>
+        <Text className="text-text-light h2-bold">₹{formatNumber(amount)}</Text>
         {/* details button view */}
         <View>
           <DynamicIcon

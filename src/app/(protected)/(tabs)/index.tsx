@@ -5,6 +5,7 @@ import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
 import { calculateBudgetPercentages } from "@/utils/budgetCalculations";
 import { formatDateTime } from "@/utils/formatDate";
+import { formatNumber } from "@/utils/formatNumber";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Stack, useRouter } from "expo-router";
@@ -127,11 +128,11 @@ const Dashboard = () => {
                 <View className="flex-center flex-col gap-y-1 p-2.5">
                   <Text className="text-4xl font-quicksand-bold text-center">
                     {userProfile?.currency?.currencySymbol}
-                    {totalExpense}
+                    {formatNumber(totalExpense)}
                   </Text>
                   <Text className="h3-bold text-center">
                     of {userProfile?.currency?.currencySymbol}
-                    {budget?.budgetAmount}
+                    {formatNumber(budget?.budgetAmount ?? 0)}
                   </Text>
                 </View>
               )}
