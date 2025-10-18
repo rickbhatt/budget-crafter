@@ -20,6 +20,9 @@
   .payment-category-chip {
     @apply flex flex-row items-center px-4 py-2 mr-2 mb-3 whitespace-nowrap rounded-full border border-border-dark;
   }
+  .payment-ctg-tab-btn {
+    @apply text-center base-bold py-3;
+  }
   .bottom-sheet-tab-btns {
     @apply flex-1 py-3 border-b-2;
   }

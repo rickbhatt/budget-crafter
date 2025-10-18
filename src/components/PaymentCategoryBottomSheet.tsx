@@ -53,7 +53,8 @@ const PaymentCategoryBottomSheet = ({
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
       enableDynamicSizing={false} //may not work well with snap points
-      snapPoints={["60%"]}
+      snapPoints={["65%"]}
+      bottomInset={bottom}
       enableOverDrag={false}
       backgroundStyle={{
         backgroundColor: "#FFFFFF",
@@ -61,9 +62,9 @@ const PaymentCategoryBottomSheet = ({
       }}
       index={-1}
     >
-      {/* Main container */}
-      <BottomSheetView className="flex-1 px-4 flex mt-4 flex-col">
-        {/* Tab Header  */}
+      {/* Main Container */}
+      <BottomSheetView className="flex-1 flex-col mt-4">
+        {/* Tab Header */}
         <View className="flex flex-row border-b border-b-border-standard">
           <Pressable
             className={cn(
@@ -76,7 +77,7 @@ const PaymentCategoryBottomSheet = ({
           >
             <Text
               className={cn(
-                "text-center base-bold py-1",
+                "payment-ctg-tab-btn",
                 activeTab === "pickOne"
                   ? "text-active-tint"
                   : "text-text-primary"
@@ -96,7 +97,7 @@ const PaymentCategoryBottomSheet = ({
           >
             <Text
               className={cn(
-                "text-center base-bold py-1",
+                "payment-ctg-tab-btn",
                 activeTab === "create"
                   ? "text-active-tint"
                   : "text-text-primary"
@@ -109,65 +110,58 @@ const PaymentCategoryBottomSheet = ({
 
         {/* Tab Content */}
         <BottomSheetScrollView
-          contentContainerStyle={{
-            paddingBottom: screenHeight * 0.16 + bottom,
-          }}
           overScrollMode={"never"}
-          bounces={false}
-          className="flex-1 mt-5"
+          className="screen-x-padding mt-8"
+          contentContainerStyle={{
+            paddingBottom: 40, // Small buffer for gestures
+          }}
         >
           {activeTab === "pickOne" ? (
             // Pick One Tab
-            <View className="flex justify-start flex-row flex-wrap">
+            <>
               {categories === undefined ? (
-                <View className="flex-1 justify-center items-center">
-                  <ActivityIndicator color="#000000" size="small" />
+                <View className="flex flex-row justify-center items-center h-[50px]">
+                  <ActivityIndicator size="small" color={"#000000"} />
                 </View>
               ) : (
-                <>
-                  {categories.map((category) => (
-                    <Pressable
-                      className={cn(
-                        "payment-category-chip",
-                        selectedCategory === category._id
-                          ? "bg-sky"
-                          : "bg-bg-primary"
-                      )}
-                      key={category._id}
-                      onPress={() => onSelect(category)}
-                    >
-                      <DynamicIcon
-                        family={category.icon.family}
-                        name={category.icon.name as any}
-                        size={24}
-                        color="#000000"
-                      />
-                      <Text
+                <View className="flex flex-row flex-wrap">
+                  <>
+                    {categories.map((category) => (
+                      <Pressable
                         className={cn(
-                          "ml-1",
+                          "payment-category-chip",
                           selectedCategory === category._id
-                            ? "paragraph-bold"
-                            : "paragraph-semibold"
+                            ? "bg-sky"
+                            : "bg-bg-primary"
                         )}
+                        key={category._id}
+                        onPress={() => onSelect(category)}
                       >
-                        {category.name}
-                      </Text>
-                    </Pressable>
-                  ))}
-                </>
+                        <DynamicIcon
+                          family={category.icon.family}
+                          name={category.icon.name as any}
+                          size={24}
+                          color="#000000"
+                        />
+                        <Text
+                          className={cn(
+                            "ml-1",
+                            selectedCategory === category._id
+                              ? "paragraph-bold"
+                              : "paragraph-semibold"
+                          )}
+                        >
+                          {category.name}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </>
+                </View>
               )}
-            </View>
+            </>
           ) : (
-            // Create New Tab: Scrollable form area (expand as needed)
-            <View className="flex flex-1 flex-col min-h-[200px]">
-              <View className="flex flex-col">
-                <Text>Category Name</Text>
-                <TextInput
-                  placeholder="Category Name"
-                  className="w-full h-10 border-border-dark"
-                />
-              </View>
-            </View>
+            //! Create Tab
+            <></>
           )}
         </BottomSheetScrollView>
       </BottomSheetView>
