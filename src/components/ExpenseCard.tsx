@@ -29,8 +29,8 @@ const ExpenseCard = ({
       className={cn("expense-card", isLast && "border-b-0")}
     >
       {/* Left Side: icon and expense category and desc view */}
-      <View className="flex-row flex items-center gap-x-4 flex-1 mr-6">
-        <DynamicIcon family={icon.family} name={icon.name} size={24} />
+      <View className="flex-row flex items-start gap-x-4 flex-1 mr-6">
+        <DynamicIcon family={icon.family} name={icon.name} size={28} />
         <View className="flex-col flex gap-y-1 flex-1">
           <Text
             numberOfLines={1}

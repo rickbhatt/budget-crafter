@@ -13,6 +13,8 @@ import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
+const MAX_EXPENSES = 6;
+
 const Dashboard = () => {
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
     "monthly"
@@ -25,9 +27,10 @@ const Dashboard = () => {
     userProfile?._id !== null ? { budgetType } : "skip"
   );
 
+  // ! Change the limit, because this alters the total expense amount
   const expenses = useQuery(
     api.expenses.queries.getAllExpenses,
-    budget?._id != null ? { budgetId: budget._id, limit: 6 } : "skip"
+    budget?._id != null ? { budgetId: budget._id } : "skip"
   );
 
   const totalExpense = useMemo(() => {
@@ -52,7 +55,7 @@ const Dashboard = () => {
 
     // Handle over-budget case (100% expenses)
     if (isOverBudget) {
-      return [{ value: 100, color: "#3B82F6", text: "100%", focused: true }];
+      return [{ value: 100, color: "#3B82F6", text: "100%" }];
     }
 
     return [
@@ -183,7 +186,7 @@ const Dashboard = () => {
 
             {/* expense cards */}
             <View className="flex-col flex mt-5">
-              {expenses.map((expense, index) => (
+              {expenses.slice(0, MAX_EXPENSES).map((expense, index) => (
                 <ExpenseCard
                   key={index}
                   expenseId={expense._id}
@@ -193,7 +196,7 @@ const Dashboard = () => {
                   notes={expense.notes ?? null}
                   icon={expense.category?.icon!}
                   date={expense.expenseDate}
-                  isLast={index == expenses.length - 1}
+                  isLast={index == MAX_EXPENSES - 1}
                 />
               ))}
             </View>
