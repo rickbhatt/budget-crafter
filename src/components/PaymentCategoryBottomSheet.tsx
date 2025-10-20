@@ -55,7 +55,7 @@ const PaymentCategoryBottomSheet = ({
 
   const createCategory = useMutation(api.categories.mutations.createCategory);
 
-  const snapPoints = useMemo(() => ["70%", "100%"], []);
+  const snapPoints = useMemo(() => ["70%"], []);
 
   const handleCreateNewCategorySubmit = async () => {
     if (newCategoryName && newCategoryIcon) {
@@ -92,7 +92,7 @@ const PaymentCategoryBottomSheet = ({
         height: 5,
       }}
       enableDynamicSizing={false} //may not work well with snap points
-      enableContentPanningGesture={false}
+      enableContentPanningGesture={true}
       snapPoints={snapPoints}
       topInset={top}
       bottomInset={bottom}
@@ -220,7 +220,6 @@ const PaymentCategoryBottomSheet = ({
                   placeholder="WiFi bill, uber..."
                   accessibilityLabel="Enter category name"
                   className="w-full text-text-primary h-14 px-3 py-2 border border-border-dark paragraph-semibold bg-bg-primary rounded-md"
-                  onFocus={() => bottomSheetRef.current?.snapToIndex(1)}
                   onBlur={() => {
                     setTimeout(
                       () => bottomSheetRef.current?.snapToIndex(0),

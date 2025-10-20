@@ -1,7 +1,8 @@
 import { CUSTOM_CATEGORY_ICONS } from "@/constants";
 import cn from "clsx";
 import React, { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { IconFamily } from "type";
 import DynamicIcon from "./DynamicIcon";
 

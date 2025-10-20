@@ -3,6 +3,7 @@ import cn from "clsx";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
+import { formatDateTime } from "src/utils/formatDate";
 import { ExpenseCardProps } from "type";
 import DynamicIcon from "./DynamicIcon";
 
@@ -42,7 +43,9 @@ const ExpenseCard = ({
           <Text className="text-text-light text-sm font-quicksand">
             {category}
           </Text>
-          <Text className="text-text-light text-sm font-quicksand">{date}</Text>
+          <Text className="text-text-light text-sm font-quicksand">
+            {formatDateTime(date).intlDateFormat}
+          </Text>
         </View>
       </View>
 

@@ -41,6 +41,30 @@ export const CUSTOM_CATEGORY_ICONS: {
     label: "Coffee",
   },
   {
+    id: "shop-AntDesign",
+    name: "shop",
+    family: "AntDesign",
+    label: "Shop",
+  },
+  {
+    id: "youtube-Entypo",
+    name: "youtube",
+    family: "Entypo",
+    label: "Youtube",
+  },
+  {
+    id: "netflix-MaterialCommunityIcons",
+    name: "netflix",
+    family: "MaterialCommunityIcons",
+    label: "Netflix",
+  },
+  {
+    id: "spotify-AntDesign",
+    name: "spotify",
+    family: "AntDesign",
+    label: "Netflix",
+  },
+  {
     id: "airplane-MaterialCommunityIcons",
     name: "airplane",
     family: "MaterialCommunityIcons",

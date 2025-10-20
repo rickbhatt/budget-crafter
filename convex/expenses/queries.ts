@@ -15,7 +15,8 @@ export const getAllExpenses = query({
       .query("expenses")
       .withIndex("byUserAndBudget", (q) =>
         q.eq("userId", user._id).eq("budgetId", args.budgetId)
-      );
+      )
+      .order("desc");
     // Apply limit if provided
     const expenses = args.limit
       ? await query.take(args.limit)
