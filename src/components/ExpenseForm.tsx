@@ -27,19 +27,18 @@ const expenseFormSchema = z.object({
   categoryId: z.custom<Id<"categories">>((val) => {
     return typeof val === "string" && val.length > 0;
   }, "Category is required"),
-  amount: z
-    .string()
-    .min(1, "Amount is required")
-    .refine(
-      (val) => {
-        const num = parseFloat(val);
-        return !isNaN(num) && num > 0;
-      },
-      {
-        message: "Amount must be greater than 0",
-      }
-    ),
-  description: z.string().min(1, "Description is required"),
+  amount: z.string({ message: "Amount is required" }).refine(
+    (val) => {
+      const num = parseFloat(val);
+      return !isNaN(num) && num > 0;
+    },
+    {
+      message: "Amount must be greater than 0",
+    }
+  ),
+  description: z
+    .string({ message: "Description is required" })
+    .min(1, "Description is required"),
   notes: z.string().optional(),
   paymentMethod: z.enum(
     ["cash", "upi", "digitalPayment", "debitCard", "creditCard"],
@@ -166,7 +165,7 @@ const ExpenseForm = ({
               color="#FFFFFF"
             />
           }
-          error={errors.amount?.message}
+          error={errors.description?.message}
           control={control}
         />
         <CustomInputs
