@@ -8,6 +8,15 @@ import {
 import { Href } from "expo-router";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
+
+// Icon Family Type
+export type IconFamily =
+  | "MaterialCommunityIcons"
+  | "Ionicons"
+  | "FontAwesome"
+  | "AntDesign"
+  | "Entypo";
+
 interface CustomButtonProps {
   onPress: () => void;
   title: string;
@@ -17,6 +26,7 @@ interface CustomButtonProps {
   isLoading?: boolean;
   activityIndicatorColor?: string;
   showElevation?: boolean;
+  disabled?: boolean;
 }
 
 interface ScreenHeaderProps {
@@ -118,31 +128,31 @@ interface CustomInputProps {
 
 type DynamicIconProps =
   | {
-      family: "MaterialCommunityIcons";
+      family: Extract<IconFamily, "MaterialCommunityIcons">;
       name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "Ionicons";
+      family: Extract<IconFamily, "Ionicons">;
       name: React.ComponentProps<typeof Ionicons>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "AntDesign";
+      family: Extract<IconFamily, "AntDesign">;
       name: React.ComponentProps<typeof AntDesign>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "FontAwesome";
+      family: Extract<IconFamily, "FontAwesome">;
       name: React.ComponentProps<typeof FontAwesome>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "Entypo";
+      family: Extract<IconFamily, "Entypo">;
       name: React.ComponentProps<typeof Entypo>["name"];
       size?: number;
       color?: string;

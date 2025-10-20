@@ -39,7 +39,8 @@ export const Categories = {
       v.literal("MaterialCommunityIcons"),
       v.literal("Ionicons"),
       v.literal("FontAwesome"),
-      v.literal("AntDesign")
+      v.literal("AntDesign"),
+      v.literal("Entypo")
     ),
   }),
   isDefault: v.boolean(),

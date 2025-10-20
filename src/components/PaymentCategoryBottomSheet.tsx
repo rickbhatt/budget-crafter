@@ -1,25 +1,20 @@
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetView,
   BottomSheetScrollView,
   BottomSheetTextInput,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 
-import { useQuery } from "convex/react";
-import { memo, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { PaymentCategoryBottomSheetProps } from "type";
-import DynamicIcon from "./DynamicIcon";
 import cn from "clsx";
+import { useMutation, useQuery } from "convex/react";
+import { memo, useMemo, useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { IconFamily, PaymentCategoryBottomSheetProps } from "type";
+import CustomButton from "./CustomButton";
+import DynamicIcon from "./DynamicIcon";
+import IconPicker from "./IconPicker";
 
 const renderBackdrop = (props: any) => (
   <BottomSheetBackdrop
@@ -35,30 +30,81 @@ const PaymentCategoryBottomSheet = ({
   selectedCategory,
   onSelect,
 }: PaymentCategoryBottomSheetProps) => {
-  const { bottom } = useSafeAreaInsets();
+  const { bottom, top } = useSafeAreaInsets();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [activeTab, setActiveTab] = useState<"pickOne" | "create">("pickOne");
 
-  const screenHeight = Dimensions.get("screen").height;
+  const [newCategoryName, setNewCategoryName] = useState<string | undefined>(
+    undefined
+  );
+
+  const [newCategoryIcon, setNewCategoryIcon] = useState<
+    | {
+        name: string;
+        family: IconFamily;
+      }
+    | undefined
+  >(undefined);
 
   const categories = useQuery(
     api.categories.queries.getAllCategories,
     isOpen ? undefined : "skip"
   );
 
+  const createCategory = useMutation(api.categories.mutations.createCategory);
+
+  const snapPoints = useMemo(() => ["70%", "100%"], []);
+
+  const handleCreateNewCategorySubmit = async () => {
+    if (newCategoryName && newCategoryIcon) {
+      try {
+        let category = await createCategory({
+          name: newCategoryName,
+          icon: {
+            name: newCategoryIcon.name,
+            family: newCategoryIcon.family,
+          },
+        });
+        onSelect(category);
+        setNewCategoryIcon(undefined);
+        setNewCategoryName(undefined);
+        setActiveTab("pickOne");
+        bottomSheetRef.current?.close();
+      } catch (error) {
+        console.error("Failed to create category:", error);
+      }
+    }
+  };
+
   return (
     <BottomSheet
-      onChange={(index) => setIsOpen(index !== -1)}
+      onChange={(index) => {
+        setIsOpen(index !== -1);
+      }}
       ref={bottomSheetRef}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
+      handleIndicatorStyle={{
+        backgroundColor: "#000000",
+        width: 40,
+        height: 5,
+      }}
       enableDynamicSizing={false} //may not work well with snap points
-      snapPoints={["65%"]}
+      enableContentPanningGesture={false}
+      snapPoints={snapPoints}
+      topInset={top}
       bottomInset={bottom}
+      android_keyboardInputMode="adjustPan"
       enableOverDrag={false}
+      keyboardBehavior="interactive"
       backgroundStyle={{
         backgroundColor: "#FFFFFF",
         borderRadius: 32,
+      }}
+      containerStyle={{
+        zIndex: 9999,
       }}
       index={-1}
     >
@@ -111,6 +157,7 @@ const PaymentCategoryBottomSheet = ({
         {/* Tab Content */}
         <BottomSheetScrollView
           overScrollMode={"never"}
+          keyboardShouldPersistTaps="never"
           className="screen-x-padding mt-8"
           contentContainerStyle={{
             paddingBottom: 40, // Small buffer for gestures
@@ -138,7 +185,7 @@ const PaymentCategoryBottomSheet = ({
                         onPress={() => onSelect(category)}
                       >
                         <DynamicIcon
-                          family={category.icon.family}
+                          family={category.icon.family as any}
                           name={category.icon.name as any}
                           size={24}
                           color="#000000"
@@ -160,8 +207,40 @@ const PaymentCategoryBottomSheet = ({
               )}
             </>
           ) : (
-            //! Create Tab
-            <></>
+            <View className="flex-col gap-y-4">
+              {/* form */}
+              <View className="flex-col">
+                <Text className="paragraph-bold mb-3">Category Name</Text>
+                <BottomSheetTextInput
+                  returnKeyType="done"
+                  autoCapitalize="words"
+                  value={newCategoryName}
+                  onChangeText={setNewCategoryName}
+                  placeholderTextColor={"#4B5563"}
+                  placeholder="WiFi bill, uber..."
+                  accessibilityLabel="Enter category name"
+                  className="w-full text-text-primary h-14 px-3 py-2 border border-border-dark paragraph-semibold bg-bg-primary rounded-md"
+                  onFocus={() => bottomSheetRef.current?.snapToIndex(1)}
+                  onBlur={() => {
+                    setTimeout(
+                      () => bottomSheetRef.current?.snapToIndex(0),
+                      150
+                    ); // Restore to 65%
+                  }}
+                />
+              </View>
+              {/* Icon picker */}
+
+              <IconPicker setIcon={setNewCategoryIcon} />
+
+              <CustomButton
+                title="Add Category"
+                onPress={handleCreateNewCategorySubmit}
+                style="bg-emerald w-full"
+                textStyle="text-text-light"
+                disabled={!newCategoryName || !newCategoryIcon}
+              />
+            </View>
           )}
         </BottomSheetScrollView>
       </BottomSheetView>

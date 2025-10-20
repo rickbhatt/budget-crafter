@@ -96,7 +96,7 @@ const ExpenseForm = ({
   ];
 
   const handlePaymentCategoryTrigger = () => {
-    bottomSheetRef.current?.expand();
+    bottomSheetRef.current?.snapToIndex(0);
   };
 
   const handleOnPaymentCategorySelect = useCallback(

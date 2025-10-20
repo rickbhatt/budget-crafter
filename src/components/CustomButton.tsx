@@ -12,6 +12,7 @@ const CustomButton = ({
   isLoading = false,
   activityIndicatorColor,
   showElevation = false,
+  disabled = false,
 }: CustomButtonProps) => {
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -22,6 +23,7 @@ const CustomButton = ({
   return (
     <Pressable
       onPress={handlePress}
+      disabled={disabled}
       style={{
         elevation: showElevation ? 10 : 0,
         shadowColor: showElevation ? "#878787" : undefined,

@@ -62,7 +62,7 @@
     @apply paragraph-bold text-text-light;
   }
   .custom-btn {
-    @apply flex items-center justify-center px-3 py-5 gap-x-2 rounded-xl active:active-press-scale;
+    @apply flex items-center justify-center px-3 py-5 gap-x-2 rounded-xl active:active-press-scale disabled:bg-inactive-tint;
   }
 
   .expense-card {
@@ -74,7 +74,7 @@
   }
 
   .screen-header {
-    @apply flex-between flex-row screen-x-padding pt-safe h-32;
+    @apply flex-between flex-row screen-x-padding pt-safe h-32 relative;
   }
 
   .screen-title {
