@@ -6,7 +6,7 @@ import { Controller } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { convertToDateUnix } from "src/utils/date";
-import { Category, CustomInputProps } from "type";
+import { CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
 
 const ICON_SIZE = 28;

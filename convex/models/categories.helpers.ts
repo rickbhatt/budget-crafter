@@ -1,6 +1,7 @@
 import { Id } from "convex/_generated/dataModel";
 import { MutationCtx } from "convex/_generated/server";
 import { getCurrentDateTimeUnix } from "src/utils/date";
+import { IconFamily } from "type";
 
 export const createCategoryHelper = async (
   ctx: MutationCtx,
@@ -8,12 +9,7 @@ export const createCategoryHelper = async (
     name: string;
     icon: {
       name: string;
-      family:
-        | "MaterialCommunityIcons"
-        | "Ionicons"
-        | "FontAwesome"
-        | "AntDesign"
-        | "Entypo";
+      family: IconFamily;
     };
     userId: Id<"users"> | null;
     isDefault: boolean;

@@ -130,4 +130,7 @@
   .paragraph-regular {
     @apply text-base font-quicksand;
   }
+  .paragraph-sm {
+    @apply text-sm font-quicksand;
+  }
 }

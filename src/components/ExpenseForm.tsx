@@ -19,11 +19,9 @@ import CustomInputs from "./CustomInputs";
 import DynamicIcon from "./DynamicIcon";
 
 const expenseFormSchema = z.object({
-  categoryId: z
-    .custom<Id<"categories">>((val) => {
-      return typeof val === "string" && val.length > 0;
-    }, "Category is required")
-    .nullable(),
+  categoryId: z.custom<Id<"categories">>((val) => {
+    return typeof val === "string" && val.length > 0;
+  }, "Category is required"),
   amount: z
     .string()
     .min(1, "Amount is required")
@@ -35,22 +33,23 @@ const expenseFormSchema = z.object({
       {
         message: "Amount must be greater than 0",
       }
-    )
-    .nullable(),
+    ),
+  description: z.string().min(1, "Description is required"),
   notes: z.string().optional(),
-  paymentMethod: z
-    .enum(["cash", "upi", "digitalPayment", "debitCard", "creditCard"], {
+  paymentMethod: z.enum(
+    ["cash", "upi", "digitalPayment", "debitCard", "creditCard"],
+    {
       message: "Payment method is required",
-    })
-    .nullable(),
-  expenseDate: z
-    .number({
-      message: "Expense date is required",
-    })
-    .nullable(),
+    }
+  ),
+  expenseDate: z.number({
+    message: "Expense date is required",
+  }),
 });
 
 export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
+
+const ICON_SIZE = 28;
 
 const ExpenseForm = ({
   onSubmit,
@@ -71,17 +70,17 @@ const ExpenseForm = ({
   const {
     control,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema),
     defaultValues: initialValues || {
-      categoryId: null,
-      amount: null,
-      notes: null,
-      paymentMethod: null,
-      expenseDate: null,
+      categoryId: undefined,
+      amount: undefined,
+      description: undefined,
+      notes: "",
+      paymentMethod: undefined,
+      expenseDate: undefined,
     },
   });
 
@@ -122,11 +121,32 @@ const ExpenseForm = ({
           placeholder="100"
           inputName="amount"
           icon={
-            <Text className="text-3xl text-text-light">
+            <Text
+              style={{
+                fontSize: ICON_SIZE,
+              }}
+              className=" text-text-light"
+            >
               {user?.currency?.currencySymbol || "₹"}
             </Text>
           }
           keyboardType="decimal-pad"
+          error={errors.amount?.message}
+          control={control}
+        />
+        <CustomInputs
+          type="text"
+          labelName="Descrtiption"
+          placeholder="What was it for?"
+          inputName="description"
+          icon={
+            <DynamicIcon
+              family="MaterialIcons"
+              name="notes"
+              size={ICON_SIZE}
+              color="#FFFFFF"
+            />
+          }
           error={errors.amount?.message}
           control={control}
         />
@@ -137,34 +157,16 @@ const ExpenseForm = ({
           control={control}
           selectedPaymentCategoryValue={selectedCategory}
           onPressPaymentCategoryTrigger={handlePaymentCategoryTrigger}
-          placeholder="What did you spend on?"
+          placeholder="Pick a category"
           icon={
             <DynamicIcon
               family="MaterialCommunityIcons"
               name="tag-outline"
-              size={28}
+              size={ICON_SIZE}
               color="#FFFFFF"
             />
           }
           error={errors.categoryId?.message}
-        />
-
-        <CustomInputs
-          type="text"
-          labelName="Notes"
-          placeholder="Add notes (optional)"
-          inputName="notes"
-          icon={
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="text-box-outline"
-              size={28}
-              color="#FFFFFF"
-            />
-          }
-          keyboardType="default"
-          error={errors.notes?.message}
-          control={control}
         />
 
         <CustomInputs
@@ -178,7 +180,7 @@ const ExpenseForm = ({
             <DynamicIcon
               family="MaterialCommunityIcons"
               name="wallet-outline"
-              size={28}
+              size={ICON_SIZE}
               color="#FFFFFF"
             />
           }
@@ -192,7 +194,23 @@ const ExpenseForm = ({
           inputName="expenseDate"
           error={errors.expenseDate?.message}
         />
-
+        <CustomInputs
+          type="text"
+          labelName="Notes (optional)"
+          placeholder="Anything else?"
+          inputName="notes"
+          icon={
+            <DynamicIcon
+              family="MaterialIcons"
+              name="description"
+              size={ICON_SIZE}
+              color="#FFFFFF"
+            />
+          }
+          keyboardType="default"
+          error={errors.notes?.message}
+          control={control}
+        />
         <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding">
           <CustomButton
             title={submitButtonText}

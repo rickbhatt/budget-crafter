@@ -187,6 +187,7 @@ const Dashboard = () => {
                 <ExpenseCard
                   key={index}
                   expenseId={expense._id}
+                  descrtipion={expense.description}
                   category={expense.category?.name!}
                   amount={expense.amount}
                   notes={expense.notes ?? null}

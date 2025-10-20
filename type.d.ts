@@ -4,6 +4,7 @@ import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { Href } from "expo-router";
 import { KeyboardTypeOptions } from "react-native";
@@ -15,7 +16,8 @@ export type IconFamily =
   | "Ionicons"
   | "FontAwesome"
   | "AntDesign"
-  | "Entypo";
+  | "Entypo"
+  | "MaterialIcons";
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -59,6 +61,7 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
+  descrtipion: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
   date: number;
@@ -154,6 +157,12 @@ type DynamicIconProps =
   | {
       family: Extract<IconFamily, "Entypo">;
       name: React.ComponentProps<typeof Entypo>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "MaterialIcons">;
+      name: React.ComponentProps<typeof MaterialIcons>["name"];
       size?: number;
       color?: string;
     };

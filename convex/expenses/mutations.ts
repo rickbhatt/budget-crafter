@@ -10,6 +10,7 @@ export const createExpense = mutation({
     categoryId: v.id("categories"),
     amount: v.float64(),
     notes: v.optional(v.string()),
+    description: v.string(),
     paymentMethod: v.union(
       v.literal("cash"),
       v.literal("upi"),

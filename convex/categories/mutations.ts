@@ -13,7 +13,8 @@ export const createCategory = mutation({
         v.literal("Ionicons"),
         v.literal("FontAwesome"),
         v.literal("AntDesign"),
-        v.literal("Entypo")
+        v.literal("Entypo"),
+        v.literal("MaterialIcons")
       ),
     }),
   },

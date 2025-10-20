@@ -20,6 +20,7 @@ const CreateExpense = () => {
         notes: data.notes!,
         paymentMethod: data.paymentMethod!,
         expenseDate: data.expenseDate!,
+        description: data.description!,
       });
       Toast.show({
         type: "success",
