@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { internalMutation, query, QueryCtx } from "./_generated/server";
+import { internalMutation, mutation } from "../_generated/server";
+import { getAuthenticatedUser } from "../models/users.helpers";
 
 export const createUser = internalMutation({
   args: {
@@ -43,31 +44,29 @@ export const deleteUser = internalMutation({
   },
 });
 
-const getUserByClerkId = async ({
-  ctx,
-  clerkId,
-}: {
-  ctx: QueryCtx;
-  clerkId: string;
-}) => {
-  const user = await ctx.db
-    .query("users")
-    .withIndex("byClerkId", (q) => q.eq("clerkId", clerkId))
-    .unique();
+export const updateCurrencyDetails = mutation({
+  args: {
+    currencyCode: v.string(),
+    currencySymbol: v.string(),
+    decimalSeparator: v.string(),
+    digitGroupingSeparator: v.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const user = await getAuthenticatedUser(ctx);
 
-  return user;
-};
+      if (!user) return;
 
-export const getAuthenticatedUser = async (ctx: QueryCtx) => {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) return null;
-  const user = await getUserByClerkId({ ctx, clerkId: identity.subject });
-  return user;
-};
+      const date = new Date().getTime();
 
-export const getAuthenticatedUserProfile = query({
-  handler: async (ctx) => {
-    const user = await getAuthenticatedUser(ctx);
-    return user;
+      const updatedUser = await ctx.db.patch(user._id, {
+        currency: {
+          ...args,
+        },
+        updatedAt: date,
+      });
+    } catch (error) {
+      console.log("🚀 error in updateCurrencyDetails", error);
+    }
   },
 });

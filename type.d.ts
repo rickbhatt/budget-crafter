@@ -1,6 +1,24 @@
+import {
+  AntDesign,
+  Entypo,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { Href } from "expo-router";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
+
+// Icon Family Type
+export type IconFamily =
+  | "MaterialCommunityIcons"
+  | "Ionicons"
+  | "FontAwesome"
+  | "AntDesign"
+  | "Entypo"
+  | "MaterialIcons";
+
 interface CustomButtonProps {
   onPress: () => void;
   title: string;
@@ -10,6 +28,7 @@ interface CustomButtonProps {
   isLoading?: boolean;
   activityIndicatorColor?: string;
   showElevation?: boolean;
+  disabled?: boolean;
 }
 
 interface ScreenHeaderProps {
@@ -42,9 +61,10 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
-  description: string;
-  icon: React.ReactNode;
-  date: string;
+  descrtipion: string | null;
+  notes?: string | null;
+  icon: Doc<"categories">["icon"];
+  date: number;
   expenseId: string;
 }
 
@@ -93,7 +113,7 @@ export type NewExpense = Omit<
 type PrimitiveValue = string | number | boolean | Date | null | undefined;
 
 interface CustomInputProps {
-  type: "amount" | "text" | "date" | "password" | "select";
+  type: "amount" | "text" | "date" | "password" | "select" | "paymentCategory";
   selectOptions?: any[];
   autoFocus?: boolean;
   labelName: string;
@@ -102,5 +122,82 @@ interface CustomInputProps {
   keyboardType?: KeyboardTypeOptions;
   error?: string;
   // React Hook Form props
-  control: any; // Control object from useForm
+  control?: any; // Control object from useForm
+  placeholder?: string;
+  onPressPaymentCategoryTrigger?: () => void;
+  maxLength?: number | undefined;
+  selectedPaymentCategoryValue?: any;
+}
+
+type DynamicIconProps =
+  | {
+      family: Extract<IconFamily, "MaterialCommunityIcons">;
+      name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "Ionicons">;
+      name: React.ComponentProps<typeof Ionicons>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "AntDesign">;
+      name: React.ComponentProps<typeof AntDesign>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "FontAwesome">;
+      name: React.ComponentProps<typeof FontAwesome>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "Entypo">;
+      name: React.ComponentProps<typeof Entypo>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "MaterialIcons">;
+      name: React.ComponentProps<typeof MaterialIcons>["name"];
+      size?: number;
+      color?: string;
+    };
+
+interface NetworkState {
+  isConnected: boolean | null;
+  isInternetReachable: boolean | null;
+  connectionType: string;
+  details: NetInfoState | null;
+}
+
+interface EmptyStateProps {
+  imageSource: ImageSourcePropType;
+  title: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  containerStyle?: string;
+  imageStyle?: string;
+}
+
+export interface ExpenseFormHandle {
+  reset: () => void;
+}
+
+export interface ExpenseFormProps {
+  onSubmit: (data: ExpenseFormData) => Promise<void>;
+  initialValues?: Partial<ExpenseFormData>;
+  submitButtonText: string;
+  isSubmitting?: boolean;
+  ref?: React.Ref<ExpenseFormHandle>;
+}
+
+interface PaymentCategoryBottomSheetProps {
+  bottomSheetRef: RefObject<BottomSheet | null>;
+  selectedCategory: Id<"categories"> | null;
+  onSelect: (params: Category) => void;
 }

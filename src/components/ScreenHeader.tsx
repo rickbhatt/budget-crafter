@@ -1,9 +1,9 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import cn from "clsx";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import { ScreenHeaderProps } from "type";
+import DynamicIcon from "./DynamicIcon";
 import HeaderButton from "./HeaderButton";
 
 const ScreenHeader = ({
@@ -27,7 +27,8 @@ const ScreenHeader = ({
             onPress={() => router.back()}
             iconBtnStyles={iconBtnStyles}
             icon={
-              <Ionicons
+              <DynamicIcon
+                family="Ionicons"
                 name="chevron-back-outline"
                 size={24}
                 color={iconColor}
@@ -54,7 +55,12 @@ const ScreenHeader = ({
             onPress={() => router.push("/(protected)/settings")}
             iconBtnStyles={iconBtnStyles}
             icon={
-              <Ionicons name="settings-outline" size={30} color={iconColor} />
+              <DynamicIcon
+                family="Ionicons"
+                name="settings-outline"
+                size={30}
+                color={iconColor}
+              />
             }
           />
         )}

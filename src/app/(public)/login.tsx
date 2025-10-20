@@ -1,6 +1,6 @@
 import CustomButton from "@/components/CustomButton";
+import DynamicIcon from "@/components/DynamicIcon";
 import { useAuth, useSSO } from "@clerk/clerk-expo";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -66,7 +66,14 @@ const Login = () => {
           textStyle="text-primary"
           showElevation={true}
           activityIndicatorColor="black"
-          leftIcon={<Ionicons name="logo-google" size={24} color="black" />}
+          leftIcon={
+            <DynamicIcon
+              family="Ionicons"
+              name="logo-google"
+              size={24}
+              color="black"
+            />
+          }
           isLoading={isLoading}
         />
       </View>

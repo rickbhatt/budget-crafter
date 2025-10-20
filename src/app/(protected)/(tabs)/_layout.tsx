@@ -1,9 +1,8 @@
 import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import DynamicIcon from "@/components/DynamicIcon";
 import cn from "clsx";
 import * as Haptics from "expo-haptics";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 import { GestureResponderEvent, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,6 +29,8 @@ const TabBarIcon = ({ focused, icon, title }: TabBarIconProps) => (
 
 const TabsLayout = () => {
   const { bottom } = useSafeAreaInsets();
+
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -62,7 +63,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Dashboard"
               icon={
-                <MaterialCommunityIcons
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
                   name="view-dashboard"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -81,7 +83,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Expenses"
               icon={
-                <Ionicons
+                <DynamicIcon
+                  family="Ionicons"
                   name="receipt"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -92,9 +95,15 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="add-transaction"
+        name="dummy-expense"
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/expense/create");
+          },
+        })}
         options={{
-          title: "Some Transaction",
+          title: "Some Expense",
           tabBarIcon: ({ focused }) => (
             <CustomCreateExpenseBtn focused={focused} />
           ),
@@ -109,7 +118,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Analytics"
               icon={
-                <Ionicons
+                <DynamicIcon
+                  family="Ionicons"
                   name="stats-chart"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
@@ -128,7 +138,8 @@ const TabsLayout = () => {
               focused={focused}
               title="Budgets"
               icon={
-                <MaterialCommunityIcons
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
                   name="sack"
                   size={IconSize}
                   color={focused ? "#3B82F6" : "#6B7280"}
