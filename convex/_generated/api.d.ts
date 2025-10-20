@@ -8,9 +8,11 @@
  * @module
  */
 
-import type * as admin_mutations from "../admin/mutations.js";
+import type * as admin_categoriesMutations from "../admin/categoriesMutations.js";
+import type * as admin_queries from "../admin/queries.js";
 import type * as budgets_mutations from "../budgets/mutations.js";
 import type * as budgets_queries from "../budgets/queries.js";
+import type * as categories_mutations from "../categories/mutations.js";
 import type * as categories_queries from "../categories/queries.js";
 import type * as expenses_mutations from "../expenses/mutations.js";
 import type * as expenses_queries from "../expenses/queries.js";
@@ -33,9 +35,11 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "admin/mutations": typeof admin_mutations;
+  "admin/categoriesMutations": typeof admin_categoriesMutations;
+  "admin/queries": typeof admin_queries;
   "budgets/mutations": typeof budgets_mutations;
   "budgets/queries": typeof budgets_queries;
+  "categories/mutations": typeof categories_mutations;
   "categories/queries": typeof categories_queries;
   "expenses/mutations": typeof expenses_mutations;
   "expenses/queries": typeof expenses_queries;

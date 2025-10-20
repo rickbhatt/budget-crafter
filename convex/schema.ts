@@ -39,7 +39,9 @@ export const Categories = {
       v.literal("MaterialCommunityIcons"),
       v.literal("Ionicons"),
       v.literal("FontAwesome"),
-      v.literal("AntDesign")
+      v.literal("AntDesign"),
+      v.literal("Entypo"),
+      v.literal("MaterialIcons")
     ),
   }),
   isDefault: v.boolean(),
@@ -51,6 +53,7 @@ export const Expenses = {
   budgetId: v.id("budgets"), // Foreign key to budgets table
   categoryId: v.id("categories"), // Foreign key to budgets table
   amount: v.float64(),
+  description: v.string(),
   notes: v.optional(v.string()),
   paymentMethod: v.union(
     v.literal("cash"),
@@ -78,6 +81,7 @@ export default defineSchema({
     .index("byUserAndDefault", ["userId", "isDefault"]),
   expenses: defineTable(Expenses)
     .index("byUser", ["userId"])
+    .index("byUserBudgetExpenseDate", ["userId", "budgetId", "expenseDate"])
     .index("byUserAndBudget", ["userId", "budgetId"])
     .index("byUserAndDate", ["userId", "expenseDate"])
     .index("byUserAndCategory", ["userId", "categoryId"])

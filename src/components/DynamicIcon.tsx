@@ -4,6 +4,7 @@ import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import React from "react";
 import { DynamicIconProps } from "type";
@@ -14,6 +15,7 @@ const ICON_FAMILIES = {
   FontAwesome,
   AntDesign,
   Entypo,
+  MaterialIcons,
 };
 
 const DynamicIcon = ({

@@ -4,10 +4,21 @@ import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { Href } from "expo-router";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
+
+// Icon Family Type
+export type IconFamily =
+  | "MaterialCommunityIcons"
+  | "Ionicons"
+  | "FontAwesome"
+  | "AntDesign"
+  | "Entypo"
+  | "MaterialIcons";
+
 interface CustomButtonProps {
   onPress: () => void;
   title: string;
@@ -17,6 +28,7 @@ interface CustomButtonProps {
   isLoading?: boolean;
   activityIndicatorColor?: string;
   showElevation?: boolean;
+  disabled?: boolean;
 }
 
 interface ScreenHeaderProps {
@@ -49,6 +61,7 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
+  descrtipion: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
   date: number;
@@ -118,32 +131,38 @@ interface CustomInputProps {
 
 type DynamicIconProps =
   | {
-      family: "MaterialCommunityIcons";
+      family: Extract<IconFamily, "MaterialCommunityIcons">;
       name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "Ionicons";
+      family: Extract<IconFamily, "Ionicons">;
       name: React.ComponentProps<typeof Ionicons>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "AntDesign";
+      family: Extract<IconFamily, "AntDesign">;
       name: React.ComponentProps<typeof AntDesign>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "FontAwesome";
+      family: Extract<IconFamily, "FontAwesome">;
       name: React.ComponentProps<typeof FontAwesome>["name"];
       size?: number;
       color?: string;
     }
   | {
-      family: "Entypo";
+      family: Extract<IconFamily, "Entypo">;
       name: React.ComponentProps<typeof Entypo>["name"];
+      size?: number;
+      color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "MaterialIcons">;
+      name: React.ComponentProps<typeof MaterialIcons>["name"];
       size?: number;
       color?: string;
     };
@@ -165,9 +184,20 @@ interface EmptyStateProps {
   imageStyle?: string;
 }
 
+export interface ExpenseFormHandle {
+  reset: () => void;
+}
+
 export interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   initialValues?: Partial<ExpenseFormData>;
   submitButtonText: string;
   isSubmitting?: boolean;
+  ref?: React.Ref<ExpenseFormHandle>;
+}
+
+interface PaymentCategoryBottomSheetProps {
+  bottomSheetRef: RefObject<BottomSheet | null>;
+  selectedCategory: Id<"categories"> | null;
+  onSelect: (params: Category) => void;
 }

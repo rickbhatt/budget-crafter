@@ -2,14 +2,16 @@ import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Toast from "react-native-toast-message";
 import ExpenseForm, { ExpenseFormData } from "src/components/ExpenseForm";
 import ScreenHeader from "src/components/ScreenHeader";
+import { ExpenseFormHandle } from "type";
 
 const CreateExpense = () => {
   const createExpense = useMutation(api.expenses.mutations.createExpense);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<ExpenseFormHandle>(null);
 
   const handleSubmit = async (data: ExpenseFormData) => {
     setIsSubmitting(true);
@@ -17,9 +19,10 @@ const CreateExpense = () => {
       await createExpense({
         categoryId: data.categoryId!,
         amount: parseFloat(data.amount!),
-        description: data.description!,
+        notes: data.notes!,
         paymentMethod: data.paymentMethod!,
         expenseDate: data.expenseDate!,
+        description: data.description!,
       });
       Toast.show({
         type: "success",
@@ -31,6 +34,8 @@ const CreateExpense = () => {
         topOffset: 80,
         swipeable: true,
       });
+      // Reset the form after successful submission
+      formRef.current?.reset();
     } catch (error: any) {
       // Parse ConvexError from the mutation
       const errorData = error?.data;
@@ -76,6 +81,7 @@ const CreateExpense = () => {
         }}
       />
       <ExpenseForm
+        ref={formRef}
         onSubmit={handleSubmit}
         submitButtonText="Add Expense"
         isSubmitting={isSubmitting}

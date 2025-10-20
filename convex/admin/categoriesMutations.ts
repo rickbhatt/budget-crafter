@@ -1,4 +1,5 @@
 import { internalMutation } from "convex/_generated/server";
+import { createCategoryHelper } from "convex/models/categories.helpers";
 import { v } from "convex/values";
 import { getCurrentDateTimeUnix } from "src/utils/date";
 export const seedCategories = internalMutation({
@@ -92,6 +93,13 @@ export const seedCategories = internalMutation({
           family: "MaterialCommunityIcons" as const,
         },
       },
+      {
+        name: "Loans & EMIs",
+        icon: {
+          name: "bank",
+          family: "MaterialCommunityIcons" as const,
+        },
+      },
     ];
 
     const results = [];
@@ -137,7 +145,7 @@ export const seedCategories = internalMutation({
   },
 });
 
-export const createCategory = internalMutation({
+export const createCategoryAdmin = internalMutation({
   args: {
     name: v.string(),
     icon: v.object({
@@ -151,17 +159,48 @@ export const createCategory = internalMutation({
     }),
   },
   handler: async (ctx, args) => {
-    const category = await ctx.db.insert("categories", {
+    return await createCategoryHelper(ctx, {
+      ...args,
       userId: null,
+      isDefault: true,
+    });
+  },
+});
+
+export const updateCategoryAdmin = internalMutation({
+  args: {
+    id: v.id("categories"),
+    name: v.string(),
+    icon: v.object({
+      name: v.string(),
+      family: v.union(
+        v.literal("MaterialCommunityIcons"),
+        v.literal("Ionicons"),
+        v.literal("FontAwesome"),
+        v.literal("AntDesign")
+      ),
+    }),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
       name: args.name,
       icon: args.icon,
-      isDefault: true,
       updatedAt: getCurrentDateTimeUnix(),
     });
 
+    const category = await ctx.db.get(args.id);
+
     return {
-      message: "Category created successfully",
+      message: "Category updated successfully",
       category,
     };
+  },
+});
+
+export const deleteCategoryAdmin = internalMutation({
+  args: { id: v.id("categories") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+    return { message: "Category deleted successfully" };
   },
 });

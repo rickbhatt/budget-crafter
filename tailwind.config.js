@@ -43,8 +43,9 @@ module.exports = {
         "text-muted": "#D1D5DB", // Disabled text
 
         // Border & Neutral
-        border: "#E5E7EB", // Standard borders
+        "border-standard": "#E5E7EB", // Standard borders
         "border-light": "#F3F4F6", // Light borders
+        "border-dark": "#151515",
       },
     },
   },

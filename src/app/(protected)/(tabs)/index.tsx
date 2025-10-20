@@ -5,12 +5,15 @@ import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
 import { calculateBudgetPercentages } from "@/utils/budgetCalculations";
 import { formatDateTime } from "@/utils/formatDate";
+import { formatNumber } from "@/utils/formatNumber";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Stack, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
+
+const MAX_EXPENSES = 6;
 
 const Dashboard = () => {
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
@@ -24,9 +27,10 @@ const Dashboard = () => {
     userProfile?._id !== null ? { budgetType } : "skip"
   );
 
+  // ! Change the limit, because this alters the total expense amount
   const expenses = useQuery(
     api.expenses.queries.getAllExpenses,
-    budget?._id != null ? { budgetId: budget._id, limit: 6 } : "skip"
+    budget?._id != null ? { budgetId: budget._id } : "skip"
   );
 
   const totalExpense = useMemo(() => {
@@ -51,7 +55,7 @@ const Dashboard = () => {
 
     // Handle over-budget case (100% expenses)
     if (isOverBudget) {
-      return [{ value: 100, color: "#3B82F6", text: "100%", focused: true }];
+      return [{ value: 100, color: "#3B82F6", text: "100%" }];
     }
 
     return [
@@ -127,11 +131,11 @@ const Dashboard = () => {
                 <View className="flex-center flex-col gap-y-1 p-2.5">
                   <Text className="text-4xl font-quicksand-bold text-center">
                     {userProfile?.currency?.currencySymbol}
-                    {totalExpense}
+                    {formatNumber(totalExpense)}
                   </Text>
                   <Text className="h3-bold text-center">
                     of {userProfile?.currency?.currencySymbol}
-                    {budget?.budgetAmount}
+                    {formatNumber(budget?.budgetAmount ?? 0)}
                   </Text>
                 </View>
               )}
@@ -182,16 +186,17 @@ const Dashboard = () => {
 
             {/* expense cards */}
             <View className="flex-col flex mt-5">
-              {expenses.map((expense, index) => (
+              {expenses.slice(0, MAX_EXPENSES).map((expense, index) => (
                 <ExpenseCard
                   key={index}
                   expenseId={expense._id}
+                  descrtipion={expense.description}
                   category={expense.category?.name!}
                   amount={expense.amount}
                   notes={expense.notes ?? null}
                   icon={expense.category?.icon!}
                   date={expense.expenseDate}
-                  isLast={index == expenses.length - 1}
+                  isLast={index == MAX_EXPENSES - 1}
                 />
               ))}
             </View>
