@@ -184,11 +184,16 @@ interface EmptyStateProps {
   imageStyle?: string;
 }
 
+export interface ExpenseFormHandle {
+  reset: () => void;
+}
+
 export interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   initialValues?: Partial<ExpenseFormData>;
   submitButtonText: string;
   isSubmitting?: boolean;
+  ref?: React.Ref<ExpenseFormHandle>;
 }
 
 interface PaymentCategoryBottomSheetProps {

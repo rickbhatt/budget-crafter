@@ -81,6 +81,7 @@ export default defineSchema({
     .index("byUserAndDefault", ["userId", "isDefault"]),
   expenses: defineTable(Expenses)
     .index("byUser", ["userId"])
+    .index("byUserBudgetExpenseDate", ["userId", "budgetId", "expenseDate"])
     .index("byUserAndBudget", ["userId", "budgetId"])
     .index("byUserAndDate", ["userId", "expenseDate"])
     .index("byUserAndCategory", ["userId", "categoryId"])

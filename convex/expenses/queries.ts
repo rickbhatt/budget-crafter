@@ -13,7 +13,7 @@ export const getAllExpenses = query({
 
     let query = ctx.db
       .query("expenses")
-      .withIndex("byUserAndBudget", (q) =>
+      .withIndex("byUserBudgetExpenseDate", (q) =>
         q.eq("userId", user._id).eq("budgetId", args.budgetId)
       )
       .order("desc");

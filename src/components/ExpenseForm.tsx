@@ -4,7 +4,12 @@ import { api } from "convex/_generated/api";
 import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useLocales } from "expo-localization";
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -56,6 +61,7 @@ const ExpenseForm = ({
   initialValues,
   submitButtonText,
   isSubmitting = false,
+  ref,
 }: ExpenseFormProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -71,6 +77,7 @@ const ExpenseForm = ({
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema),
@@ -83,6 +90,18 @@ const ExpenseForm = ({
       expenseDate: undefined,
     },
   });
+
+  // Expose reset method to parent via ref
+  useImperativeHandle(
+    ref,
+    () => ({
+      reset: () => {
+        reset();
+        setSelectedCategory(null);
+      },
+    }),
+    [reset]
+  );
 
   // Payment method options
   const paymentMethodOptions = [
