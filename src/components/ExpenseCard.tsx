@@ -16,6 +16,7 @@ const ExpenseCard = ({
   date,
   isLast,
   expenseId,
+  currencySymbol,
 }: ExpenseCardProps & { isLast?: boolean }) => {
   const router = useRouter();
 
@@ -58,7 +59,10 @@ const ExpenseCard = ({
 
       {/* Right Side: amount view */}
       <View className="flex flex-row items-center gap-x-4">
-        <Text className="text-text-light h2-bold">₹{formatNumber(amount)}</Text>
+        <Text className="text-text-light h2-bold">
+          {currencySymbol}
+          {formatNumber(amount)}
+        </Text>
         {/* details button view */}
         <View>
           <DynamicIcon

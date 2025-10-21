@@ -6,9 +6,9 @@ const ProtectedLayout = () => {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="expense/[id]" />
-      <Stack.Screen name="expense/edit" />
+      <Stack.Screen name="expense/edit/[id]" />
       <Stack.Screen name="expense/create" />
-      <Stack.Screen name="budget/create" />
+
       <Stack.Screen name="settings" options={{ headerShown: false }} />
     </Stack>
   );

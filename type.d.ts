@@ -65,7 +65,8 @@ interface ExpenseCardProps {
   notes?: string | null;
   icon: Doc<"categories">["icon"];
   date: number;
-  expenseId: string;
+  expenseId: Id<"expenses">;
+  currencySymbol: string;
 }
 
 // convex/types.ts - Type definitions for the frontend
