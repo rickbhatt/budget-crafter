@@ -1,12 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-const EditExpense = () => {
+const ExpenseEdit = () => {
   return (
     <View>
-      <Text>EditExpense</Text>
+      <Text>ExpenseEdit</Text>
     </View>
   );
 };
 
-export default EditExpense;
+export default ExpenseEdit;
