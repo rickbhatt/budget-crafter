@@ -27,7 +27,6 @@ const Dashboard = () => {
     userProfile?._id !== null ? { budgetType } : "skip"
   );
 
-  // ! Change the limit, because this alters the total expense amount
   const expenses = useQuery(
     api.expenses.queries.getAllExpenses,
     budget?._id != null ? { budgetId: budget._id } : "skip"
@@ -197,6 +196,7 @@ const Dashboard = () => {
                   icon={expense.category?.icon!}
                   date={expense.expenseDate}
                   isLast={index == MAX_EXPENSES - 1}
+                  currencySymbol={userProfile?.currency?.currencySymbol!}
                 />
               ))}
             </View>
