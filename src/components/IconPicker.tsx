@@ -1,5 +1,5 @@
 import { CUSTOM_CATEGORY_ICONS } from "@/constants";
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";

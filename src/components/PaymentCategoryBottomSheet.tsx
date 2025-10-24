@@ -6,7 +6,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import { useMutation, useQuery } from "convex/react";
 import { memo, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";

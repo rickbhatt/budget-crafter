@@ -3,7 +3,10 @@ import EmptyState from "@/components/EmptyState";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
-import { calculateBudgetPercentages } from "@/utils/budgetCalculations";
+import {
+  calculateBudgetPercentages,
+  totalExpenseCalc,
+} from "@/utils/budgetCalculations";
 import { formatDateTime } from "@/utils/formatDate";
 import { formatNumber } from "@/utils/formatNumber";
 import { api } from "convex/_generated/api";
@@ -33,8 +36,7 @@ const Dashboard = () => {
   );
 
   const totalExpense = useMemo(() => {
-    if (!expenses || expenses.length === 0) return 0;
-    return expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    return totalExpenseCalc(expenses ?? []);
   }, [expenses]);
 
   // Calculate budget percentages - now accessible throughout the component
@@ -174,12 +176,7 @@ const Dashboard = () => {
                 title="View All"
                 style="bg-bg-primary w-32 py-3 rounded-xl"
                 textStyle="text-text-primary text-base"
-                onPress={() =>
-                  router.push({
-                    pathname: "/expense/[id]",
-                    params: { id: "1" },
-                  })
-                }
+                onPress={() => router.push("/(protected)/(tabs)/expenses")}
               />
             </View>
 
@@ -197,6 +194,7 @@ const Dashboard = () => {
                   date={expense.expenseDate}
                   isLast={index == MAX_EXPENSES - 1}
                   currencySymbol={userProfile?.currency?.currencySymbol!}
+                  variant="dashboard"
                 />
               ))}
             </View>

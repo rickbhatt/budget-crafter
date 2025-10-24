@@ -1,6 +1,6 @@
 import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
 import DynamicIcon from "@/components/DynamicIcon";
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import * as Haptics from "expo-haptics";
 import { Tabs, useRouter } from "expo-router";
 import React from "react";

@@ -1,4 +1,4 @@
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import * as Haptics from "expo-haptics";
 import React from "react";
 import { Pressable } from "react-native";

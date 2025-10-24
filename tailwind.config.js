@@ -27,6 +27,7 @@ module.exports = {
           700: "#B91C1C", // Dark - for border
         },
         purple: "#8B5CF6",
+        dark: "#151515",
 
         // Background Colors
         "bg-primary": "#FFFFFF",

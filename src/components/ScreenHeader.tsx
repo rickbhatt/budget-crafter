@@ -1,4 +1,4 @@
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";

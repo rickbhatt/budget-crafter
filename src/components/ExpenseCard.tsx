@@ -1,11 +1,36 @@
+import { cn } from "@/utils/cn";
 import { formatNumber } from "@/utils/formatNumber";
-import cn from "clsx";
+import { cva } from "class-variance-authority";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { formatDateTime } from "src/utils/formatDate";
 import { ExpenseCardProps } from "type";
 import DynamicIcon from "./DynamicIcon";
+
+// Define variants using CVA
+const expenseCardVariants = cva(
+  // Base styles (always applied)
+  "flex-between flex-row active:opacity-60 active:active-press-scale",
+  {
+    variants: {
+      variant: {
+        dashboard: "screen-x-padding py-5 border-b border-border-light",
+        list: "screen-x-padding py-4 bg-bg-secondary rounded-xl mb-3",
+        compact: "px-3 py-3 border-b border-border-light",
+      },
+      size: {
+        default: "",
+        sm: "py-3",
+        lg: "py-6",
+      },
+    },
+    defaultVariants: {
+      variant: "dashboard",
+      size: "default",
+    },
+  }
+);
 
 const ExpenseCard = ({
   category,
@@ -14,10 +39,12 @@ const ExpenseCard = ({
   descrtipion,
   icon,
   date,
-  isLast,
+  isLast = false,
   expenseId,
   currencySymbol,
-}: ExpenseCardProps & { isLast?: boolean }) => {
+  variant,
+  size,
+}: ExpenseCardProps) => {
   const router = useRouter();
 
   const handlePress = () => {
@@ -27,7 +54,10 @@ const ExpenseCard = ({
   return (
     <Pressable
       onPress={handlePress}
-      className={cn("expense-card", isLast && "border-b-0")}
+      className={cn(
+        expenseCardVariants({ variant, size }),
+        isLast && "border-b-0"
+      )}
     >
       {/* Left Side: icon and expense category and desc view */}
       <View className="flex-row flex items-start gap-x-4 flex-1 mr-6">

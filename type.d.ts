@@ -67,6 +67,9 @@ interface ExpenseCardProps {
   date: number;
   expenseId: Id<"expenses">;
   currencySymbol: string;
+  isLast?: boolean;
+  variant?: "dashboard" | "list" | "compact";
+  size?: "default" | "sm" | "lg";
 }
 
 // convex/types.ts - Type definitions for the frontend

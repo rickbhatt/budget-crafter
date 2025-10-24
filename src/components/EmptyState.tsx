@@ -1,4 +1,4 @@
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { EmptyStateProps } from "type";
