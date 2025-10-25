@@ -17,6 +17,7 @@ import {
   KeyboardToolbar,
 } from "react-native-keyboard-controller";
 import PaymentCategoryBottomSheet from "src/components/PaymentCategoryBottomSheet";
+import { getCurrentDateUnix } from "src/utils/date";
 import { Category, ExpenseFormProps } from "type";
 import { z } from "zod";
 import CustomButton from "./CustomButton";
@@ -211,6 +212,7 @@ const ExpenseForm = ({
           labelName="Expense Date"
           inputName="expenseDate"
           error={errors.expenseDate?.message}
+          maxDate={new Date(getCurrentDateUnix())}
         />
         <CustomInputs
           type="text"

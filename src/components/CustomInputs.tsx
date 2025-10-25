@@ -38,6 +38,8 @@ const CustomInputs = ({
   onPressPaymentCategoryTrigger,
   selectedPaymentCategoryValue,
   maxLength = undefined,
+  maxDate,
+  minDate,
 }: CustomInputProps) => {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
@@ -134,6 +136,8 @@ const CustomInputs = ({
                   value={value ? new Date(value) : new Date()}
                   mode="date"
                   display="calendar"
+                  maximumDate={maxDate ? maxDate : undefined}
+                  minimumDate={minDate ? minDate : undefined}
                   onChange={(event, selectedDate) => {
                     setDatePickerOpen(false);
                     if (selectedDate) {

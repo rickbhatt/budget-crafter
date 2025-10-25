@@ -14,14 +14,17 @@ const getDateFnsLocale = (): Locale => {
 };
 
 export const formatDateTime = (date: Date | number) => {
-  const formatDateMonth = format(new Date(date), "d MMM");
-
   const locale = getDateFnsLocale();
 
+  const formatDateMonth = format(new Date(date), "d MMM");
+
   const formatIntlDate = format(new Date(date), "P", { locale });
+
+  const formatShortDateWithYear = format(new Date(date), "d MMM yyyy");
 
   return {
     dateMonthForRange: formatDateMonth,
     intlDateFormat: formatIntlDate,
+    shortDateWithYear: formatShortDateWithYear,
   };
 };

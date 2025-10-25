@@ -16,8 +16,7 @@ const expenseCardVariants = cva(
     variants: {
       variant: {
         dashboard: "screen-x-padding py-5 border-b border-border-light",
-        list: "screen-x-padding py-4 bg-bg-secondary rounded-xl mb-3",
-        compact: "px-3 py-3 border-b border-border-light",
+        list: "p-4 bg-lavender/50 border border-lavender rounded-xl mb-3",
       },
       size: {
         default: "",
@@ -31,6 +30,62 @@ const expenseCardVariants = cva(
     },
   }
 );
+
+// Text variants for description/title
+const descriptionTextVariants = cva("text-text-light base-bold", {
+  variants: {
+    variant: {
+      dashboard: "text-text-light",
+      list: "text-text-dark",
+    },
+  },
+  defaultVariants: {
+    variant: "dashboard",
+  },
+});
+
+// Text variants for category/subtitle
+const categoryTextVariants = cva("text-text-light paragraph-semibold", {
+  variants: {
+    variant: {
+      dashboard: "text-text-light/70",
+      list: "text-text-dark/80",
+    },
+  },
+  defaultVariants: {
+    variant: "dashboard",
+  },
+});
+
+// Text variants for amount
+const amountTextVariants = cva("text-text-light h2-bold", {
+  variants: {
+    variant: {
+      dashboard: "text-text-light h2-bold",
+      list: "text-text-dark h2-bold",
+    },
+  },
+  defaultVariants: {
+    variant: "dashboard",
+  },
+});
+
+const leftSectionVariant = cva("flex-row flex gap-x-4 flex-1 mr-6", {
+  variants: {
+    variant: {
+      dashboard: "items-start",
+      list: "items-center",
+      compact: "",
+    },
+  },
+});
+
+// Icon size variants
+const iconSizeVariants = {
+  dashboard: 28,
+  list: 32,
+  compact: 20,
+} as const;
 
 const ExpenseCard = ({
   category,
@@ -48,40 +103,65 @@ const ExpenseCard = ({
   const router = useRouter();
 
   const handlePress = () => {
-    router.push(`/(protected)/expense/${expenseId}`);
+    router.push({
+      pathname: "/(protected)/expense/[id]",
+      params: {
+        id: expenseId,
+      },
+    });
+  };
+
+  const handleLongPress = () => {
+    router.push({
+      pathname: "/(protected)/expense/edit/[id]",
+      params: {
+        id: expenseId,
+      },
+    });
   };
 
   return (
     <Pressable
       onPress={handlePress}
+      onLongPress={handleLongPress}
       className={cn(
         expenseCardVariants({ variant, size }),
         isLast && "border-b-0"
       )}
     >
       {/* Left Side: icon and expense category and desc view */}
-      <View className="flex-row flex items-start gap-x-4 flex-1 mr-6">
-        <DynamicIcon family={icon.family} name={icon.name} size={28} />
-        <View className="flex-col flex gap-y-1 flex-1">
+      <View className={cn(leftSectionVariant({ variant }))}>
+        <DynamicIcon
+          family={icon.family}
+          name={icon.name}
+          size={iconSizeVariants[variant || "dashboard"]}
+          color={variant === "dashboard" ? "#FFFFFF" : "#000000"}
+        />
+        {/* description view */}
+        <View className="flex-col flex gap-y-0.5 flex-1">
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            className="text-text-light paragraph-semibold"
+            className={cn(descriptionTextVariants({ variant }))}
           >
             {descrtipion}
           </Text>
 
-          <Text className="text-text-light paragraph-sm">{category}</Text>
-          <Text className="text-text-light paragraph-sm">
-            {formatDateTime(date).intlDateFormat}
+          <Text className={cn(categoryTextVariants({ variant }))}>
+            {category}
           </Text>
+          {date && (
+            <Text className={cn(categoryTextVariants({ variant }))}>
+              {formatDateTime(date).intlDateFormat}
+            </Text>
+          )}
         </View>
       </View>
       {notes && (
         <Text
           numberOfLines={1}
           ellipsizeMode="tail"
-          className="text-text-light paragraph-sm"
+          className={cn(categoryTextVariants({ variant }))}
         >
           {notes}
         </Text>
@@ -89,7 +169,7 @@ const ExpenseCard = ({
 
       {/* Right Side: amount view */}
       <View className="flex flex-row items-center gap-x-4">
-        <Text className="text-text-light h2-bold">
+        <Text className={cn(amountTextVariants({ variant }))}>
           {currencySymbol}
           {formatNumber(amount)}
         </Text>
@@ -99,7 +179,7 @@ const ExpenseCard = ({
             family="Ionicons"
             name="chevron-forward"
             size={24}
-            color="white"
+            color={variant === "dashboard" ? "#FFFFFF" : "#000000"}
           />
         </View>
       </View>

@@ -19,6 +19,7 @@ import { PieChart } from "react-native-gifted-charts";
 const MAX_EXPENSES = 6;
 
 const Dashboard = () => {
+  //! Budget type implementation left for later
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
     "monthly"
   );

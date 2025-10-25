@@ -30,7 +30,7 @@ export const checkOverllapingMonthlyBudgets = async ({
   }
 };
 
-export async function findActiveBudgetOrThrow(
+export async function findBudgetOrThrow(
   ctx: QueryCtx,
   userId: Doc<"users">["_id"],
   budgetType: Doc<"budgets">["budgetType"],

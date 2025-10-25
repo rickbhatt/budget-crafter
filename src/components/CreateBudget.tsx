@@ -3,7 +3,7 @@ import { api } from "convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -119,16 +119,21 @@ const CreateBudget = () => {
 
   const budgetType = watch("budgetType");
 
+  const periodStartDate = watch("periodStartDate");
+
+  const minPeriodEndDate = useMemo(() => {
+    if (!periodStartDate) return null;
+    const date = new Date(periodStartDate!);
+    date.setDate(date.getDate() + 1);
+    return date.getTime();
+  }, [periodStartDate]);
+
   useEffect(() => {
     if (budgetType === "monthly") {
       setValue("cardName", null, { shouldValidate: false });
       setValue("cardLastFourDigits", null, { shouldValidate: false });
     }
   }, [budgetType, setValue]);
-
-  const handleClearAllPress = () => {
-    reset();
-  };
 
   const onSubmit = async (data: BudgetFormData) => {
     try {
@@ -289,6 +294,9 @@ const CreateBudget = () => {
           control={control}
           labelName="Period End Date"
           inputName="periodEndDate"
+          minDate={
+            minPeriodEndDate !== null ? new Date(minPeriodEndDate) : undefined
+          }
           error={errors.periodEndDate?.message}
         />
 

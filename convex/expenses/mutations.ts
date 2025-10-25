@@ -2,7 +2,7 @@ import { Doc } from "convex/_generated/dataModel";
 import { ConvexError, v } from "convex/values";
 import { getCurrentDateUnix } from "src/utils/date";
 import { mutation } from "../_generated/server";
-import { findActiveBudgetOrThrow } from "../models/budgets.helpers";
+import { findBudgetOrThrow } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
 
 export const createExpense = mutation({
@@ -33,7 +33,7 @@ export const createExpense = mutation({
       budgetType = "monthly";
     }
 
-    let budgetQuery = await findActiveBudgetOrThrow(
+    let budgetQuery = await findBudgetOrThrow(
       ctx,
       user._id,
       budgetType,

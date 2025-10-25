@@ -64,11 +64,11 @@ interface ExpenseCardProps {
   descrtipion: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
-  date: number;
+  date?: number;
   expenseId: Id<"expenses">;
   currencySymbol: string;
   isLast?: boolean;
-  variant?: "dashboard" | "list" | "compact";
+  variant?: "dashboard" | "list";
   size?: "default" | "sm" | "lg";
 }
 
@@ -77,6 +77,26 @@ export type User = Doc<"users">;
 export type Budget = Doc<"budgets">;
 export type Category = Doc<"categories">;
 export type Expense = Doc<"expenses">;
+
+// Expense with enriched category details (from getAllExpenses query)
+export type ExpenseWithCategory = Expense & {
+  category: {
+    name: string;
+    icon: {
+      family: IconFamily;
+      name: string;
+    };
+  } | null;
+};
+
+// Grouped expenses by date
+interface ExpenseSection {
+  title: number;
+  total: number;
+  data: ExpenseWithCategory[];
+}
+
+export type GroupedExpenses = ExpenseSection[];
 
 export type UserId = Id<"users">;
 export type BudgetId = Id<"budgets">;
@@ -131,6 +151,8 @@ interface CustomInputProps {
   onPressPaymentCategoryTrigger?: () => void;
   maxLength?: number | undefined;
   selectedPaymentCategoryValue?: any;
+  maxDate?: Date | undefined;
+  minDate?: Date | undefined;
 }
 
 type DynamicIconProps =
@@ -188,11 +210,11 @@ interface EmptyStateProps {
   imageStyle?: string;
 }
 
-export interface ExpenseFormHandle {
+interface ExpenseFormHandle {
   reset: () => void;
 }
 
-export interface ExpenseFormProps {
+interface ExpenseFormProps {
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   initialValues?: Partial<ExpenseFormData>;
   submitButtonText: string;
