@@ -33,7 +33,13 @@ const ListHeader = ({
   );
 
   return (
-    <View className="screen-x-padding flex-col w-full gap-y-7 pb-4 border-b border-border-standard">
+    <View
+      className="screen-x-padding flex-col w-full gap-y-7 pb-4"
+      style={{
+        elevation: 20,
+        shadowColor: "#878787",
+      }}
+    >
       {/* expense summary */}
       <View className="flex-row p-3 justify-between w-full bg-blue rounded-lg items-center">
         {/* total expense */}

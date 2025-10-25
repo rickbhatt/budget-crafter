@@ -45,7 +45,7 @@ const ScreenHeader = ({
         {rightIcons?.map((icon) => (
           <HeaderButton
             key={icon.name}
-            onPress={() => router.push(icon.path)}
+            onPress={icon.onPress}
             iconBtnStyles={iconBtnStyles}
             icon={icon.icon}
           />

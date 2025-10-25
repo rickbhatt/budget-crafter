@@ -35,7 +35,7 @@ interface ScreenHeaderProps {
   title: string;
   rightIcons?: {
     icon: React.ReactNode;
-    path: Href;
+    onPress: () => void;
     name: string;
   }[];
   showBackBtn?: boolean;

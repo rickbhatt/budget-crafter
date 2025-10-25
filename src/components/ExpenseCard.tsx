@@ -16,7 +16,7 @@ const expenseCardVariants = cva(
     variants: {
       variant: {
         dashboard: "screen-x-padding py-5 border-b border-border-light",
-        list: "p-4 bg-lavender/50 border border-lavender rounded-xl mb-3",
+        list: "p-4 bg-orange/25 border border-orange rounded-xl mb-3",
       },
       size: {
         default: "",
@@ -32,7 +32,7 @@ const expenseCardVariants = cva(
 );
 
 // Text variants for description/title
-const descriptionTextVariants = cva("text-text-light base-bold", {
+const descriptionTextVariants = cva("base-bold", {
   variants: {
     variant: {
       dashboard: "text-text-light",
@@ -45,11 +45,11 @@ const descriptionTextVariants = cva("text-text-light base-bold", {
 });
 
 // Text variants for category/subtitle
-const categoryTextVariants = cva("text-text-light paragraph-semibold", {
+const categoryTextVariants = cva("paragraph-sm", {
   variants: {
     variant: {
-      dashboard: "text-text-light/70",
-      list: "text-text-dark/80",
+      dashboard: "text-text-light/75",
+      list: "text-text-dark",
     },
   },
   defaultVariants: {
@@ -58,11 +58,11 @@ const categoryTextVariants = cva("text-text-light paragraph-semibold", {
 });
 
 // Text variants for amount
-const amountTextVariants = cva("text-text-light h2-bold", {
+const amountTextVariants = cva("", {
   variants: {
     variant: {
-      dashboard: "text-text-light h2-bold",
-      list: "text-text-dark h2-bold",
+      dashboard: "text-text-light h1-bold",
+      list: "text-text-dark h1-bold",
     },
   },
   defaultVariants: {
@@ -70,12 +70,21 @@ const amountTextVariants = cva("text-text-light h2-bold", {
   },
 });
 
-const leftSectionVariant = cva("flex-row flex gap-x-4 flex-1 mr-6", {
+const leftSectionVariant = cva("flex-row flex gap-x-6 flex-1 mr-6", {
   variants: {
     variant: {
       dashboard: "items-start",
       list: "items-center",
       compact: "",
+    },
+  },
+});
+
+const iconViewVariant = cva("flex-row items-center justify-center", {
+  variants: {
+    variant: {
+      dashboard: "",
+      list: "p-4 rounded-2xl bg-orange/80",
     },
   },
 });
@@ -131,12 +140,14 @@ const ExpenseCard = ({
     >
       {/* Left Side: icon and expense category and desc view */}
       <View className={cn(leftSectionVariant({ variant }))}>
-        <DynamicIcon
-          family={icon.family}
-          name={icon.name}
-          size={iconSizeVariants[variant || "dashboard"]}
-          color={variant === "dashboard" ? "#FFFFFF" : "#000000"}
-        />
+        <View className={cn(iconViewVariant({ variant }))}>
+          <DynamicIcon
+            family={icon.family}
+            name={icon.name}
+            size={iconSizeVariants[variant || "dashboard"]}
+            color={"#FFFFFF"}
+          />
+        </View>
         {/* description view */}
         <View className="flex-col flex gap-y-0.5 flex-1">
           <Text

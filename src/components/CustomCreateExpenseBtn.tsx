@@ -11,12 +11,7 @@ const CustomCreateExpenseBtn = ({ focused }: { focused: boolean }) => {
         focused ? "bg-active-tint" : "bg-bg-dark"
       )}
     >
-      <DynamicIcon
-        family="Entypo"
-        name="add-to-list"
-        size={25}
-        color={"#FFFFFF"}
-      />
+      <DynamicIcon family="Entypo" name="plus" size={25} color={"#FFFFFF"} />
     </View>
   );
 };
