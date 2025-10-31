@@ -1,12 +1,13 @@
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Href } from "expo-router";
+import { RefObject } from "react";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
 
@@ -17,7 +18,8 @@ export type IconFamily =
   | "FontAwesome"
   | "AntDesign"
   | "Entypo"
-  | "MaterialIcons";
+  | "MaterialIcons"
+  | "Feather";
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -64,7 +66,7 @@ interface ExpenseCardProps {
   descrtipion: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
-  date?: number;
+  date?: string;
   expenseId: Id<"expenses">;
   currencySymbol: string;
   isLast?: boolean;
@@ -91,7 +93,7 @@ export type ExpenseWithCategory = Expense & {
 
 // Grouped expenses by date
 interface ExpenseSection {
-  title: number;
+  title: string;
   total: number;
   data: ExpenseWithCategory[];
 }
@@ -109,12 +111,10 @@ export type BudgetType = "monthly" | "credit";
 
 // Helper types for creating new records
 export type NewUser = Omit<User, "_id" | "_creationTime" | "updatedAt"> & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
 export type NewBudget = Omit<Budget, "_id" | "_creationTime" | "updatedAt"> & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -122,7 +122,6 @@ export type NewCategory = Omit<
   Category,
   "_id" | "_creationTime" | "updatedAt"
 > & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -130,7 +129,6 @@ export type NewExpense = Omit<
   Expense,
   "_id" | "_creationTime" | "updatedAt"
 > & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -191,6 +189,12 @@ type DynamicIconProps =
       name: React.ComponentProps<typeof MaterialIcons>["name"];
       size?: number;
       color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "Feather">;
+      name: React.ComponentProps<typeof Feather>["name"];
+      size?: number;
+      color?: string;
     };
 
 interface NetworkState {
@@ -226,4 +230,8 @@ interface PaymentCategoryBottomSheetProps {
   bottomSheetRef: RefObject<BottomSheet | null>;
   selectedCategory: Id<"categories"> | null;
   onSelect: (params: Category) => void;
+}
+
+interface ExpenseFilterBottomsheetProps {
+  ref: RefObject<BottomSheet | null>;
 }

@@ -9,6 +9,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabBarIconProps } from "type";
 
 const IconSize = 24;
+const IconActiveColor = "#EF4444";
+const IconInactiveColor = "#6B7280";
 
 const TabBarIcon = ({ focused, icon, title }: TabBarIconProps) => (
   <View className="tab-icon">
@@ -39,7 +41,7 @@ const TabsLayout = () => {
           height: 120,
           paddingBottom: bottom,
           backgroundColor: "#FFFFFF",
-          elevation: 5,
+          elevation: 20,
         },
         tabBarButton: ({ children, onPress }) => (
           <Pressable
@@ -67,7 +69,7 @@ const TabsLayout = () => {
                   family="MaterialCommunityIcons"
                   name="view-dashboard"
                   size={IconSize}
-                  color={focused ? "#3B82F6" : "#6B7280"}
+                  color={focused ? IconActiveColor : IconInactiveColor}
                 />
               }
             />
@@ -87,7 +89,7 @@ const TabsLayout = () => {
                   family="Ionicons"
                   name="receipt"
                   size={IconSize}
-                  color={focused ? "#3B82F6" : "#6B7280"}
+                  color={focused ? IconActiveColor : IconInactiveColor}
                 />
               }
             />
@@ -122,7 +124,7 @@ const TabsLayout = () => {
                   family="Ionicons"
                   name="stats-chart"
                   size={IconSize}
-                  color={focused ? "#3B82F6" : "#6B7280"}
+                  color={focused ? IconActiveColor : IconInactiveColor}
                 />
               }
             />
@@ -142,7 +144,7 @@ const TabsLayout = () => {
                   family="MaterialCommunityIcons"
                   name="sack"
                   size={IconSize}
-                  color={focused ? "#3B82F6" : "#6B7280"}
+                  color={focused ? IconActiveColor : IconInactiveColor}
                 />
               }
             />

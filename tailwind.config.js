@@ -30,11 +30,11 @@ module.exports = {
         dark: "#151515",
 
         // Background Colors
-        "bg-primary": "#FFFFFF",
+        "bg-primary": "#F6F7F0",
         "bg-secondary": "#F8FAFC",
         "bg-dark": "#151515",
         "inactive-tint": "#6B7280",
-        "active-tint": "#3B82F6",
+        "active-tint": "#EF4444",
 
         // Text Colors
         "text-primary": "#151515", // Main text (using your dark)

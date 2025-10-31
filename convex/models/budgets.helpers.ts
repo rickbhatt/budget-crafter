@@ -8,7 +8,7 @@ export const checkOverllapingMonthlyBudgets = async ({
   userId,
 }: {
   ctx: QueryCtx;
-  timestamp: number;
+  timestamp: string;
   userId: Id<"users">;
 }): Promise<boolean> => {
   try {
@@ -34,7 +34,7 @@ export async function findBudgetOrThrow(
   ctx: QueryCtx,
   userId: Doc<"users">["_id"],
   budgetType: Doc<"budgets">["budgetType"],
-  timestamp: number
+  timestamp: string
 ): Promise<Doc<"budgets">> {
   const budget = await ctx.db
     .query("budgets")
@@ -46,11 +46,12 @@ export async function findBudgetOrThrow(
     )
     .filter((q) => q.gte(q.field("periodEndDate"), timestamp))
     .first();
+  console.log("🚀 ~ findBudgetOrThrow ~ budget:", budget);
 
   if (!budget) {
     throw new ConvexError({
       code: "Budget not found",
-      message: "No active budget found for this expense",
+      message: `No active budget found for ${timestamp}-${budgetType}`,
     });
   }
   return budget;

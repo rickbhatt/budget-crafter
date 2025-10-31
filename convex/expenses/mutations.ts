@@ -1,6 +1,6 @@
 import { Doc } from "convex/_generated/dataModel";
 import { ConvexError, v } from "convex/values";
-import { getCurrentDateUnix } from "src/utils/date";
+import { getCurrentDate } from "../utils/date";
 import { mutation } from "../_generated/server";
 import { findBudgetOrThrow } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
@@ -18,12 +18,12 @@ export const createExpense = mutation({
       v.literal("debitCard"),
       v.literal("creditCard")
     ),
-    expenseDate: v.number(),
+    expenseDate: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getAuthUserOrThrow(ctx);
 
-    const timestamp = getCurrentDateUnix();
+    const timestamp = getCurrentDate();
 
     let budgetType: Doc<"budgets">["budgetType"];
 

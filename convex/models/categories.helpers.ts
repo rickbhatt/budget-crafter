@@ -1,6 +1,5 @@
 import { Id } from "convex/_generated/dataModel";
 import { MutationCtx } from "convex/_generated/server";
-import { getCurrentDateTimeUnix } from "src/utils/date";
 import { IconFamily } from "type";
 
 export const createCategoryHelper = async (
@@ -20,7 +19,7 @@ export const createCategoryHelper = async (
     name: args.name,
     icon: args.icon,
     isDefault: args.isDefault,
-    updatedAt: getCurrentDateTimeUnix(),
+    updatedAt: Date.now(),
   });
 
   // Fetch the full document using the returned ID

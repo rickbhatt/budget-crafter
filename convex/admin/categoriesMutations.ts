@@ -1,7 +1,7 @@
 import { internalMutation } from "convex/_generated/server";
 import { createCategoryHelper } from "convex/models/categories.helpers";
 import { v } from "convex/values";
-import { getCurrentDateTimeUnix } from "src/utils/date";
+import { getCurrentDateTimeUnix } from "../utils/date";
 export const seedCategories = internalMutation({
   handler: async (ctx) => {
     const defaultCategories = [

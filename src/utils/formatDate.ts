@@ -13,7 +13,7 @@ const getDateFnsLocale = (): Locale => {
   );
 };
 
-export const formatDateTime = (date: Date | number) => {
+export const formatDateTime = (date: Date | string) => {
   const locale = getDateFnsLocale();
 
   const formatDateMonth = format(new Date(date), "d MMM");
@@ -22,9 +22,12 @@ export const formatDateTime = (date: Date | number) => {
 
   const formatShortDateWithYear = format(new Date(date), "d MMM yyyy");
 
+  const formatDateToISOString = format(new Date(date), "yyyy-MM-dd");
+
   return {
     dateMonthForRange: formatDateMonth,
     intlDateFormat: formatIntlDate,
     shortDateWithYear: formatShortDateWithYear,
+    dateToISOString: formatDateToISOString,
   };
 };

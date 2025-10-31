@@ -11,7 +11,7 @@ import { formatDateTime } from "@/utils/formatDate";
 import { formatNumber } from "@/utils/formatNumber";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Stack, useRouter } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
@@ -33,7 +33,7 @@ const Dashboard = () => {
 
   const expenses = useQuery(
     api.expenses.queries.getAllExpenses,
-    budget?._id != null ? { budgetId: budget._id } : "skip"
+    budget != null ? { budgetId: budget._id } : "skip"
   );
 
   const totalExpense = useMemo(() => {
@@ -82,9 +82,20 @@ const Dashboard = () => {
 
   const router = useRouter();
 
+  if (!budget) {
+    return (
+      <EmptyState
+        imageSource={images.wallet}
+        title="No Expenses Yet"
+        description="Start tracking your spending to see insights and stay within your budget"
+        imageStyle="w-44 h-44"
+      />
+    );
+  }
+
   return (
     <>
-      <Stack.Screen
+      <Tabs.Screen
         options={{
           header: () => (
             <ScreenHeader

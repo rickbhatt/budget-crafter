@@ -1,7 +1,7 @@
-export const getCurrentDateUnix = (): number => {
-  const timestamp = new Date();
-  timestamp.setHours(0, 0, 0, 0);
-  return timestamp.getTime();
+import { formatDateTime } from "src/utils/formatDate";
+
+export const getCurrentDate = (): string => {
+  return formatDateTime(new Date()).dateToISOString;
 };
 
 export const getCurrentDateTimeUnix = (): number => {
@@ -10,6 +10,10 @@ export const getCurrentDateTimeUnix = (): number => {
 
 export const convertToDateUnix = (date: Date | string): number => {
   const timestamp = new Date(date);
-  timestamp.setHours(0, 0, 0, 0);
+  timestamp.setUTCHours(0, 0, 0, 0);
   return timestamp.getTime();
+};
+
+export const convertToISODateString = (date: Date) => {
+  return date.toISOString().split("T")[0];
 };

@@ -25,8 +25,8 @@ export const Budgets = {
   // Credit card specific fields (optional, only for creditCard type)
   cardName: v.optional(v.string()),
   cardLastFourDigits: v.optional(v.string()), // "4532" (4 digits only)
-  periodStartDate: v.number(),
-  periodEndDate: v.number(),
+  periodStartDate: v.string(),
+  periodEndDate: v.string(),
   updatedAt: v.optional(v.number()),
 };
 
@@ -41,7 +41,8 @@ export const Categories = {
       v.literal("FontAwesome"),
       v.literal("AntDesign"),
       v.literal("Entypo"),
-      v.literal("MaterialIcons")
+      v.literal("MaterialIcons"),
+      v.literal("Feather")
     ),
   }),
   isDefault: v.boolean(),
@@ -62,7 +63,7 @@ export const Expenses = {
     v.literal("debitCard"),
     v.literal("creditCard")
   ),
-  expenseDate: v.number(), // timestamp
+  expenseDate: v.string(), // timestamp
   updatedAt: v.optional(v.number()),
 };
 

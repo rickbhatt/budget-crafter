@@ -1,6 +1,7 @@
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -16,6 +17,7 @@ const ICON_FAMILIES = {
   AntDesign,
   Entypo,
   MaterialIcons,
+  Feather,
 };
 
 const DynamicIcon = ({

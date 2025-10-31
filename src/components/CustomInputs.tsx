@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { convertToDateUnix } from "src/utils/date";
 import { CustomInputProps } from "type";
 import DynamicIcon from "./DynamicIcon";
 
@@ -141,7 +140,9 @@ const CustomInputs = ({
                   onChange={(event, selectedDate) => {
                     setDatePickerOpen(false);
                     if (selectedDate) {
-                      let timestamp = convertToDateUnix(selectedDate);
+                      let timestamp =
+                        formatDateTime(selectedDate).dateToISOString;
+
                       onChange(timestamp);
                     }
                   }}

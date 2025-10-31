@@ -42,13 +42,13 @@ const budgetFormSchema = z
       .optional()
       .nullable(),
     periodStartDate: z
-      .number({ message: "Period start date is required" })
+      .string({ message: "Period start date is required" })
       .nullable()
       .refine((val) => val !== null, {
         message: "Period start date is required",
       }),
     periodEndDate: z
-      .number({ message: "Period end date is required" })
+      .string({ message: "Period end date is required" })
       .nullable()
       .refine((val) => val !== null, {
         message: "Period end date is required",
@@ -58,6 +58,7 @@ const budgetFormSchema = z
     (data) => {
       // Only validate if both dates are present
       if (data.periodStartDate !== null && data.periodEndDate !== null) {
+        // Compare ISO date strings lexicographically (YYYY-MM-DD format)
         return data.periodEndDate > data.periodStartDate;
       }
       // Skip validation if either date is missing (handled by individual field validation)
@@ -125,7 +126,7 @@ const CreateBudget = () => {
     if (!periodStartDate) return null;
     const date = new Date(periodStartDate!);
     date.setDate(date.getDate() + 1);
-    return date.getTime();
+    return date;
   }, [periodStartDate]);
 
   useEffect(() => {
@@ -294,9 +295,7 @@ const CreateBudget = () => {
           control={control}
           labelName="Period End Date"
           inputName="periodEndDate"
-          minDate={
-            minPeriodEndDate !== null ? new Date(minPeriodEndDate) : undefined
-          }
+          minDate={minPeriodEndDate !== null ? minPeriodEndDate : undefined}
           error={errors.periodEndDate?.message}
         />
 

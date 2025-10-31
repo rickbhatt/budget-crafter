@@ -18,6 +18,7 @@ import type * as expenses_queries from "../expenses/queries.js";
 import type * as http from "../http.js";
 import type * as users_mutations from "../users/mutations.js";
 import type * as users_queries from "../users/queries.js";
+import type * as utils_date from "../utils/date.js";
 
 import type {
   ApiFromModules,
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "users/mutations": typeof users_mutations;
   "users/queries": typeof users_queries;
+  "utils/date": typeof utils_date;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

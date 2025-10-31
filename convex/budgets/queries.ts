@@ -1,5 +1,5 @@
-import { getCurrentDateUnix } from "@/utils/date";
-import { ConvexError, v } from "convex/values";
+import { getCurrentDate } from "../utils/date";
+import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { findBudgetOrThrow } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
@@ -46,7 +46,8 @@ export const getCurrentActiveBudget = query({
     try {
       const user = await getAuthUserOrThrow(ctx);
 
-      const timestamp = getCurrentDateUnix();
+      const timestamp = getCurrentDate();
+      console.log("🚀 ~ timestamp:", timestamp);
 
       const budget = await findBudgetOrThrow(
         ctx,
@@ -54,13 +55,13 @@ export const getCurrentActiveBudget = query({
         args.budgetType,
         timestamp
       );
+      console.log("🚀 ~ budget:", budget);
 
       return budget;
     } catch (error) {
-      throw new ConvexError({
-        code: "BUDGET_NOT_FOUND",
-        message: "Budget not found",
-      });
+      // Return null instead of throwing an error so the UI can handle the empty state
+      console.log("🚀 ~ getCurrentActiveBudget error:", error);
+      return null;
     }
   },
 });
@@ -68,7 +69,7 @@ export const getCurrentActiveBudget = query({
 export const getBudgetByDateAndUser = query({
   args: {
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
-    timestamp: v.number(),
+    timestamp: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getAuthUserOrThrow(ctx);

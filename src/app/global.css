@@ -74,7 +74,7 @@
   }
 
   .screen-header {
-    @apply flex-between flex-row screen-x-padding pt-safe h-32 relative;
+    @apply flex-between flex-row screen-x-padding pt-safe h-32;
   }
 
   .screen-title {

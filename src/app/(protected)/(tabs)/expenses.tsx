@@ -1,20 +1,27 @@
 import ScreenHeader from "@/components/ScreenHeader";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 import { Doc } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { Stack } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { Tabs } from "expo-router";
+import React, { useMemo, useRef, useState } from "react";
 import { SectionList, Text, View } from "react-native";
 import DynamicIcon from "src/components/DynamicIcon";
 import ExpenseCard from "src/components/ExpenseCard";
+import ExpenseFilterBottomsheet from "src/components/ExpenseFilterBottomsheet";
 import {
   calculateBudgetPercentages,
   totalExpenseCalc,
 } from "src/utils/budgetCalculations";
-import { getCurrentDateUnix } from "src/utils/date";
+import { getCurrentDate } from "src/utils/date";
 import { formatDateTime } from "src/utils/formatDate";
 import { formatNumber } from "src/utils/formatNumber";
-import { ExpenseSection, ExpenseWithCategory, GroupedExpenses } from "type";
+import {
+  ExpenseSection,
+  ExpenseWithCategory,
+  GroupedExpenses,
+  ScreenHeaderProps,
+} from "type";
 
 const ListHeader = ({
   expenses,
@@ -33,18 +40,12 @@ const ListHeader = ({
   );
 
   return (
-    <View
-      className="screen-x-padding flex-col w-full gap-y-7 pb-4"
-      style={{
-        elevation: 20,
-        shadowColor: "#878787",
-      }}
-    >
+    <View className="screen-x-padding flex-col w-full gap-y-7 pb-4">
       {/* expense summary */}
       <View className="flex-row p-3 justify-between w-full bg-blue rounded-lg items-center">
         {/* total expense */}
         <View className="flex-col gap-y-1">
-          <Text className="base-semibold text-text-light">Total Expense</Text>
+          <Text className="base-semibold text-text-light">Total Expenses</Text>
           <Text className="h1-bold text-text-light">
             {currencySymbol}
             {formatNumber(totalExpense)}
@@ -75,14 +76,15 @@ const SectionHeader = ({
   section: ExpenseSection;
   currencySymbol: string;
 }) => {
-  const today = getCurrentDateUnix();
+  const today = getCurrentDate();
 
-  const isToday = section.title === getCurrentDateUnix();
+  const isToday = section.title === getCurrentDate();
 
   const previousDate = new Date(today);
   previousDate.setDate(previousDate.getDate() - 1);
+  const yesterdayISO = previousDate.toISOString().split("T")[0];
 
-  const isYesterday = section.title === previousDate.getTime();
+  const isYesterday = section.title === yesterdayISO;
 
   return (
     <View className="screen-x-padding mt-3 flex-row justify-between items-center">
@@ -139,7 +141,10 @@ const Expenses = () => {
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
     "monthly"
   );
-  const [timestamp, setTimestamp] = useState(getCurrentDateUnix());
+
+  const [timestamp, setTimestamp] = useState(getCurrentDate());
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const userProfile = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
@@ -154,6 +159,16 @@ const Expenses = () => {
       ? { budgetId: budget._id }
       : "skip"
   );
+
+  const RHS_SCREEN_HEADER_ICON: ScreenHeaderProps["rightIcons"] = [
+    {
+      name: "filter",
+      icon: (
+        <DynamicIcon family="Feather" name="filter" size={30} color="#000000" />
+      ),
+      onPress: () => bottomSheetRef.current?.snapToIndex(0),
+    },
+  ];
 
   const expensesGroupedByExpenseDate: GroupedExpenses = useMemo(() => {
     if (!expenses) return [];
@@ -172,14 +187,14 @@ const Expenses = () => {
       section.total += expense.amount;
 
       return map;
-    }, new Map<number, ExpenseSection>());
+    }, new Map<string, ExpenseSection>());
 
-    return Array.from(groupedMap.values()).sort((a, b) => b.title - a.title);
+    return Array.from(groupedMap.values()).sort((a, b) => b.title.localeCompare(a.title));
   }, [expenses]);
 
   return (
     <>
-      <Stack.Screen
+      <Tabs.Screen
         options={{
           header: () => (
             <ScreenHeader
@@ -187,6 +202,7 @@ const Expenses = () => {
               iconColor="black"
               showBackBtn={false}
               showSettingBtn={true}
+              rightIcons={RHS_SCREEN_HEADER_ICON}
             />
           ),
         }}
@@ -215,6 +231,7 @@ const Expenses = () => {
           />
         )}
       />
+      <ExpenseFilterBottomsheet ref={bottomSheetRef} />
     </>
   );
 };
