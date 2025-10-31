@@ -1,8 +1,8 @@
-import { getCurrentDate } from "../utils/date";
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { findBudgetOrThrow } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
+import { getCurrentDate } from "../utils/date";
 
 export const getBudgetById = query({
   args: {
@@ -47,7 +47,6 @@ export const getCurrentActiveBudget = query({
       const user = await getAuthUserOrThrow(ctx);
 
       const timestamp = getCurrentDate();
-      console.log("🚀 ~ timestamp:", timestamp);
 
       const budget = await findBudgetOrThrow(
         ctx,
@@ -55,7 +54,6 @@ export const getCurrentActiveBudget = query({
         args.budgetType,
         timestamp
       );
-      console.log("🚀 ~ budget:", budget);
 
       return budget;
     } catch (error) {

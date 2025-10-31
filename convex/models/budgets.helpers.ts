@@ -46,7 +46,6 @@ export async function findBudgetOrThrow(
     )
     .filter((q) => q.gte(q.field("periodEndDate"), timestamp))
     .first();
-  console.log("🚀 ~ findBudgetOrThrow ~ budget:", budget);
 
   if (!budget) {
     throw new ConvexError({
