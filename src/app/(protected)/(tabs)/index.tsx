@@ -82,17 +82,6 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  if (!budget) {
-    return (
-      <EmptyState
-        imageSource={images.wallet}
-        title="No Expenses Yet"
-        description="Start tracking your spending to see insights and stay within your budget"
-        imageStyle="w-44 h-44"
-      />
-    );
-  }
-
   return (
     <>
       <Tabs.Screen
