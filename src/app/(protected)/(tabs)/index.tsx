@@ -98,7 +98,10 @@ const Dashboard = () => {
       />
 
       {/* main content view */}
-      <ScrollView className="container bg-bg-primary flex flex-col">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="container bg-bg-primary flex flex-col"
+      >
         {/* intro view */}
 
         {userProfile && (
