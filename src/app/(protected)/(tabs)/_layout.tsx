@@ -1,11 +1,14 @@
 import CustomCreateExpenseBtn from "@/components/CustomCreateExpenseBtn";
 import DynamicIcon from "@/components/DynamicIcon";
 import { cn } from "@/utils/cn";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import { Tabs, useRouter } from "expo-router";
-import React from "react";
+
+import React, { useRef } from "react";
 import { GestureResponderEvent, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CreateExpenseBottomSheetModal from "src/components/CreateExpenseBottomSheetModal";
 import { TabBarIconProps } from "type";
 
 const IconSize = 24;
@@ -33,125 +36,139 @@ const TabsLayout = () => {
   const { bottom } = useSafeAreaInsets();
 
   const router = useRouter();
+
+  const createExpenseBottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const handleBottomSheetTrigger = () => {
+    createExpenseBottomSheetModalRef.current?.present();
+  };
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          height: 120,
-          paddingBottom: bottom,
-          backgroundColor: "#FFFFFF",
-          elevation: 20,
-        },
-        tabBarButton: ({ children, onPress }) => (
-          <Pressable
-            onPress={(event: GestureResponderEvent) => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onPress?.(event);
-            }}
-            className="flex-1 items-center justify-center"
-          >
-            {children}
-          </Pressable>
-        ),
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Dashboard",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              focused={focused}
-              title="Dashboard"
-              icon={
-                <DynamicIcon
-                  family="MaterialCommunityIcons"
-                  name="view-dashboard"
-                  size={IconSize}
-                  color={focused ? IconActiveColor : IconInactiveColor}
-                />
-              }
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="expenses"
-        options={{
-          title: "Expenses",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              focused={focused}
-              title="Expenses"
-              icon={
-                <DynamicIcon
-                  family="Ionicons"
-                  name="receipt"
-                  size={IconSize}
-                  color={focused ? IconActiveColor : IconInactiveColor}
-                />
-              }
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="dummy-expense"
-        listeners={() => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push("/expense/create");
+    <>
+      <Tabs
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            height: 120,
+            paddingBottom: bottom,
+            backgroundColor: "#FFFFFF",
+            elevation: 20,
           },
-        })}
-        options={{
-          title: "Some Expense",
-          tabBarIcon: ({ focused }) => (
-            <CustomCreateExpenseBtn focused={focused} />
+          tabBarButton: ({ children, onPress }) => (
+            <Pressable
+              onPress={(event: GestureResponderEvent) => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                onPress?.(event);
+              }}
+              className="flex-1 items-center justify-center"
+            >
+              {children}
+            </Pressable>
           ),
         }}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Dashboard",
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                title="Dashboard"
+                icon={
+                  <DynamicIcon
+                    family="MaterialCommunityIcons"
+                    name="view-dashboard"
+                    size={IconSize}
+                    color={focused ? IconActiveColor : IconInactiveColor}
+                  />
+                }
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="expenses"
+          options={{
+            title: "Expenses",
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                title="Expenses"
+                icon={
+                  <DynamicIcon
+                    family="Ionicons"
+                    name="receipt"
+                    size={IconSize}
+                    color={focused ? IconActiveColor : IconInactiveColor}
+                  />
+                }
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="dummy-expense"
+          listeners={() => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push("/(protected)/expense/create");
+
+              // handleBottomSheetTrigger();
+            },
+          })}
+          options={{
+            title: "Some Expense",
+            tabBarIcon: ({ focused }) => (
+              <CustomCreateExpenseBtn focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="analytics"
+          options={{
+            title: "Analytics",
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                title="Analytics"
+                icon={
+                  <DynamicIcon
+                    family="Ionicons"
+                    name="stats-chart"
+                    size={IconSize}
+                    color={focused ? IconActiveColor : IconInactiveColor}
+                  />
+                }
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="budgets"
+          options={{
+            title: "Budgets",
+            tabBarIcon: ({ focused }) => (
+              <TabBarIcon
+                focused={focused}
+                title="Budgets"
+                icon={
+                  <DynamicIcon
+                    family="MaterialCommunityIcons"
+                    name="sack"
+                    size={IconSize}
+                    color={focused ? IconActiveColor : IconInactiveColor}
+                  />
+                }
+              />
+            ),
+          }}
+        />
+      </Tabs>
+      <CreateExpenseBottomSheetModal
+        createExpenseRef={createExpenseBottomSheetModalRef}
       />
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          title: "Analytics",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              focused={focused}
-              title="Analytics"
-              icon={
-                <DynamicIcon
-                  family="Ionicons"
-                  name="stats-chart"
-                  size={IconSize}
-                  color={focused ? IconActiveColor : IconInactiveColor}
-                />
-              }
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="budgets"
-        options={{
-          title: "Budgets",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              focused={focused}
-              title="Budgets"
-              icon={
-                <DynamicIcon
-                  family="MaterialCommunityIcons"
-                  name="sack"
-                  size={IconSize}
-                  color={focused ? IconActiveColor : IconInactiveColor}
-                />
-              }
-            />
-          ),
-        }}
-      />
-    </Tabs>
+    </>
   );
 };
 

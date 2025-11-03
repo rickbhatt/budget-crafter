@@ -1,5 +1,6 @@
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 import { ConvexReactClient, useMutation, useQuery } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
@@ -70,9 +71,11 @@ export default function RootLayout() {
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <SafeAreaProvider>
             <GestureHandlerRootView className="flex-1">
-              <KeyboardProvider>
-                <InitialLayout />
-              </KeyboardProvider>
+              <BottomSheetModalProvider>
+                <KeyboardProvider>
+                  <InitialLayout />
+                </KeyboardProvider>
+              </BottomSheetModalProvider>
             </GestureHandlerRootView>
           </SafeAreaProvider>
         </ConvexProviderWithClerk>

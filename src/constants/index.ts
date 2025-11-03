@@ -59,6 +59,12 @@ export const CUSTOM_CATEGORY_ICONS: {
     label: "Netflix",
   },
   {
+    id: "shopping-MaterialCommunityIcons",
+    name: "shopping",
+    family: "MaterialCommunityIcons",
+    label: "Shopping",
+  },
+  {
     id: "spotify-AntDesign",
     name: "spotify",
     family: "AntDesign",

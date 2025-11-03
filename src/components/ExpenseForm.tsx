@@ -214,7 +214,7 @@ const ExpenseForm = ({
           error={errors.expenseDate?.message}
           maxDate={new Date(getCurrentDate())}
         />
-        <CustomInputs
+        {/* <CustomInputs
           type="text"
           labelName="Notes (optional)"
           placeholder="Anything else?"
@@ -230,7 +230,7 @@ const ExpenseForm = ({
           keyboardType="default"
           error={errors.notes?.message}
           control={control}
-        />
+        /> */}
         <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding">
           <CustomButton
             title={submitButtonText}
