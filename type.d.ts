@@ -44,7 +44,7 @@ interface ScreenHeaderProps {
   headerStyles?: string;
   iconBtnStyles?: string;
   iconColor?: string;
-  showSettingBtn?: boolean;
+  showMenuBtn?: boolean;
   titleStyles?: string;
 }
 
@@ -63,7 +63,7 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
-  descrtipion: string | null;
+  description?: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
   date?: string;

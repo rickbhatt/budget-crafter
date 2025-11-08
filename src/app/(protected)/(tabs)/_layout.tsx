@@ -101,7 +101,7 @@ const TabsLayout = () => {
         listeners={() => ({
           tabPress: (e) => {
             e.preventDefault();
-            router.push("/expense/create");
+            router.push("/(protected)/expense/create");
           },
         })}
         options={{

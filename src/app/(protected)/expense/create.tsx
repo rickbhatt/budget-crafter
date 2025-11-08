@@ -74,7 +74,7 @@ const CreateExpense = () => {
               iconBtnStyles="bg-[#1f1f1f]"
               iconColor="#FFFFFF"
               showBackBtn={true}
-              showSettingBtn={false}
+              showMenuBtn={false}
               headerStyles="bg-bg-dark"
             />
           ),

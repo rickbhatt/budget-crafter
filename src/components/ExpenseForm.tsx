@@ -37,9 +37,7 @@ const expenseFormSchema = z.object({
       message: "Amount must be greater than 0",
     }
   ),
-  description: z
-    .string({ message: "Description is required" })
-    .min(1, "Description is required"),
+  description: z.string().optional(),
   notes: z.string().optional(),
   paymentMethod: z.enum(
     ["cash", "upi", "digitalPayment", "debitCard", "creditCard"],
@@ -155,7 +153,7 @@ const ExpenseForm = ({
         />
         <CustomInputs
           type="text"
-          labelName="Descrtiption"
+          labelName="Description (optional)"
           placeholder="What was it for?"
           inputName="description"
           icon={

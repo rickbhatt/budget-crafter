@@ -126,7 +126,7 @@ const SectionItem = ({
       <ExpenseCard
         expenseId={item._id}
         category={item.category.name}
-        descrtipion={item.description}
+        description={item.description}
         notes={item.notes ?? null}
         icon={item.category.icon}
         amount={item.amount}
@@ -189,7 +189,9 @@ const Expenses = () => {
       return map;
     }, new Map<string, ExpenseSection>());
 
-    return Array.from(groupedMap.values()).sort((a, b) => b.title.localeCompare(a.title));
+    return Array.from(groupedMap.values()).sort((a, b) =>
+      b.title.localeCompare(a.title)
+    );
   }, [expenses]);
 
   return (
@@ -201,7 +203,7 @@ const Expenses = () => {
               title="Expenses"
               iconColor="black"
               showBackBtn={false}
-              showSettingBtn={true}
+              showMenuBtn={true}
               rightIcons={RHS_SCREEN_HEADER_ICON}
             />
           ),

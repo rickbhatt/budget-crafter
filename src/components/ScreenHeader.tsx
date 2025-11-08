@@ -13,7 +13,7 @@ const ScreenHeader = ({
   headerStyles = "bg-bg-primary",
   iconBtnStyles = "bg-white",
   iconColor = "black",
-  showSettingBtn = false,
+  showMenuBtn = false,
   titleStyles = "text-text-primary",
 }: ScreenHeaderProps) => {
   const router = useRouter();
@@ -50,14 +50,14 @@ const ScreenHeader = ({
             icon={icon.icon}
           />
         ))}
-        {showSettingBtn && (
+        {showMenuBtn && (
           <HeaderButton
             onPress={() => router.push("/(protected)/settings")}
             iconBtnStyles={iconBtnStyles}
             icon={
               <DynamicIcon
                 family="Ionicons"
-                name="settings-outline"
+                name="menu"
                 size={30}
                 color={iconColor}
               />

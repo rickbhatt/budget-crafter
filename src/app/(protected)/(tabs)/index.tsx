@@ -91,7 +91,7 @@ const Dashboard = () => {
               title="Dashboard"
               iconColor="black"
               showBackBtn={false}
-              showSettingBtn={true}
+              showMenuBtn={true}
             />
           ),
         }}
@@ -187,7 +187,7 @@ const Dashboard = () => {
                 <ExpenseCard
                   key={index}
                   expenseId={expense._id}
-                  descrtipion={expense.description}
+                  description={expense.description}
                   category={expense.category?.name!}
                   amount={expense.amount}
                   notes={expense.notes ?? null}

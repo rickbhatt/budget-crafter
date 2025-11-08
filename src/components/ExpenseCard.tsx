@@ -31,8 +31,8 @@ const expenseCardVariants = cva(
   }
 );
 
-// Text variants for description/title
-const descriptionTextVariants = cva("base-bold", {
+// Text variants for title
+const titleTextVariants = cva("base-bold", {
   variants: {
     variant: {
       dashboard: "text-text-light",
@@ -61,8 +61,8 @@ const categoryTextVariants = cva("paragraph-sm", {
 const amountTextVariants = cva("", {
   variants: {
     variant: {
-      dashboard: "text-text-light h1-bold",
-      list: "text-text-dark h1-bold",
+      dashboard: "text-text-light h2-bold",
+      list: "text-text-dark h2-bold",
     },
   },
   defaultVariants: {
@@ -100,7 +100,7 @@ const ExpenseCard = ({
   category,
   amount,
   notes,
-  descrtipion,
+  description,
   icon,
   date,
   isLast = false,
@@ -150,17 +150,15 @@ const ExpenseCard = ({
         </View>
         {/* description view */}
         <View className="flex-col flex gap-y-0.5 flex-1">
-          <Text
+          {/* <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            className={cn(descriptionTextVariants({ variant }))}
+            className={cn(titleTextVariants({ variant }))}
           >
             {descrtipion}
-          </Text>
+          </Text> */}
 
-          <Text className={cn(categoryTextVariants({ variant }))}>
-            {category}
-          </Text>
+          <Text className={cn(titleTextVariants({ variant }))}>{category}</Text>
           {date && (
             <Text className={cn(categoryTextVariants({ variant }))}>
               {formatDateTime(date).intlDateFormat}
