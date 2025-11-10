@@ -24,7 +24,7 @@ const DynamicIcon = ({
   family,
   name,
   size = 24,
-  color = "#FFFFFF",
+  color = "#000000",
 }: DynamicIconProps) => {
   const Icon = ICON_FAMILIES[family];
 

@@ -160,7 +160,11 @@ const ExpenseCard = ({
 
           <Text className={cn(titleTextVariants({ variant }))}>{category}</Text>
           {date && (
-            <Text className={cn(categoryTextVariants({ variant }))}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className={cn(categoryTextVariants({ variant }))}
+            >
               {formatDateTime(date).intlDateFormat}
             </Text>
           )}

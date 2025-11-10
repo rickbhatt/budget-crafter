@@ -64,18 +64,18 @@ const CreateExpense = () => {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           header: () => (
             <ScreenHeader
               title="Add Expense"
-              titleStyles="text-text-light"
-              iconBtnStyles="bg-[#1f1f1f]"
-              iconColor="#FFFFFF"
+              titleStyles="text-text-primary"
+              iconBtnStyles="bg-white"
+              iconColor="#000000"
               showBackBtn={true}
               showMenuBtn={false}
-              headerStyles="bg-bg-dark"
+              headerStyles="bg-bg-primary"
             />
           ),
         }}

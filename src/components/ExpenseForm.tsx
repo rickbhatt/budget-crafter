@@ -1,58 +1,25 @@
 import BottomSheet from "@gorhom/bottom-sheet";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useLocales } from "expo-localization";
-import React, {
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
-import { useForm } from "react-hook-form";
-import { Text, View } from "react-native";
-import {
-  KeyboardAwareScrollView,
-  KeyboardToolbar,
-} from "react-native-keyboard-controller";
-import PaymentCategoryBottomSheet from "src/components/PaymentCategoryBottomSheet";
-import { getCurrentDate } from "src/utils/date";
+import React, { useCallback, useRef, useState } from "react";
+import { Pressable, Text, TextInput, View } from "react-native";
+import DynamicIcon from "src/components/DynamicIcon";
 import { Category, ExpenseFormProps } from "type";
-import { z } from "zod";
-import CustomButton from "./CustomButton";
-import CustomInputs from "./CustomInputs";
-import DynamicIcon from "./DynamicIcon";
 
-const expenseFormSchema = z.object({
-  categoryId: z.custom<Id<"categories">>((val) => {
-    return typeof val === "string" && val.length > 0;
-  }, "Category is required"),
-  amount: z.string({ message: "Amount is required" }).refine(
-    (val) => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num > 0;
-    },
-    {
-      message: "Amount must be greater than 0",
-    }
-  ),
-  description: z.string().optional(),
-  notes: z.string().optional(),
-  paymentMethod: z.enum(
-    ["cash", "upi", "digitalPayment", "debitCard", "creditCard"],
-    {
-      message: "Payment method is required",
-    }
-  ),
-  expenseDate: z.string({
-    message: "Expense date is required",
-  }),
-});
-
-export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
-
-const ICON_SIZE = 28;
+const NumKeys = ({
+  value,
+  onPress,
+}: {
+  value: string;
+  onPress: () => void;
+}) => {
+  return (
+    <Pressable onPress={onPress}>
+      <Text>{value}</Text>
+    </Pressable>
+  );
+};
 
 const ExpenseForm = ({
   onSubmit,
@@ -71,36 +38,6 @@ const ExpenseForm = ({
 
   const locales = useLocales()[0];
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<ExpenseFormData>({
-    resolver: zodResolver(expenseFormSchema),
-    defaultValues: initialValues || {
-      categoryId: undefined,
-      amount: undefined,
-      description: undefined,
-      notes: "",
-      paymentMethod: undefined,
-      expenseDate: undefined,
-    },
-  });
-
-  // Expose reset method to parent via ref
-  useImperativeHandle(
-    ref,
-    () => ({
-      reset: () => {
-        reset();
-        setSelectedCategory(null);
-      },
-    }),
-    [reset]
-  );
-
   // Payment method options
   const paymentMethodOptions = [
     { label: "Cash", value: "cash" },
@@ -116,137 +53,129 @@ const ExpenseForm = ({
   };
 
   const handleOnPaymentCategorySelect = useCallback(
-    (params: Category) => {
-      setValue("categoryId", params._id);
-      setSelectedCategory(params);
-      bottomSheetRef.current?.close();
-    },
-    [setValue]
+    (params: Category) => {},
+    []
   );
 
   return (
-    <>
-      <KeyboardAwareScrollView
-        className="flex-1 bg-bg-dark"
-        bottomOffset={62}
-        overScrollMode="never"
-        contentContainerClassName="pb-safe"
-      >
-        <CustomInputs
-          type="text"
-          labelName="Amount"
-          placeholder="100"
-          inputName="amount"
-          icon={
+    <View className="flex-1 screen-x-padding bg-bg-primary pb-safe">
+      {/* floating buttons */}
+      <View className="flex-col">
+        {/* row 1 */}
+        <View className="flex-row justify-between items-center gap-x-2">
+          <Pressable className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25">
+            <DynamicIcon
+              family="Ionicons"
+              name="cash"
+              color="#000000"
+              size={24}
+            />
             <Text
-              style={{
-                fontSize: ICON_SIZE,
-              }}
-              className=" text-text-light"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="crt-expense-floating-btn-text"
             >
-              {user?.currency?.currencySymbol || "₹"}
+              Digital Payments
             </Text>
-          }
-          keyboardType="decimal-pad"
-          error={errors.amount?.message}
-          control={control}
-        />
-        <CustomInputs
-          type="text"
-          labelName="Description (optional)"
-          placeholder="What was it for?"
-          inputName="description"
-          icon={
-            <DynamicIcon
-              family="MaterialIcons"
-              name="notes"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.description?.message}
-          control={control}
-        />
-        <CustomInputs
-          type="paymentCategory"
-          labelName="Category"
-          inputName="categoryId"
-          control={control}
-          selectedPaymentCategoryValue={selectedCategory}
-          onPressPaymentCategoryTrigger={handlePaymentCategoryTrigger}
-          placeholder="Pick a category"
-          icon={
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="tag-outline"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.categoryId?.message}
-        />
-
-        <CustomInputs
-          type="select"
-          labelName="Payment Method"
-          selectOptions={paymentMethodOptions}
-          inputName="paymentMethod"
-          placeholder="Select a method"
-          control={control}
-          icon={
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="wallet-outline"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.paymentMethod?.message}
-        />
-
-        <CustomInputs
-          type="date"
-          control={control}
-          labelName="Expense Date"
-          inputName="expenseDate"
-          error={errors.expenseDate?.message}
-          maxDate={new Date(getCurrentDate())}
-        />
-        <CustomInputs
-          type="text"
-          labelName="Notes (optional)"
-          placeholder="Anything else?"
-          inputName="notes"
-          icon={
-            <DynamicIcon
-              family="MaterialIcons"
-              name="description"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          keyboardType="default"
-          error={errors.notes?.message}
-          control={control}
-        />
-        <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding">
-          <CustomButton
-            title={submitButtonText}
-            onPress={handleSubmit(onSubmit)}
-            style="bg-emerald w-full"
-            textStyle="text-text-light"
-            isLoading={isSubmitting}
-            leftIcon={<DynamicIcon name="save" family="FontAwesome" />}
-          />
+          </Pressable>
+          <Pressable className="crt-expense-floating-btn flex-1 border-blue bg-blue/25">
+            <DynamicIcon family="Ionicons" name="cart" />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="crt-expense-floating-btn-text"
+            >
+              Miscellaneous
+            </Text>
+          </Pressable>
         </View>
-      </KeyboardAwareScrollView>
-      <KeyboardToolbar />
-      <PaymentCategoryBottomSheet
-        selectedCategory={selectedCategory?._id ?? null}
-        bottomSheetRef={bottomSheetRef}
-        onSelect={handleOnPaymentCategorySelect}
-      />
-    </>
+        {/* row 2 */}
+        <View className="flex-row items-center justify-center">
+          <Pressable className="crt-expense-floating-btn border-lime bg-lime/25">
+            <DynamicIcon family="Ionicons" name="calendar" />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="crt-expense-floating-btn-text"
+            >
+              10/11/2025
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+      {/* Amount Display */}
+      <View className="mt-7 gap-x-1.5 flex-row flex-center">
+        <Text className="font-quicksand-semibold text-5xl text-text-tertiary">
+          {user?.currency?.currencySymbol}
+        </Text>
+        <Text className="font-quicksand-bold text-text-primary text-7xl">
+          100
+        </Text>
+      </View>
+      {/* Description */}
+      <View className="mt-4 flex-row">
+        <TextInput
+          className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular"
+          keyboardType="default"
+          placeholder="Description (optional)"
+          style={{
+            color: "#151515",
+          }}
+          placeholderTextColor={"#4B5563"}
+          maxLength={100}
+        />
+      </View>
+
+      {/* Keypad */}
+      <View className="mt-3 flex-1 flex-row border border-black">
+        {/* Numpad */}
+        <View className="flex-1 flex-col border border-red-500">
+          {/* row 1 */}
+          <View className="flex-row border border-green-500">
+            {["1", "2", "3"].map((num) => (
+              <NumKeys key={num} value={num} onPress={() => {}} />
+            ))}
+          </View>
+          {/* row 2 */}
+          <View className="flex-row border border-green-500">
+            {["4", "5", "6"].map((num) => (
+              <NumKeys key={num} value={num} onPress={() => {}} />
+            ))}
+          </View>
+          {/* row 3 */}
+          <View className="flex-row border border-green-500">
+            {["7", "8", "9"].map((num) => (
+              <NumKeys key={num} value={num} onPress={() => {}} />
+            ))}
+          </View>
+          {/* row 4 */}
+          <View className="flex-row border border-green-500">
+            {["00", "0", "."].map((num) => (
+              <NumKeys key={num} value={num} onPress={() => {}} />
+            ))}
+          </View>
+        </View>
+        {/* Action btns */}
+        <View className="flex-col flex-1 border border-yellow">
+          <Pressable onPress={() => {}}>
+            <DynamicIcon
+              family="MaterialCommunityIcons"
+              name="backspace-outline"
+              size={24}
+              color="#151515"
+            />
+          </Pressable>
+          <Pressable onPress={() => {}}>
+            <DynamicIcon
+              family="MaterialCommunityIcons"
+              name="check"
+              size={24}
+              color="#151515"
+            />
+          </Pressable>
+        </View>
+      </View>
+    </View>
   );
 };
 
