@@ -6,6 +6,7 @@ import { useLocales } from "expo-localization";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DynamicIcon from "src/components/DynamicIcon";
+import { cn } from "src/utils/cn";
 import { Category, ExpenseFormProps } from "type";
 
 const NumKeys = ({
@@ -20,7 +21,9 @@ const NumKeys = ({
       className="crt-numkeys-btn flex-1"
       onPress={() => onPress(value)}
     >
-      <Text className="crt-numkeys-text">{value}</Text>
+      <Text className={cn("crt-numkeys-text", value === "." && "text-4xl")}>
+        {value}
+      </Text>
     </Pressable>
   );
 };
