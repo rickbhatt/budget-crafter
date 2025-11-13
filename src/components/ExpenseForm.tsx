@@ -1,6 +1,7 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
+import * as Haptics from "expo-haptics";
 import { useLocales } from "expo-localization";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
@@ -12,11 +13,14 @@ const NumKeys = ({
   onPress,
 }: {
   value: string;
-  onPress: () => void;
+  onPress: (value: string) => void;
 }) => {
   return (
-    <Pressable onPress={onPress}>
-      <Text>{value}</Text>
+    <Pressable
+      className="crt-numkeys-btn flex-1"
+      onPress={() => onPress(value)}
+    >
+      <Text className="crt-numkeys-text">{value}</Text>
     </Pressable>
   );
 };
@@ -56,6 +60,11 @@ const ExpenseForm = ({
     (params: Category) => {},
     []
   );
+
+  const handleNumpadPress = (value: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    console.log(value);
+  };
 
   return (
     <View className="flex-1 screen-x-padding bg-bg-primary pb-safe">
@@ -126,51 +135,57 @@ const ExpenseForm = ({
         />
       </View>
 
-      {/* Keypad */}
-      <View className="mt-3 flex-1 flex-row border border-black">
-        {/* Numpad */}
-        <View className="flex-1 flex-col border border-red-500">
+      {/* Keypad Container */}
+      <View className="mt-3 flex-1 flex-row gap-x-2">
+        {/* Num Pad: Left Column */}
+        <View className="flex-[2.5] gap-y-1.5 flex-col">
           {/* row 1 */}
-          <View className="flex-row border border-green-500">
+          <View className="flex-1 gap-x-2 flex-row">
             {["1", "2", "3"].map((num) => (
-              <NumKeys key={num} value={num} onPress={() => {}} />
+              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
             ))}
           </View>
           {/* row 2 */}
-          <View className="flex-row border border-green-500">
+          <View className="flex-1 gap-x-2 flex-row">
             {["4", "5", "6"].map((num) => (
-              <NumKeys key={num} value={num} onPress={() => {}} />
+              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
             ))}
           </View>
           {/* row 3 */}
-          <View className="flex-row border border-green-500">
+          <View className="flex-1 gap-x-2 flex-row">
             {["7", "8", "9"].map((num) => (
-              <NumKeys key={num} value={num} onPress={() => {}} />
+              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
             ))}
           </View>
           {/* row 4 */}
-          <View className="flex-row border border-green-500">
+          <View className="flex-1 gap-x-2 flex-row">
             {["00", "0", "."].map((num) => (
-              <NumKeys key={num} value={num} onPress={() => {}} />
+              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
             ))}
           </View>
         </View>
-        {/* Action btns */}
-        <View className="flex-col flex-1 border border-yellow">
-          <Pressable onPress={() => {}}>
+        {/* Action Btns: Right Column */}
+        <View className="flex-col gap-y-2 flex-1">
+          <Pressable
+            className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
+            onPress={() => handleNumpadPress("backspace")}
+          >
             <DynamicIcon
               family="MaterialCommunityIcons"
               name="backspace-outline"
-              size={24}
-              color="#151515"
+              size={28}
+              color="#EF4444"
             />
           </Pressable>
-          <Pressable onPress={() => {}}>
+          <Pressable
+            className="flex-[2] bg-bg-dark crt-action-btn"
+            onPress={() => handleNumpadPress("submit")}
+          >
             <DynamicIcon
               family="MaterialCommunityIcons"
               name="check"
-              size={24}
-              color="#151515"
+              size={28}
+              color="#FFFFFF"
             />
           </Pressable>
         </View>
