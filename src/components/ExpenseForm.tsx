@@ -70,12 +70,54 @@ const ExpenseForm = ({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     setAmount((prev) => {
-      // Remove leading zeros, but keep "0" if that's all we have
-      if (prev === "0.00" || prev === "0") {
-        return num === "." ? "0." : num;
+      if (num === "C") {
+        return "0";
       }
 
+      // 1. Only allow digits and decimal point
+      if (!/^[0-9.]$/.test(num)) {
+        return prev;
+      }
+
+      // 2. Handle initial zero state
+      if (prev === "0") {
+        if (num === ".") return "0.";
+        if (num === "0") return "0"; // Don't change if pressing 0 again
+        return num; // Replace 0 with the new digit
+      }
+
+      // 3. Prevent multiple decimal points
+      if (num === "." && prev.includes(".")) {
+        return prev;
+      }
+
+      // 4. Check if decimal exists and limit decimal places
+      if (prev.includes(".")) {
+        const parts = prev.split(".");
+        const decimalPlaces = parts[1]?.length || 0;
+
+        // Already have 2 decimal places, don't allow more
+        if (decimalPlaces >= 2 && num !== ".") {
+          return prev;
+        }
+      }
+
+      // 5. Prevent invalid leading zeros (e.g., "01", "001")
+      // Allow "0." but not "00" or "01"
+      if (prev === "0" && num === "0") {
+        return prev;
+      }
+
+      // 6. Set maximum amount limit (optional but recommended)
       const newValue = prev + num;
+      const numericValue = parseFloat(newValue);
+      const maxAmount = 999999.99;
+
+      if (numericValue > maxAmount) {
+        return prev;
+      }
+
+      // 7. All validations passed
       return newValue;
     });
   };
@@ -186,7 +228,7 @@ const ExpenseForm = ({
           </View>
           {/* row 4 */}
           <View className="flex-1 gap-x-2 flex-row">
-            {["00", "0", "."].map((num) => (
+            {["C", "0", "."].map((num) => (
               <NumKeys key={num} value={num} onPress={handleNumpadPress} />
             ))}
           </View>
