@@ -27,10 +27,20 @@ module.exports = {
           700: "#B91C1C", // Dark - for border
         },
         purple: "#8B5CF6",
-        dark: "#151515",
+        dark: {
+          100: "#151515", // Darkest
+          200: "#4B5563",
+          300: "#6B7280",
+          400: "#9CA3AF",
+          500: "#D1D5DB", // Lightest
+        },
+        light: {
+          100: "#F6F7F0", // Darkest
+          500: "#FFFFFF", // Lightest
+        },
 
         // Background Colors
-        "bg-primary": "#F6F7F0",
+        "bg-primary": "#FFFFFF",
         "bg-secondary": "#F8FAFC",
         "bg-dark": "#151515",
         "inactive-tint": "#6B7280",

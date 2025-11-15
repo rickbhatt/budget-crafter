@@ -36,7 +36,7 @@ const titleTextVariants = cva("base-bold", {
   variants: {
     variant: {
       dashboard: "text-text-light",
-      list: "text-text-dark",
+      list: "text-text-primary",
     },
   },
   defaultVariants: {
@@ -49,7 +49,7 @@ const categoryTextVariants = cva("paragraph-sm", {
   variants: {
     variant: {
       dashboard: "text-text-light/75",
-      list: "text-text-dark",
+      list: "text-text-primary",
     },
   },
   defaultVariants: {
@@ -62,7 +62,7 @@ const amountTextVariants = cva("", {
   variants: {
     variant: {
       dashboard: "text-text-light h2-bold",
-      list: "text-text-dark h2-bold",
+      list: "text-text-primary h2-bold",
     },
   },
   defaultVariants: {

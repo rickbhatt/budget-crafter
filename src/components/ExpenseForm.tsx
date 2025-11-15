@@ -41,6 +41,8 @@ const ExpenseForm = ({
     null
   );
 
+  const [amount, setAmount] = useState<string>("0");
+
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
   const locales = useLocales()[0];
@@ -64,9 +66,29 @@ const ExpenseForm = ({
     []
   );
 
-  const handleNumpadPress = (value: string) => {
+  const handleNumpadPress = (num: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    console.log(value);
+
+    setAmount((prev) => {
+      // Remove leading zeros, but keep "0" if that's all we have
+      if (prev === "0.00" || prev === "0") {
+        return num === "." ? "0." : num;
+      }
+
+      const newValue = prev + num;
+      return newValue;
+    });
+  };
+
+  const handleBackspace = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    setAmount((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)));
+  };
+
+  const handleSubmit = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onSubmit({ amount, selectedCategory, paymentMethod: "cash" });
   };
 
   return (
@@ -120,19 +142,21 @@ const ExpenseForm = ({
         <Text className="font-quicksand-semibold text-5xl text-text-tertiary">
           {user?.currency?.currencySymbol}
         </Text>
-        <Text className="font-quicksand-bold text-text-primary text-7xl">
-          100
+        <Text
+          className={cn(
+            "font-quicksand-bold text-7xl",
+            amount ? "text-text-primary" : "text-text-tertiary"
+          )}
+        >
+          {amount ?? "0.00"}
         </Text>
       </View>
       {/* Description */}
       <View className="mt-4 flex-row">
         <TextInput
-          className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular"
+          className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular text-text-primary"
           keyboardType="default"
           placeholder="Description (optional)"
-          style={{
-            color: "#151515",
-          }}
           placeholderTextColor={"#4B5563"}
           maxLength={100}
         />
@@ -171,7 +195,7 @@ const ExpenseForm = ({
         <View className="flex-col gap-y-2 flex-1">
           <Pressable
             className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
-            onPress={() => handleNumpadPress("backspace")}
+            onPress={handleBackspace}
           >
             <DynamicIcon
               family="MaterialCommunityIcons"
@@ -182,7 +206,7 @@ const ExpenseForm = ({
           </Pressable>
           <Pressable
             className="flex-[2] bg-bg-dark crt-action-btn"
-            onPress={() => handleNumpadPress("submit")}
+            onPress={handleSubmit}
           >
             <DynamicIcon
               family="MaterialCommunityIcons"
