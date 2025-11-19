@@ -5,8 +5,11 @@ import * as Haptics from "expo-haptics";
 import { useLocales } from "expo-localization";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
+import DatePickerModal from "src/components/DatePickerModal";
 import DynamicIcon from "src/components/DynamicIcon";
 import { cn } from "src/utils/cn";
+import { getCurrentDate } from "src/utils/date";
+import { formatDateTime } from "src/utils/formatDate";
 import { Category, ExpenseFormProps } from "type";
 
 const NumKeys = ({
@@ -42,6 +45,11 @@ const ExpenseForm = ({
   );
 
   const [amount, setAmount] = useState<string>("0");
+
+  const [expenseDate, setExpenseDate] = useState<string>(getCurrentDate());
+  console.log("🚀 ~ ExpenseForm ~ expenseDate:", expenseDate);
+
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
@@ -133,133 +141,152 @@ const ExpenseForm = ({
     onSubmit({ amount, selectedCategory, paymentMethod: "cash" });
   };
 
-  return (
-    <View className="flex-1 screen-x-padding bg-bg-primary pb-safe">
-      {/* floating buttons */}
-      <View className="flex-col">
-        {/* row 1 */}
-        <View className="flex-row justify-between items-center gap-x-2">
-          <Pressable className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25">
-            <DynamicIcon
-              family="Ionicons"
-              name="cash"
-              color="#000000"
-              size={24}
-            />
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              className="crt-expense-floating-btn-text"
-            >
-              Digital Payments
-            </Text>
-          </Pressable>
-          <Pressable className="crt-expense-floating-btn flex-1 border-blue bg-blue/25">
-            <DynamicIcon family="Ionicons" name="cart" />
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              className="crt-expense-floating-btn-text"
-            >
-              Miscellaneous
-            </Text>
-          </Pressable>
-        </View>
-        {/* row 2 */}
-        <View className="flex-row items-center justify-center">
-          <Pressable className="crt-expense-floating-btn border-lime bg-lime/25">
-            <DynamicIcon family="Ionicons" name="calendar" />
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              className="crt-expense-floating-btn-text"
-            >
-              10/11/2025
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-      {/* Amount Display */}
-      <View className="mt-7 gap-x-1.5 flex-row flex-center">
-        <Text className="font-quicksand-semibold text-5xl text-text-tertiary">
-          {user?.currency?.currencySymbol}
-        </Text>
-        <Text
-          className={cn(
-            "font-quicksand-bold text-7xl",
-            amount ? "text-text-primary" : "text-text-tertiary"
-          )}
-        >
-          {amount ?? "0.00"}
-        </Text>
-      </View>
-      {/* Description */}
-      <View className="mt-4 flex-row">
-        <TextInput
-          className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular text-text-primary"
-          keyboardType="default"
-          placeholder="Description (optional)"
-          placeholderTextColor={"#4B5563"}
-          maxLength={100}
-        />
-      </View>
+  const handleDateChange = (date: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setExpenseDate(date);
+  };
 
-      {/* Keypad Container */}
-      <View className="mt-3 flex-1 flex-row gap-x-2">
-        {/* Num Pad: Left Column */}
-        <View className="flex-[2.5] gap-y-1.5 flex-col">
+  return (
+    <>
+      <View className="flex-1 screen-x-padding bg-bg-primary pb-safe">
+        {/* floating buttons */}
+        <View className="flex-col">
           {/* row 1 */}
-          <View className="flex-1 gap-x-2 flex-row">
-            {["1", "2", "3"].map((num) => (
-              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
-            ))}
+          <View className="flex-row justify-between items-center gap-x-2">
+            <Pressable className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25">
+              <DynamicIcon
+                family="Ionicons"
+                name="cash"
+                color="#000000"
+                size={24}
+              />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                Digital Payments
+              </Text>
+            </Pressable>
+            <Pressable className="crt-expense-floating-btn flex-1 border-blue bg-blue/25">
+              <DynamicIcon family="Ionicons" name="cart" />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                Miscellaneous
+              </Text>
+            </Pressable>
           </View>
           {/* row 2 */}
-          <View className="flex-1 gap-x-2 flex-row">
-            {["4", "5", "6"].map((num) => (
-              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
-            ))}
-          </View>
-          {/* row 3 */}
-          <View className="flex-1 gap-x-2 flex-row">
-            {["7", "8", "9"].map((num) => (
-              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
-            ))}
-          </View>
-          {/* row 4 */}
-          <View className="flex-1 gap-x-2 flex-row">
-            {["C", "0", "."].map((num) => (
-              <NumKeys key={num} value={num} onPress={handleNumpadPress} />
-            ))}
+          <View className="flex-row items-center justify-center">
+            <Pressable
+              onPress={() => setIsDatePickerOpen(true)}
+              className="crt-expense-floating-btn border-lime bg-lime/25"
+            >
+              <DynamicIcon family="Ionicons" name="calendar" />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                {expenseDate === getCurrentDate()
+                  ? "Today"
+                  : formatDateTime(expenseDate).intlDateFormat}
+              </Text>
+            </Pressable>
           </View>
         </View>
-        {/* Action Btns: Right Column */}
-        <View className="flex-col gap-y-2 flex-1">
-          <Pressable
-            className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
-            onPress={handleBackspace}
+        {/* Amount Display */}
+        <View className="mt-7 gap-x-1.5 flex-row flex-center">
+          <Text className="font-quicksand-semibold text-5xl text-text-tertiary">
+            {user?.currency?.currencySymbol}
+          </Text>
+          <Text
+            className={cn(
+              "font-quicksand-bold text-7xl",
+              amount ? "text-text-primary" : "text-text-tertiary"
+            )}
           >
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="backspace-outline"
-              size={28}
-              color="#EF4444"
-            />
-          </Pressable>
-          <Pressable
-            className="flex-[2] bg-bg-dark crt-action-btn"
-            onPress={handleSubmit}
-          >
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="check"
-              size={28}
-              color="#FFFFFF"
-            />
-          </Pressable>
+            {amount ?? "0.00"}
+          </Text>
+        </View>
+        {/* Description */}
+        <View className="mt-4 flex-row">
+          <TextInput
+            className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular text-text-primary"
+            keyboardType="default"
+            placeholder="Description (optional)"
+            placeholderTextColor={"#4B5563"}
+            maxLength={100}
+          />
+        </View>
+
+        {/* Keypad Container */}
+        <View className="mt-3 flex-1 flex-row gap-x-2">
+          {/* Num Pad: Left Column */}
+          <View className="flex-[2.5] gap-y-1.5 flex-col">
+            {/* row 1 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["1", "2", "3"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 2 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["4", "5", "6"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 3 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["7", "8", "9"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 4 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["C", "0", "."].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+          </View>
+          {/* Action Btns: Right Column */}
+          <View className="flex-col gap-y-2 flex-1">
+            <Pressable
+              className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
+              onPress={handleBackspace}
+            >
+              <DynamicIcon
+                family="MaterialCommunityIcons"
+                name="backspace-outline"
+                size={28}
+                color="#EF4444"
+              />
+            </Pressable>
+            <Pressable
+              className="flex-[2] bg-bg-dark crt-action-btn"
+              onPress={handleSubmit}
+            >
+              <DynamicIcon
+                family="MaterialCommunityIcons"
+                name="check"
+                size={28}
+                color="#FFFFFF"
+              />
+            </Pressable>
+          </View>
         </View>
       </View>
-    </View>
+      <DatePickerModal
+        value={expenseDate}
+        onChange={handleDateChange}
+        isDatePickerOpen={isDatePickerOpen}
+        setIsDatePickerOpen={setIsDatePickerOpen}
+        maxDate={new Date(getCurrentDate() + "T00:00:00")}
+      />
+    </>
   );
 };
 

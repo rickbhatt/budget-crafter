@@ -71,7 +71,6 @@ const CreateExpense = () => {
             <ScreenHeader
               title="Add Expense"
               titleStyles="text-text-primary"
-              iconBtnStyles="bg-white"
               iconColor="#000000"
               showBackBtn={true}
               showMenuBtn={false}
