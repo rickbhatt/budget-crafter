@@ -11,10 +11,10 @@ import { useMutation, useQuery } from "convex/react";
 import { memo, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { IconFamily, PaymentCategoryBottomSheetProps } from "type";
-import CustomButton from "./CustomButton";
-import DynamicIcon from "./DynamicIcon";
-import IconPicker from "./IconPicker";
+import { ExpenseCategoryBottomSheetProps, IconFamily } from "type";
+import CustomButton from "../CustomButton";
+import DynamicIcon from "../DynamicIcon";
+import IconPicker from "../IconPicker";
 
 const renderBackdrop = (props: any) => (
   <BottomSheetBackdrop
@@ -22,14 +22,17 @@ const renderBackdrop = (props: any) => (
     disappearsOnIndex={-1}
     appearsOnIndex={0}
     opacity={0.7}
+    style={{
+      zIndex: 9999,
+    }}
   />
 );
 
-const PaymentCategoryBottomSheet = ({
+const ExpenseCategoryBottomSheet = ({
   bottomSheetRef,
   selectedCategory,
   onSelect,
-}: PaymentCategoryBottomSheetProps) => {
+}: ExpenseCategoryBottomSheetProps) => {
   const { bottom, top } = useSafeAreaInsets();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -177,7 +180,7 @@ const PaymentCategoryBottomSheet = ({
                       <Pressable
                         className={cn(
                           "payment-category-chip",
-                          selectedCategory === category._id
+                          selectedCategory?._id === category._id
                             ? "bg-sky"
                             : "bg-bg-primary"
                         )}
@@ -193,7 +196,7 @@ const PaymentCategoryBottomSheet = ({
                         <Text
                           className={cn(
                             "ml-1",
-                            selectedCategory === category._id
+                            selectedCategory?._id === category._id
                               ? "paragraph-bold"
                               : "paragraph-semibold"
                           )}
@@ -247,4 +250,4 @@ const PaymentCategoryBottomSheet = ({
   );
 };
 
-export default memo(PaymentCategoryBottomSheet);
+export default memo(ExpenseCategoryBottomSheet);

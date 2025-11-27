@@ -226,7 +226,7 @@ interface ExpenseFormProps {
   ref?: React.Ref<ExpenseFormHandle>;
 }
 
-interface PaymentCategoryBottomSheetProps {
+interface ExpenseCategoryBottomSheetProps {
   bottomSheetRef: RefObject<BottomSheet | null>;
   selectedCategory: Id<"categories"> | null;
   onSelect: (params: Category) => void;

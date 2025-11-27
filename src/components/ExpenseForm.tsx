@@ -1,8 +1,8 @@
+import ExpenseCategoryBottomSheet from "@/components/bottomsheets/ExpenseCategoryBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import * as Haptics from "expo-haptics";
-import { useLocales } from "expo-localization";
 import React, { useCallback, useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import DatePickerModal from "src/components/DatePickerModal";
@@ -38,41 +38,33 @@ const ExpenseForm = ({
   isSubmitting = false,
   ref,
 }: ExpenseFormProps) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  // refs for bottom sheets
+  const expenseCategoryBottomSheetRef = useRef<BottomSheet>(null);
+  const paymentMethodBottomSheetRef = useRef<BottomSheet>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
 
+  // expense amount
   const [amount, setAmount] = useState<string>("0");
 
+  // expense date
   const [expenseDate, setExpenseDate] = useState<string>(getCurrentDate());
-  console.log("🚀 ~ ExpenseForm ~ expenseDate:", expenseDate);
 
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
-  const locales = useLocales()[0];
-
-  // Payment method options
-  const paymentMethodOptions = [
-    { label: "Cash", value: "cash" },
-    locales.languageRegionCode === "IN"
-      ? { label: "UPI", value: "upi" }
-      : { label: "Digital Payment", value: "digitalPayment" },
-    { label: "Debit Card", value: "debitCard" },
-    { label: "Credit Card", value: "creditCard" },
-  ];
-
   const handlePaymentCategoryTrigger = () => {
-    bottomSheetRef.current?.snapToIndex(0);
+    expenseCategoryBottomSheetRef.current?.snapToIndex(0);
   };
 
-  const handleOnPaymentCategorySelect = useCallback(
-    (params: Category) => {},
-    []
-  );
+  // handle category selection
+  const handleOnPaymentCategorySelect = useCallback((params: Category) => {
+    setSelectedCategory(params);
+    expenseCategoryBottomSheetRef.current?.close();
+  }, []);
 
   const handleNumpadPress = (num: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -153,6 +145,7 @@ const ExpenseForm = ({
         <View className="flex-col">
           {/* row 1 */}
           <View className="flex-row justify-between items-center gap-x-2">
+            {/* payment method */}
             <Pressable className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25">
               <DynamicIcon
                 family="Ionicons"
@@ -168,14 +161,22 @@ const ExpenseForm = ({
                 Digital Payments
               </Text>
             </Pressable>
-            <Pressable className="crt-expense-floating-btn flex-1 border-blue bg-blue/25">
-              <DynamicIcon family="Ionicons" name="cart" />
+
+            {/* payment category */}
+            <Pressable
+              onPress={handlePaymentCategoryTrigger}
+              className="crt-expense-floating-btn flex-1 border-blue bg-blue/25"
+            >
+              <DynamicIcon
+                family={selectedCategory?.icon?.family ?? "MaterialIcons"}
+                name={selectedCategory?.icon?.name ?? "category"}
+              />
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 className="crt-expense-floating-btn-text"
               >
-                Miscellaneous
+                {selectedCategory ? selectedCategory.name : "Pick Category"}
               </Text>
             </Pressable>
           </View>
@@ -285,6 +286,11 @@ const ExpenseForm = ({
         isDatePickerOpen={isDatePickerOpen}
         setIsDatePickerOpen={setIsDatePickerOpen}
         maxDate={new Date(getCurrentDate() + "T00:00:00")}
+      />
+      <ExpenseCategoryBottomSheet
+        selectedCategory={selectedCategory}
+        bottomSheetRef={expenseCategoryBottomSheetRef}
+        onSelect={handleOnPaymentCategorySelect}
       />
     </>
   );
