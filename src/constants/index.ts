@@ -4,6 +4,9 @@ import { IconFamily } from "type";
 
 // images
 import wallet from "@assets/images/wallet.png";
+import { getLocales } from "expo-localization";
+
+const locales = getLocales()[0];
 
 export const fnsLoacales: { [key: string]: Locale } = {
   "en-US": enUS,
@@ -21,6 +24,50 @@ export const fnsLoacales: { [key: string]: Locale } = {
 export const images = {
   wallet,
 };
+
+export const paymentMethodOptions = [
+  {
+    label: "Cash",
+    value: "cash",
+    icon: {
+      family: "MaterialCommunityIcons" as const,
+      name: "cash" as const,
+    },
+  },
+  locales.languageRegionCode === "IN"
+    ? {
+        label: "UPI",
+        value: "upi",
+        icon: {
+          family: "MaterialCommunityIcons" as const,
+          name: "qrcode-scan" as const,
+        },
+      }
+    : {
+        label: "Digital Payment",
+        value: "digitalPayment",
+        icon: {
+          family: "MaterialCommunityIcons" as const,
+          name: "contactless-payment" as const,
+        },
+      },
+  {
+    label: "Debit Card",
+    value: "debitCard",
+    icon: {
+      family: "MaterialCommunityIcons" as const,
+      name: "credit-card" as const,
+    },
+  },
+  {
+    label: "Credit Card",
+    value: "creditCard",
+    icon: {
+      family: "MaterialCommunityIcons" as const,
+      name: "credit-card-outline" as const,
+    },
+  },
+];
 
 export const CUSTOM_CATEGORY_ICONS: {
   id: string;

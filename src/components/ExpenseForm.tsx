@@ -1,4 +1,5 @@
 import ExpenseCategoryBottomSheet from "@/components/bottomsheets/ExpenseCategoryBottomSheet";
+import PaymentMethodBottomSheet from "@/components/bottomsheets/PaymentMethodBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
@@ -10,7 +11,7 @@ import DynamicIcon from "src/components/DynamicIcon";
 import { cn } from "src/utils/cn";
 import { getCurrentDate } from "src/utils/date";
 import { formatDateTime } from "src/utils/formatDate";
-import { Category, ExpenseFormProps } from "type";
+import { Category, ExpenseFormProps, PaymentMethodType } from "type";
 
 const NumKeys = ({
   value,
@@ -46,6 +47,9 @@ const ExpenseForm = ({
     null
   );
 
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethodType | null>(null);
+
   // expense amount
   const [amount, setAmount] = useState<string>("0");
 
@@ -56,16 +60,30 @@ const ExpenseForm = ({
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
-  const handlePaymentCategoryTrigger = () => {
+  // trigger expense category bottom sheet
+  const handleExpenseCategoryTrigger = () => {
     expenseCategoryBottomSheetRef.current?.snapToIndex(0);
   };
 
+  // trigger  payment method bottom sheet
+  const handlePaymentMethodTrigger = () => {
+    paymentMethodBottomSheetRef.current?.snapToIndex(0);
+  };
+
   // handle category selection
-  const handleOnPaymentCategorySelect = useCallback((params: Category) => {
+  const handleExpenseCategorySelect = useCallback((params: Category) => {
     setSelectedCategory(params);
     expenseCategoryBottomSheetRef.current?.close();
   }, []);
 
+  // handle payment method selection
+  const handlePaymentMethodSelect = useCallback((params: PaymentMethodType) => {
+    console.log("🚀 ~ ExpenseForm ~ params:", params);
+    setSelectedPaymentMethod(params);
+    paymentMethodBottomSheetRef.current?.close();
+  }, []);
+
+  // handle numpad press
   const handleNumpadPress = (num: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -122,17 +140,20 @@ const ExpenseForm = ({
     });
   };
 
+  // handle backspace
   const handleBackspace = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     setAmount((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)));
   };
 
+  // handle submit
   const handleSubmit = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onSubmit({ amount, selectedCategory, paymentMethod: "cash" });
   };
 
+  // handle date change
   const handleDateChange = (date: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setExpenseDate(date);
@@ -146,10 +167,15 @@ const ExpenseForm = ({
           {/* row 1 */}
           <View className="flex-row justify-between items-center gap-x-2">
             {/* payment method */}
-            <Pressable className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25">
+            <Pressable
+              onPress={handlePaymentMethodTrigger}
+              className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25"
+            >
               <DynamicIcon
-                family="Ionicons"
-                name="cash"
+                family={
+                  (selectedPaymentMethod?.icon?.family ?? "Ionicons") as any
+                }
+                name={(selectedPaymentMethod?.icon?.name ?? "wallet") as any}
                 color="#000000"
                 size={24}
               />
@@ -158,13 +184,13 @@ const ExpenseForm = ({
                 ellipsizeMode="tail"
                 className="crt-expense-floating-btn-text"
               >
-                Digital Payments
+                {selectedPaymentMethod?.label ?? "Payment Method"}
               </Text>
             </Pressable>
 
             {/* payment category */}
             <Pressable
-              onPress={handlePaymentCategoryTrigger}
+              onPress={handleExpenseCategoryTrigger}
               className="crt-expense-floating-btn flex-1 border-blue bg-blue/25"
             >
               <DynamicIcon
@@ -290,7 +316,12 @@ const ExpenseForm = ({
       <ExpenseCategoryBottomSheet
         selectedCategory={selectedCategory}
         bottomSheetRef={expenseCategoryBottomSheetRef}
-        onSelect={handleOnPaymentCategorySelect}
+        onSelect={handleExpenseCategorySelect}
+      />
+      <PaymentMethodBottomSheet
+        selectedMethod={selectedPaymentMethod}
+        bottomSheetRef={paymentMethodBottomSheetRef}
+        onSelect={handlePaymentMethodSelect}
       />
     </>
   );

@@ -232,6 +232,18 @@ interface ExpenseCategoryBottomSheetProps {
   onSelect: (params: Category) => void;
 }
 
+interface PaymentMethodType {
+  value: string;
+  label: string;
+  icon: { family: string; name: string };
+}
+
+interface PaymentMethodBottomSheetProps {
+  bottomSheetRef: RefObject<BottomSheet | null>;
+  selectedMethod: PaymentMethodType | null;
+  onSelect: (params: Category) => void;
+}
+
 interface ExpenseFilterBottomsheetProps {
   ref: RefObject<BottomSheet | null>;
 }
