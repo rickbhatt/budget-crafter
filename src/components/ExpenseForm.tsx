@@ -56,6 +56,9 @@ const ExpenseForm = ({
   // expense date
   const [expenseDate, setExpenseDate] = useState<string>(getCurrentDate());
 
+  // expense description
+  const [description, setDescription] = useState<string>("");
+
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
@@ -247,6 +250,8 @@ const ExpenseForm = ({
             placeholder="Description (optional)"
             placeholderTextColor={"#4B5563"}
             maxLength={100}
+            value={description}
+            onChangeText={setDescription}
           />
         </View>
 
