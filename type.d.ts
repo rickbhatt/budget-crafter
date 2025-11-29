@@ -214,16 +214,33 @@ interface EmptyStateProps {
   imageStyle?: string;
 }
 
-interface ExpenseFormHandle {
-  reset: () => void;
+export interface ExpenseFormData {
+  amount: string;
+  categoryId: Id<"categories"> | null;
+  selectedCategory: Category | null;
+  paymentMethod: PaymentMethodType | null;
+  expenseDate: string;
+  description: string;
 }
 
 interface ExpenseFormProps {
-  onSubmit: (data: ExpenseFormData) => Promise<void>;
-  initialValues?: Partial<ExpenseFormData>;
-  submitButtonText: string;
+  // Controlled state props
+  amount: string;
+  selectedCategory: Category | null;
+  selectedPaymentMethod: PaymentMethodType | null;
+  expenseDate: string;
+  description: string;
+
+  // Change handlers
+  onAmountChange: (amount: string) => void;
+  onCategoryChange: (category: Category) => void;
+  onPaymentMethodChange: (method: PaymentMethodType) => void;
+  onExpenseDateChange: (date: string) => void;
+  onDescriptionChange: (description: string) => void;
+
+  // Submission
+  onSubmit: () => void;
   isSubmitting?: boolean;
-  ref?: React.Ref<ExpenseFormHandle>;
 }
 
 interface ExpenseCategoryBottomSheetProps {

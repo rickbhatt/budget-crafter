@@ -33,32 +33,27 @@ const NumKeys = ({
 };
 
 const ExpenseForm = ({
+  // Controlled state
+  amount,
+  selectedCategory,
+  selectedPaymentMethod,
+  expenseDate,
+  description,
+  // Change handlers
+  onAmountChange,
+  onCategoryChange,
+  onPaymentMethodChange,
+  onExpenseDateChange,
+  onDescriptionChange,
+  // Submission
   onSubmit,
-  initialValues,
-  submitButtonText,
   isSubmitting = false,
-  ref,
 }: ExpenseFormProps) => {
-  // refs for bottom sheets
+  // refs for bottom sheets (UI-only state)
   const expenseCategoryBottomSheetRef = useRef<BottomSheet>(null);
   const paymentMethodBottomSheetRef = useRef<BottomSheet>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
-
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethodType | null>(null);
-
-  // expense amount
-  const [amount, setAmount] = useState<string>("0");
-
-  // expense date
-  const [expenseDate, setExpenseDate] = useState<string>(getCurrentDate());
-
-  // expense description
-  const [description, setDescription] = useState<string>("");
-
+  // UI-only state
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
@@ -75,91 +70,95 @@ const ExpenseForm = ({
 
   // handle category selection
   const handleExpenseCategorySelect = useCallback((params: Category) => {
-    setSelectedCategory(params);
+    onCategoryChange(params);
     expenseCategoryBottomSheetRef.current?.close();
-  }, []);
+  }, [onCategoryChange]);
 
   // handle payment method selection
   const handlePaymentMethodSelect = useCallback((params: PaymentMethodType) => {
-    console.log("🚀 ~ ExpenseForm ~ params:", params);
-    setSelectedPaymentMethod(params);
+    onPaymentMethodChange(params);
     paymentMethodBottomSheetRef.current?.close();
-  }, []);
+  }, [onPaymentMethodChange]);
 
   // handle numpad press
   const handleNumpadPress = (num: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    setAmount((prev) => {
-      if (num === "C") {
-        return "0";
+    if (num === "C") {
+      onAmountChange("0");
+      return;
+    }
+
+    // 1. Only allow digits and decimal point
+    if (!/^[0-9.]$/.test(num)) {
+      return;
+    }
+
+    // 2. Handle initial zero state
+    if (amount === "0") {
+      if (num === ".") {
+        onAmountChange("0.");
+        return;
       }
-
-      // 1. Only allow digits and decimal point
-      if (!/^[0-9.]$/.test(num)) {
-        return prev;
+      if (num === "0") {
+        return; // Don't change if pressing 0 again
       }
+      onAmountChange(num); // Replace 0 with the new digit
+      return;
+    }
 
-      // 2. Handle initial zero state
-      if (prev === "0") {
-        if (num === ".") return "0.";
-        if (num === "0") return "0"; // Don't change if pressing 0 again
-        return num; // Replace 0 with the new digit
+    // 3. Prevent multiple decimal points
+    if (num === "." && amount.includes(".")) {
+      return;
+    }
+
+    // 4. Check if decimal exists and limit decimal places
+    if (amount.includes(".")) {
+      const parts = amount.split(".");
+      const decimalPlaces = parts[1]?.length || 0;
+
+      // Already have 2 decimal places, don't allow more
+      if (decimalPlaces >= 2 && num !== ".") {
+        return;
       }
+    }
 
-      // 3. Prevent multiple decimal points
-      if (num === "." && prev.includes(".")) {
-        return prev;
-      }
+    // 5. Prevent invalid leading zeros (e.g., "01", "001")
+    // Allow "0." but not "00" or "01"
+    if (amount === "0" && num === "0") {
+      return;
+    }
 
-      // 4. Check if decimal exists and limit decimal places
-      if (prev.includes(".")) {
-        const parts = prev.split(".");
-        const decimalPlaces = parts[1]?.length || 0;
+    // 6. Set maximum amount limit (optional but recommended)
+    const newValue = amount + num;
+    const numericValue = parseFloat(newValue);
+    const maxAmount = 999999.99;
 
-        // Already have 2 decimal places, don't allow more
-        if (decimalPlaces >= 2 && num !== ".") {
-          return prev;
-        }
-      }
+    if (numericValue > maxAmount) {
+      return;
+    }
 
-      // 5. Prevent invalid leading zeros (e.g., "01", "001")
-      // Allow "0." but not "00" or "01"
-      if (prev === "0" && num === "0") {
-        return prev;
-      }
-
-      // 6. Set maximum amount limit (optional but recommended)
-      const newValue = prev + num;
-      const numericValue = parseFloat(newValue);
-      const maxAmount = 999999.99;
-
-      if (numericValue > maxAmount) {
-        return prev;
-      }
-
-      // 7. All validations passed
-      return newValue;
-    });
+    // 7. All validations passed
+    onAmountChange(newValue);
   };
 
   // handle backspace
   const handleBackspace = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    setAmount((prev) => (prev.length <= 1 ? "0" : prev.slice(0, -1)));
+    const newValue = amount.length <= 1 ? "0" : amount.slice(0, -1);
+    onAmountChange(newValue);
   };
 
   // handle submit
   const handleSubmit = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onSubmit({ amount, selectedCategory, paymentMethod: "cash" });
+    onSubmit();
   };
 
   // handle date change
   const handleDateChange = (date: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setExpenseDate(date);
+    onExpenseDateChange(date);
   };
 
   return (
@@ -251,7 +250,7 @@ const ExpenseForm = ({
             placeholderTextColor={"#4B5563"}
             maxLength={100}
             value={description}
-            onChangeText={setDescription}
+            onChangeText={onDescriptionChange}
           />
         </View>
 
@@ -300,6 +299,7 @@ const ExpenseForm = ({
             <Pressable
               className="flex-[2] bg-bg-dark crt-action-btn"
               onPress={handleSubmit}
+              disabled={isSubmitting}
             >
               <DynamicIcon
                 family="MaterialCommunityIcons"

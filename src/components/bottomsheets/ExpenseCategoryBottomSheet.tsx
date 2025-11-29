@@ -1,6 +1,5 @@
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetScrollView,
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
@@ -10,6 +9,7 @@ import { cn } from "@/utils/cn";
 import { useMutation, useQuery } from "convex/react";
 import { memo, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ExpenseCategoryBottomSheetProps, IconFamily } from "type";
 import CustomButton from "../CustomButton";
@@ -158,8 +158,9 @@ const ExpenseCategoryBottomSheet = ({
         </View>
 
         {/* Tab Content */}
-        <BottomSheetScrollView
+        <ScrollView
           overScrollMode={"never"}
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="never"
           className="screen-x-padding mt-8"
           contentContainerStyle={{
@@ -244,7 +245,7 @@ const ExpenseCategoryBottomSheet = ({
               />
             </View>
           )}
-        </BottomSheetScrollView>
+        </ScrollView>
       </BottomSheetView>
     </BottomSheet>
   );
