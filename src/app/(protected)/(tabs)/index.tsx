@@ -82,6 +82,20 @@ const Dashboard = () => {
 
   const router = useRouter();
 
+  if (budget === null) {
+    return (
+      <View className="bg-bg-primary flex-1 items-center justify-center">
+        <Text className="h3-bold">You have no active budgets</Text>
+        <CustomButton
+          style="bg-bg-dark mt-4"
+          textStyle="text-text-light"
+          title="Create Budget"
+          onPress={() => router.push("/(protected)/budget/create")}
+        />
+      </View>
+    );
+  }
+
   return (
     <>
       <Tabs.Screen
