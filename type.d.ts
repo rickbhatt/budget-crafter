@@ -1,12 +1,13 @@
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { Href } from "expo-router";
+import { RefObject } from "react";
 import { KeyboardTypeOptions } from "react-native";
 import { Doc, Id } from "./_generated/dataModel";
 
@@ -17,7 +18,8 @@ export type IconFamily =
   | "FontAwesome"
   | "AntDesign"
   | "Entypo"
-  | "MaterialIcons";
+  | "MaterialIcons"
+  | "Feather";
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -35,14 +37,14 @@ interface ScreenHeaderProps {
   title: string;
   rightIcons?: {
     icon: React.ReactNode;
-    path: Href;
+    onPress: () => void;
     name: string;
   }[];
   showBackBtn?: boolean;
   headerStyles?: string;
   iconBtnStyles?: string;
   iconColor?: string;
-  showSettingBtn?: boolean;
+  showMenuBtn?: boolean;
   titleStyles?: string;
 }
 
@@ -61,12 +63,15 @@ interface TabBarIconProps {
 interface ExpenseCardProps {
   category: string;
   amount: number;
-  descrtipion: string | null;
+  description?: string | null;
   notes?: string | null;
   icon: Doc<"categories">["icon"];
-  date: number;
+  date?: string;
   expenseId: Id<"expenses">;
   currencySymbol: string;
+  isLast?: boolean;
+  variant?: "dashboard" | "list";
+  size?: "default" | "sm" | "lg";
 }
 
 // convex/types.ts - Type definitions for the frontend
@@ -74,6 +79,26 @@ export type User = Doc<"users">;
 export type Budget = Doc<"budgets">;
 export type Category = Doc<"categories">;
 export type Expense = Doc<"expenses">;
+
+// Expense with enriched category details (from getAllExpenses query)
+export type ExpenseWithCategory = Expense & {
+  category: {
+    name: string;
+    icon: {
+      family: IconFamily;
+      name: string;
+    };
+  } | null;
+};
+
+// Grouped expenses by date
+interface ExpenseSection {
+  title: string;
+  total: number;
+  data: ExpenseWithCategory[];
+}
+
+export type GroupedExpenses = ExpenseSection[];
 
 export type UserId = Id<"users">;
 export type BudgetId = Id<"budgets">;
@@ -86,12 +111,10 @@ export type BudgetType = "monthly" | "credit";
 
 // Helper types for creating new records
 export type NewUser = Omit<User, "_id" | "_creationTime" | "updatedAt"> & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
 export type NewBudget = Omit<Budget, "_id" | "_creationTime" | "updatedAt"> & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -99,7 +122,6 @@ export type NewCategory = Omit<
   Category,
   "_id" | "_creationTime" | "updatedAt"
 > & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -107,7 +129,6 @@ export type NewExpense = Omit<
   Expense,
   "_id" | "_creationTime" | "updatedAt"
 > & {
-  createdAt?: number;
   updatedAt?: number;
 };
 
@@ -128,6 +149,8 @@ interface CustomInputProps {
   onPressPaymentCategoryTrigger?: () => void;
   maxLength?: number | undefined;
   selectedPaymentCategoryValue?: any;
+  maxDate?: Date | undefined;
+  minDate?: Date | undefined;
 }
 
 type DynamicIconProps =
@@ -166,6 +189,12 @@ type DynamicIconProps =
       name: React.ComponentProps<typeof MaterialIcons>["name"];
       size?: number;
       color?: string;
+    }
+  | {
+      family: Extract<IconFamily, "Feather">;
+      name: React.ComponentProps<typeof Feather>["name"];
+      size?: number;
+      color?: string;
     };
 
 interface NetworkState {
@@ -185,20 +214,53 @@ interface EmptyStateProps {
   imageStyle?: string;
 }
 
-export interface ExpenseFormHandle {
-  reset: () => void;
+export interface ExpenseFormData {
+  amount: string;
+  categoryId: Id<"categories"> | null;
+  selectedCategory: Category | null;
+  paymentMethod: PaymentMethodType | null;
+  expenseDate: string;
+  description: string;
 }
 
-export interface ExpenseFormProps {
-  onSubmit: (data: ExpenseFormData) => Promise<void>;
-  initialValues?: Partial<ExpenseFormData>;
-  submitButtonText: string;
+interface ExpenseFormProps {
+  // Controlled state props
+  amount: string;
+  selectedCategory: Category | null;
+  selectedPaymentMethod: PaymentMethodType | null;
+  expenseDate: string;
+  description: string;
+
+  // Change handlers
+  onAmountChange: (amount: string) => void;
+  onCategoryChange: (category: Category) => void;
+  onPaymentMethodChange: (method: PaymentMethodType) => void;
+  onExpenseDateChange: (date: string) => void;
+  onDescriptionChange: (description: string) => void;
+
+  // Submission
+  onSubmit: () => void;
   isSubmitting?: boolean;
-  ref?: React.Ref<ExpenseFormHandle>;
 }
 
-interface PaymentCategoryBottomSheetProps {
+interface ExpenseCategoryBottomSheetProps {
   bottomSheetRef: RefObject<BottomSheet | null>;
   selectedCategory: Id<"categories"> | null;
   onSelect: (params: Category) => void;
+}
+
+interface PaymentMethodType {
+  value: string;
+  label: string;
+  icon: { family: string; name: string };
+}
+
+interface PaymentMethodBottomSheetProps {
+  bottomSheetRef: RefObject<BottomSheet | null>;
+  selectedMethod: PaymentMethodType | null;
+  onSelect: (params: Category) => void;
+}
+
+interface ExpenseFilterBottomsheetProps {
+  ref: RefObject<BottomSheet | null>;
 }

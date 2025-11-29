@@ -1,4 +1,4 @@
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
@@ -11,9 +11,9 @@ const ScreenHeader = ({
   rightIcons = [] as ScreenHeaderProps["rightIcons"],
   showBackBtn = false,
   headerStyles = "bg-bg-primary",
-  iconBtnStyles = "bg-gray-100",
+  iconBtnStyles = "bg-light-100",
   iconColor = "black",
-  showSettingBtn = false,
+  showMenuBtn = false,
   titleStyles = "text-text-primary",
 }: ScreenHeaderProps) => {
   const router = useRouter();
@@ -45,19 +45,19 @@ const ScreenHeader = ({
         {rightIcons?.map((icon) => (
           <HeaderButton
             key={icon.name}
-            onPress={() => router.push(icon.path)}
+            onPress={icon.onPress}
             iconBtnStyles={iconBtnStyles}
             icon={icon.icon}
           />
         ))}
-        {showSettingBtn && (
+        {showMenuBtn && (
           <HeaderButton
             onPress={() => router.push("/(protected)/settings")}
             iconBtnStyles={iconBtnStyles}
             icon={
               <DynamicIcon
                 family="Ionicons"
-                name="settings-outline"
+                name="menu"
                 size={30}
                 color={iconColor}
               />

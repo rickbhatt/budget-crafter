@@ -14,7 +14,8 @@ export const createCategory = mutation({
         v.literal("FontAwesome"),
         v.literal("AntDesign"),
         v.literal("Entypo"),
-        v.literal("MaterialIcons")
+        v.literal("MaterialIcons"),
+        v.literal("Feather")
       ),
     }),
   },

@@ -1,4 +1,4 @@
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import * as Haptics from "expo-haptics";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { CustomButtonProps } from "type";

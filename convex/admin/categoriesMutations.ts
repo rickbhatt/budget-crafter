@@ -1,7 +1,6 @@
 import { internalMutation } from "convex/_generated/server";
 import { createCategoryHelper } from "convex/models/categories.helpers";
 import { v } from "convex/values";
-import { getCurrentDateTimeUnix } from "src/utils/date";
 export const seedCategories = internalMutation({
   handler: async (ctx) => {
     const defaultCategories = [
@@ -122,7 +121,7 @@ export const seedCategories = internalMutation({
           name: category.name,
           icon: category.icon,
           isDefault: true,
-          updatedAt: getCurrentDateTimeUnix(),
+          updatedAt: Date.now(),
         });
         results.push({
           name: category.name,
@@ -185,7 +184,7 @@ export const updateCategoryAdmin = internalMutation({
     await ctx.db.patch(args.id, {
       name: args.name,
       icon: args.icon,
-      updatedAt: getCurrentDateTimeUnix(),
+      updatedAt: Date.now(),
     });
 
     const category = await ctx.db.get(args.id);

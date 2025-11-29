@@ -57,13 +57,11 @@ export const updateCurrencyDetails = mutation({
 
       if (!user) return;
 
-      const date = new Date().getTime();
-
       const updatedUser = await ctx.db.patch(user._id, {
         currency: {
           ...args,
         },
-        updatedAt: date,
+        updatedAt: Date.now(),
       });
     } catch (error) {
       console.log("🚀 error in updateCurrencyDetails", error);

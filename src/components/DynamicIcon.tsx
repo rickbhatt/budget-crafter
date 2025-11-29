@@ -1,6 +1,7 @@
 import {
   AntDesign,
   Entypo,
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
@@ -16,13 +17,14 @@ const ICON_FAMILIES = {
   AntDesign,
   Entypo,
   MaterialIcons,
+  Feather,
 };
 
 const DynamicIcon = ({
   family,
   name,
   size = 24,
-  color = "#FFFFFF",
+  color = "#000000",
 }: DynamicIconProps) => {
   const Icon = ICON_FAMILIES[family];
 

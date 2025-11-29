@@ -3,7 +3,7 @@ import { api } from "convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import {
@@ -42,13 +42,13 @@ const budgetFormSchema = z
       .optional()
       .nullable(),
     periodStartDate: z
-      .number({ message: "Period start date is required" })
+      .string({ message: "Period start date is required" })
       .nullable()
       .refine((val) => val !== null, {
         message: "Period start date is required",
       }),
     periodEndDate: z
-      .number({ message: "Period end date is required" })
+      .string({ message: "Period end date is required" })
       .nullable()
       .refine((val) => val !== null, {
         message: "Period end date is required",
@@ -58,6 +58,7 @@ const budgetFormSchema = z
     (data) => {
       // Only validate if both dates are present
       if (data.periodStartDate !== null && data.periodEndDate !== null) {
+        // Compare ISO date strings lexicographically (YYYY-MM-DD format)
         return data.periodEndDate > data.periodStartDate;
       }
       // Skip validation if either date is missing (handled by individual field validation)
@@ -119,16 +120,21 @@ const CreateBudget = () => {
 
   const budgetType = watch("budgetType");
 
+  const periodStartDate = watch("periodStartDate");
+
+  const minPeriodEndDate = useMemo(() => {
+    if (!periodStartDate) return null;
+    const date = new Date(periodStartDate!);
+    date.setDate(date.getDate() + 1);
+    return date;
+  }, [periodStartDate]);
+
   useEffect(() => {
     if (budgetType === "monthly") {
       setValue("cardName", null, { shouldValidate: false });
       setValue("cardLastFourDigits", null, { shouldValidate: false });
     }
   }, [budgetType, setValue]);
-
-  const handleClearAllPress = () => {
-    reset();
-  };
 
   const onSubmit = async (data: BudgetFormData) => {
     try {
@@ -191,7 +197,7 @@ const CreateBudget = () => {
               iconBtnStyles="bg-[#1f1f1f]"
               iconColor="#FFFFFF"
               showBackBtn={true}
-              showSettingBtn={false}
+              showMenuBtn={false}
               headerStyles="bg-bg-dark"
             />
           ),
@@ -289,6 +295,7 @@ const CreateBudget = () => {
           control={control}
           labelName="Period End Date"
           inputName="periodEndDate"
+          minDate={minPeriodEndDate !== null ? minPeriodEndDate : undefined}
           error={errors.periodEndDate?.message}
         />
 

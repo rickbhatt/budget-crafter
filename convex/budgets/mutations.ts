@@ -1,16 +1,16 @@
+import { checkOverllapingMonthlyBudgets } from "convex/models/budgets.helpers";
 import { ConvexError, v } from "convex/values";
 import { mutation } from "../_generated/server";
-import { checkOverllapingMonthlyBudgets } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
 
 export const createBudget = mutation({
   args: {
     budgetType: v.union(v.literal("monthly"), v.literal("creditCard")),
     budgetAmount: v.float64(),
-    periodStartDate: v.number(),
+    periodStartDate: v.string(),
     cardName: v.optional(v.string()),
     cardLastFourDigits: v.optional(v.string()),
-    periodEndDate: v.number(),
+    periodEndDate: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getAuthUserOrThrow(ctx);
@@ -43,8 +43,8 @@ export const updateBudget = mutation({
     updates: v.object({
       budgetAmount: v.optional(v.number()),
       type: v.optional(v.union(v.literal("monthly"), v.literal("creditCard"))),
-      periodStartDate: v.optional(v.number()),
-      periodEndDate: v.optional(v.number()),
+      periodStartDate: v.optional(v.string()),
+      periodEndDate: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {

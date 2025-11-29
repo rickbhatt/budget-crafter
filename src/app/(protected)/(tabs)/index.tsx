@@ -3,12 +3,15 @@ import EmptyState from "@/components/EmptyState";
 import ExpenseCard from "@/components/ExpenseCard";
 import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
-import { calculateBudgetPercentages } from "@/utils/budgetCalculations";
+import {
+  calculateBudgetPercentages,
+  totalExpenseCalc,
+} from "@/utils/budgetCalculations";
 import { formatDateTime } from "@/utils/formatDate";
 import { formatNumber } from "@/utils/formatNumber";
 import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Stack, useRouter } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
@@ -16,6 +19,7 @@ import { PieChart } from "react-native-gifted-charts";
 const MAX_EXPENSES = 6;
 
 const Dashboard = () => {
+  //! Budget type implementation left for later
   const [budgetType, setBudgetType] = useState<"monthly" | "creditCard">(
     "monthly"
   );
@@ -29,12 +33,11 @@ const Dashboard = () => {
 
   const expenses = useQuery(
     api.expenses.queries.getAllExpenses,
-    budget?._id != null ? { budgetId: budget._id } : "skip"
+    budget != null ? { budgetId: budget._id } : "skip"
   );
 
   const totalExpense = useMemo(() => {
-    if (!expenses || expenses.length === 0) return 0;
-    return expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    return totalExpenseCalc(expenses ?? []);
   }, [expenses]);
 
   // Calculate budget percentages - now accessible throughout the component
@@ -79,16 +82,30 @@ const Dashboard = () => {
 
   const router = useRouter();
 
+  if (budget === null) {
+    return (
+      <View className="bg-bg-primary flex-1 items-center justify-center">
+        <Text className="h3-bold">You have no active budgets</Text>
+        <CustomButton
+          style="bg-bg-dark mt-4"
+          textStyle="text-text-light"
+          title="Create Budget"
+          onPress={() => router.push("/(protected)/budget/create")}
+        />
+      </View>
+    );
+  }
+
   return (
     <>
-      <Stack.Screen
+      <Tabs.Screen
         options={{
           header: () => (
             <ScreenHeader
               title="Dashboard"
               iconColor="black"
               showBackBtn={false}
-              showSettingBtn={true}
+              showMenuBtn={true}
             />
           ),
         }}
@@ -174,12 +191,7 @@ const Dashboard = () => {
                 title="View All"
                 style="bg-bg-primary w-32 py-3 rounded-xl"
                 textStyle="text-text-primary text-base"
-                onPress={() =>
-                  router.push({
-                    pathname: "/expense/[id]",
-                    params: { id: "1" },
-                  })
-                }
+                onPress={() => router.push("/(protected)/(tabs)/expenses")}
               />
             </View>
 
@@ -189,7 +201,7 @@ const Dashboard = () => {
                 <ExpenseCard
                   key={index}
                   expenseId={expense._id}
-                  descrtipion={expense.description}
+                  description={expense.description}
                   category={expense.category?.name!}
                   amount={expense.amount}
                   notes={expense.notes ?? null}
@@ -197,6 +209,7 @@ const Dashboard = () => {
                   date={expense.expenseDate}
                   isLast={index == MAX_EXPENSES - 1}
                   currencySymbol={userProfile?.currency?.currencySymbol!}
+                  variant="dashboard"
                 />
               ))}
             </View>

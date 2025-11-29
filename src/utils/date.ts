@@ -1,15 +1,5 @@
-export const getCurrentDateUnix = (): number => {
-  const timestamp = new Date();
-  timestamp.setHours(0, 0, 0, 0);
-  return timestamp.getTime();
-};
+import { formatDateTime } from "src/utils/formatDate";
 
-export const getCurrentDateTimeUnix = (): number => {
-  return new Date().getTime();
-};
-
-export const convertToDateUnix = (date: Date | string): number => {
-  const timestamp = new Date(date);
-  timestamp.setHours(0, 0, 0, 0);
-  return timestamp.getTime();
+export const getCurrentDate = (): string => {
+  return formatDateTime(new Date()).dateToISOString;
 };

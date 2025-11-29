@@ -1,9 +1,5 @@
-/**
- * Calculates budget and expense percentages
- * @param totalExpense - The total amount spent
- * @param budgetAmount - The total budget allocated
- * @returns Object containing expense percentage, remaining percentage, and over-budget status
- */
+import { Doc } from "convex/_generated/dataModel";
+
 export const calculateBudgetPercentages = (
   totalExpense: number,
   budgetAmount: number
@@ -18,10 +14,7 @@ export const calculateBudgetPercentages = (
   }
 
   // Calculate expense percentage (capped at 100%)
-  const expensePercentage = Math.min(
-    (totalExpense / budgetAmount) * 100,
-    100
-  );
+  const expensePercentage = Math.min((totalExpense / budgetAmount) * 100, 100);
 
   // Calculate remaining percentage (minimum 0%)
   const remainingPercentage = Math.max(100 - expensePercentage, 0);
@@ -34,4 +27,9 @@ export const calculateBudgetPercentages = (
     remainingPercentage,
     isOverBudget,
   };
+};
+
+export const totalExpenseCalc = (expenses: Doc<"expenses">[]) => {
+  if (!expenses || expenses.length === 0) return 0;
+  return expenses.reduce((acc, expense) => acc + expense.amount, 0);
 };

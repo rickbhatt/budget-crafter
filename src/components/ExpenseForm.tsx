@@ -1,250 +1,351 @@
+import ExpenseCategoryBottomSheet from "@/components/bottomsheets/ExpenseCategoryBottomSheet";
+import PaymentMethodBottomSheet from "@/components/bottomsheets/PaymentMethodBottomSheet";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "convex/_generated/api";
-import { Id } from "convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useLocales } from "expo-localization";
-import React, {
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
-import { useForm } from "react-hook-form";
-import { Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
+import React, { useCallback, useRef, useState } from "react";
 import {
-  KeyboardAwareScrollView,
-  KeyboardToolbar,
-} from "react-native-keyboard-controller";
-import PaymentCategoryBottomSheet from "src/components/PaymentCategoryBottomSheet";
-import { Category, ExpenseFormProps } from "type";
-import { z } from "zod";
-import CustomButton from "./CustomButton";
-import CustomInputs from "./CustomInputs";
-import DynamicIcon from "./DynamicIcon";
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import DatePickerModal from "src/components/DatePickerModal";
+import DynamicIcon from "src/components/DynamicIcon";
+import { cn } from "src/utils/cn";
+import { getCurrentDate } from "src/utils/date";
+import { formatDateTime } from "src/utils/formatDate";
+import { Category, ExpenseFormProps, PaymentMethodType } from "type";
 
-const expenseFormSchema = z.object({
-  categoryId: z.custom<Id<"categories">>((val) => {
-    return typeof val === "string" && val.length > 0;
-  }, "Category is required"),
-  amount: z.string({ message: "Amount is required" }).refine(
-    (val) => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num > 0;
-    },
-    {
-      message: "Amount must be greater than 0",
-    }
-  ),
-  description: z
-    .string({ message: "Description is required" })
-    .min(1, "Description is required"),
-  notes: z.string().optional(),
-  paymentMethod: z.enum(
-    ["cash", "upi", "digitalPayment", "debitCard", "creditCard"],
-    {
-      message: "Payment method is required",
-    }
-  ),
-  expenseDate: z.number({
-    message: "Expense date is required",
-  }),
-});
-
-export type ExpenseFormData = z.infer<typeof expenseFormSchema>;
-
-const ICON_SIZE = 28;
+const NumKeys = ({
+  value,
+  onPress,
+}: {
+  value: string;
+  onPress: (value: string) => void;
+}) => {
+  return (
+    <Pressable
+      className="crt-numkeys-btn flex-1"
+      onPress={() => onPress(value)}
+    >
+      <Text className={cn("crt-numkeys-text", value === "." && "text-4xl")}>
+        {value}
+      </Text>
+    </Pressable>
+  );
+};
 
 const ExpenseForm = ({
+  // Controlled state
+  amount,
+  selectedCategory,
+  selectedPaymentMethod,
+  expenseDate,
+  description,
+  // Change handlers
+  onAmountChange,
+  onCategoryChange,
+  onPaymentMethodChange,
+  onExpenseDateChange,
+  onDescriptionChange,
+  // Submission
   onSubmit,
-  initialValues,
-  submitButtonText,
   isSubmitting = false,
-  ref,
 }: ExpenseFormProps) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  // refs for bottom sheets (UI-only state)
+  const expenseCategoryBottomSheetRef = useRef<BottomSheet>(null);
+  const paymentMethodBottomSheetRef = useRef<BottomSheet>(null);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
+  // UI-only state
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 
   const user = useQuery(api.users.queries.getAuthenticatedUserProfile);
 
-  const locales = useLocales()[0];
-
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<ExpenseFormData>({
-    resolver: zodResolver(expenseFormSchema),
-    defaultValues: initialValues || {
-      categoryId: undefined,
-      amount: undefined,
-      description: undefined,
-      notes: "",
-      paymentMethod: undefined,
-      expenseDate: undefined,
-    },
-  });
-
-  // Expose reset method to parent via ref
-  useImperativeHandle(
-    ref,
-    () => ({
-      reset: () => {
-        reset();
-        setSelectedCategory(null);
-      },
-    }),
-    [reset]
-  );
-
-  // Payment method options
-  const paymentMethodOptions = [
-    { label: "Cash", value: "cash" },
-    locales.languageRegionCode === "IN"
-      ? { label: "UPI", value: "upi" }
-      : { label: "Digital Payment", value: "digitalPayment" },
-    { label: "Debit Card", value: "debitCard" },
-    { label: "Credit Card", value: "creditCard" },
-  ];
-
-  const handlePaymentCategoryTrigger = () => {
-    bottomSheetRef.current?.snapToIndex(0);
+  // trigger expense category bottom sheet
+  const handleExpenseCategoryTrigger = () => {
+    expenseCategoryBottomSheetRef.current?.snapToIndex(0);
   };
 
-  const handleOnPaymentCategorySelect = useCallback(
+  // trigger  payment method bottom sheet
+  const handlePaymentMethodTrigger = () => {
+    paymentMethodBottomSheetRef.current?.snapToIndex(0);
+  };
+
+  // handle category selection
+  const handleExpenseCategorySelect = useCallback(
     (params: Category) => {
-      setValue("categoryId", params._id);
-      setSelectedCategory(params);
-      bottomSheetRef.current?.close();
+      onCategoryChange(params);
+      expenseCategoryBottomSheetRef.current?.close();
     },
-    [setValue]
+    [onCategoryChange]
   );
+
+  // handle payment method selection
+  const handlePaymentMethodSelect = useCallback(
+    (params: PaymentMethodType) => {
+      onPaymentMethodChange(params);
+      paymentMethodBottomSheetRef.current?.close();
+    },
+    [onPaymentMethodChange]
+  );
+
+  // handle numpad press
+  const handleNumpadPress = (num: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    if (num === "C") {
+      onAmountChange("0");
+      return;
+    }
+
+    // 1. Only allow digits and decimal point
+    if (!/^[0-9.]$/.test(num)) {
+      return;
+    }
+
+    // 2. Handle initial zero state
+    if (amount === "0") {
+      if (num === ".") {
+        onAmountChange("0.");
+        return;
+      }
+      if (num === "0") {
+        return; // Don't change if pressing 0 again
+      }
+      onAmountChange(num); // Replace 0 with the new digit
+      return;
+    }
+
+    // 3. Prevent multiple decimal points
+    if (num === "." && amount.includes(".")) {
+      return;
+    }
+
+    // 4. Check if decimal exists and limit decimal places
+    if (amount.includes(".")) {
+      const parts = amount.split(".");
+      const decimalPlaces = parts[1]?.length || 0;
+
+      // Already have 2 decimal places, don't allow more
+      if (decimalPlaces >= 2 && num !== ".") {
+        return;
+      }
+    }
+
+    // 5. Prevent invalid leading zeros (e.g., "01", "001")
+    // Allow "0." but not "00" or "01"
+    if (amount === "0" && num === "0") {
+      return;
+    }
+
+    // 6. Set maximum amount limit (optional but recommended)
+    const newValue = amount + num;
+    const numericValue = parseFloat(newValue);
+    const maxAmount = 999999.99;
+
+    if (numericValue > maxAmount) {
+      return;
+    }
+
+    // 7. All validations passed
+    onAmountChange(newValue);
+  };
+
+  // handle backspace
+  const handleBackspace = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newValue = amount.length <= 1 ? "0" : amount.slice(0, -1);
+    onAmountChange(newValue);
+  };
+
+  // handle submit
+  const handleSubmit = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onSubmit();
+  };
+
+  // handle date change
+  const handleDateChange = (date: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onExpenseDateChange(date);
+  };
 
   return (
     <>
-      <KeyboardAwareScrollView
-        className="flex-1 bg-bg-dark"
-        bottomOffset={62}
-        overScrollMode="never"
-        contentContainerClassName="pb-safe"
-      >
-        <CustomInputs
-          type="text"
-          labelName="Amount"
-          placeholder="100"
-          inputName="amount"
-          icon={
-            <Text
-              style={{
-                fontSize: ICON_SIZE,
-              }}
-              className=" text-text-light"
+      <View className="flex-1 screen-x-padding bg-bg-primary pb-safe">
+        {/* floating buttons */}
+        <View className="flex-col">
+          {/* row 1 */}
+          <View className="flex-row justify-between items-center gap-x-2">
+            {/* payment method */}
+            <Pressable
+              onPress={handlePaymentMethodTrigger}
+              className="crt-expense-floating-btn flex-1 border-lavender bg-lavender/25"
             >
-              {user?.currency?.currencySymbol || "₹"}
-            </Text>
-          }
-          keyboardType="decimal-pad"
-          error={errors.amount?.message}
-          control={control}
-        />
-        <CustomInputs
-          type="text"
-          labelName="Descrtiption"
-          placeholder="What was it for?"
-          inputName="description"
-          icon={
-            <DynamicIcon
-              family="MaterialIcons"
-              name="notes"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.description?.message}
-          control={control}
-        />
-        <CustomInputs
-          type="paymentCategory"
-          labelName="Category"
-          inputName="categoryId"
-          control={control}
-          selectedPaymentCategoryValue={selectedCategory}
-          onPressPaymentCategoryTrigger={handlePaymentCategoryTrigger}
-          placeholder="Pick a category"
-          icon={
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="tag-outline"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.categoryId?.message}
-        />
+              <DynamicIcon
+                family={
+                  (selectedPaymentMethod?.icon?.family ?? "Ionicons") as any
+                }
+                name={(selectedPaymentMethod?.icon?.name ?? "wallet") as any}
+                color="#000000"
+                size={24}
+              />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                {selectedPaymentMethod?.label ?? "Payment Method"}
+              </Text>
+            </Pressable>
 
-        <CustomInputs
-          type="select"
-          labelName="Payment Method"
-          selectOptions={paymentMethodOptions}
-          inputName="paymentMethod"
-          placeholder="Select a method"
-          control={control}
-          icon={
-            <DynamicIcon
-              family="MaterialCommunityIcons"
-              name="wallet-outline"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          error={errors.paymentMethod?.message}
-        />
-
-        <CustomInputs
-          type="date"
-          control={control}
-          labelName="Expense Date"
-          inputName="expenseDate"
-          error={errors.expenseDate?.message}
-        />
-        <CustomInputs
-          type="text"
-          labelName="Notes (optional)"
-          placeholder="Anything else?"
-          inputName="notes"
-          icon={
-            <DynamicIcon
-              family="MaterialIcons"
-              name="description"
-              size={ICON_SIZE}
-              color="#FFFFFF"
-            />
-          }
-          keyboardType="default"
-          error={errors.notes?.message}
-          control={control}
-        />
-        <View className="flex items-center gap-x-2.5 flex-row mt-8 w-full screen-x-padding">
-          <CustomButton
-            title={submitButtonText}
-            onPress={handleSubmit(onSubmit)}
-            style="bg-emerald w-full"
-            textStyle="text-text-light"
-            isLoading={isSubmitting}
-            leftIcon={<DynamicIcon name="save" family="FontAwesome" />}
+            {/* payment category */}
+            <Pressable
+              onPress={handleExpenseCategoryTrigger}
+              className="crt-expense-floating-btn flex-1 border-blue bg-blue/25"
+            >
+              <DynamicIcon
+                family={selectedCategory?.icon?.family ?? "MaterialIcons"}
+                name={selectedCategory?.icon?.name ?? "category"}
+              />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                {selectedCategory ? selectedCategory.name : "Pick Category"}
+              </Text>
+            </Pressable>
+          </View>
+          {/* row 2 */}
+          <View className="flex-row items-center justify-center">
+            <Pressable
+              onPress={() => setIsDatePickerOpen(true)}
+              className="crt-expense-floating-btn border-lime bg-lime/25"
+            >
+              <DynamicIcon family="Ionicons" name="calendar" />
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                className="crt-expense-floating-btn-text"
+              >
+                {expenseDate === getCurrentDate()
+                  ? "Today"
+                  : formatDateTime(expenseDate).intlDateFormat}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+        {/* Amount Display */}
+        <View className="mt-7 gap-x-1.5 flex-row flex-center">
+          <Text className="font-quicksand-semibold text-5xl text-text-tertiary">
+            {user?.currency?.currencySymbol}
+          </Text>
+          <Text
+            className={cn(
+              "font-quicksand-bold text-7xl",
+              amount ? "text-text-primary" : "text-text-tertiary"
+            )}
+          >
+            {amount ?? "0.00"}
+          </Text>
+        </View>
+        {/* Description */}
+        <View className="mt-4 flex-row">
+          <TextInput
+            className="border border-standard rounded-lg flex-1 px-2.5 font-quicksand-regular text-text-primary"
+            keyboardType="default"
+            placeholder="Description (optional)"
+            placeholderTextColor={"#4B5563"}
+            maxLength={100}
+            value={description}
+            onChangeText={onDescriptionChange}
           />
         </View>
-      </KeyboardAwareScrollView>
-      <KeyboardToolbar />
-      <PaymentCategoryBottomSheet
-        selectedCategory={selectedCategory?._id ?? null}
-        bottomSheetRef={bottomSheetRef}
-        onSelect={handleOnPaymentCategorySelect}
+
+        {/* Keypad Container */}
+        <View className="mt-3 flex-1 flex-row gap-x-2">
+          {/* Num Pad: Left Column */}
+          <View className="flex-[2.5] gap-y-1.5 flex-col">
+            {/* row 1 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["1", "2", "3"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 2 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["4", "5", "6"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 3 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["7", "8", "9"].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+            {/* row 4 */}
+            <View className="flex-1 gap-x-2 flex-row">
+              {["C", "0", "."].map((num) => (
+                <NumKeys key={num} value={num} onPress={handleNumpadPress} />
+              ))}
+            </View>
+          </View>
+          {/* Action Btns: Right Column */}
+          <View className="flex-col gap-y-2 flex-1">
+            {/* backspace */}
+            <Pressable
+              className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
+              onPress={handleBackspace}
+            >
+              <DynamicIcon
+                family="MaterialCommunityIcons"
+                name="backspace-outline"
+                size={28}
+                color="#EF4444"
+              />
+            </Pressable>
+
+            {/* submit */}
+            <Pressable
+              className="flex-[2] bg-bg-dark crt-action-btn"
+              onPress={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
+                  name="check"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              )}
+            </Pressable>
+          </View>
+        </View>
+      </View>
+      <DatePickerModal
+        value={expenseDate}
+        onChange={handleDateChange}
+        isDatePickerOpen={isDatePickerOpen}
+        setIsDatePickerOpen={setIsDatePickerOpen}
+        maxDate={new Date(getCurrentDate() + "T00:00:00")}
+      />
+      <ExpenseCategoryBottomSheet
+        selectedCategory={selectedCategory}
+        bottomSheetRef={expenseCategoryBottomSheetRef}
+        onSelect={handleExpenseCategorySelect}
+      />
+      <PaymentMethodBottomSheet
+        selectedMethod={selectedPaymentMethod}
+        bottomSheetRef={paymentMethodBottomSheetRef}
+        onSelect={handlePaymentMethodSelect}
       />
     </>
   );

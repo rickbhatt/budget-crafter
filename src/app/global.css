@@ -17,6 +17,24 @@
 }
 
 @layer components {
+  .crt-expense-floating-btn {
+    @apply flex-row items-center gap-2 py-2 px-3 justify-center border-2 mb-3 rounded-full active:active-press-scale;
+  }
+  .crt-expense-floating-btn-text {
+    @apply text-base font-quicksand-bold;
+  }
+
+  .crt-numkeys-btn {
+    @apply bg-light-100 border border-dark-100 rounded-3xl items-center justify-center active:active-press-scale;
+  }
+  .crt-action-btn {
+    @apply rounded-3xl items-center justify-center active:active-press-scale;
+  }
+
+  .crt-numkeys-text {
+    @apply text-2xl font-quicksand-bold text-text-primary;
+  }
+
   .payment-category-chip {
     @apply flex flex-row items-center px-4 py-2 mr-2 mb-3 whitespace-nowrap rounded-full border border-border-dark;
   }
@@ -74,7 +92,7 @@
   }
 
   .screen-header {
-    @apply flex-between flex-row screen-x-padding pt-safe h-32 relative;
+    @apply flex-between flex-row screen-x-padding pt-safe h-32;
   }
 
   .screen-title {

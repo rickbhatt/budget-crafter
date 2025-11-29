@@ -2,28 +2,83 @@ import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Toast from "react-native-toast-message";
-import ExpenseForm, { ExpenseFormData } from "src/components/ExpenseForm";
+import ExpenseForm from "src/components/ExpenseForm";
 import ScreenHeader from "src/components/ScreenHeader";
-import { ExpenseFormHandle } from "type";
+import { getCurrentDate } from "src/utils/date";
+import { Category, PaymentMethodType } from "type";
 
 const CreateExpense = () => {
   const createExpense = useMutation(api.expenses.mutations.createExpense);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef<ExpenseFormHandle>(null);
 
-  const handleSubmit = async (data: ExpenseFormData) => {
+  // Form state - lifted from ExpenseForm
+  const [amount, setAmount] = useState<string>("0");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] =
+    useState<PaymentMethodType | null>(null);
+  const [expenseDate, setExpenseDate] = useState<string>(getCurrentDate());
+  const [description, setDescription] = useState<string>("");
+
+  // Validation
+  const validateForm = (): boolean => {
+    if (!selectedCategory) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please select a category",
+        position: "top",
+        visibilityTime: 3000,
+        topOffset: 80,
+      });
+      return false;
+    }
+
+    if (!selectedPaymentMethod) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please select a payment method",
+        position: "top",
+        visibilityTime: 3000,
+        topOffset: 80,
+      });
+      return false;
+    }
+
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please enter a valid amount",
+        position: "top",
+        visibilityTime: 3000,
+        topOffset: 80,
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
     try {
       await createExpense({
-        categoryId: data.categoryId!,
-        amount: parseFloat(data.amount!),
-        notes: data.notes!,
-        paymentMethod: data.paymentMethod!,
-        expenseDate: data.expenseDate!,
-        description: data.description!,
+        categoryId: selectedCategory!._id,
+        amount: parseFloat(amount),
+        notes: "",
+        paymentMethod: selectedPaymentMethod!.value as any,
+        expenseDate: expenseDate,
+        description: description || "",
       });
+
       Toast.show({
         type: "success",
         text1: "Success",
@@ -34,8 +89,13 @@ const CreateExpense = () => {
         topOffset: 80,
         swipeable: true,
       });
-      // Reset the form after successful submission
-      formRef.current?.reset();
+
+      // Reset form state
+      setAmount("0");
+      setSelectedCategory(null);
+      setSelectedPaymentMethod(null);
+      setExpenseDate(getCurrentDate());
+      setDescription("");
     } catch (error: any) {
       // Parse ConvexError from the mutation
       const errorData = error?.data;
@@ -64,26 +124,36 @@ const CreateExpense = () => {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack.Screen
         options={{
           header: () => (
             <ScreenHeader
               title="Add Expense"
-              titleStyles="text-text-light"
-              iconBtnStyles="bg-[#1f1f1f]"
-              iconColor="#FFFFFF"
+              titleStyles="text-text-primary"
+              iconColor="#000000"
               showBackBtn={true}
-              showSettingBtn={false}
-              headerStyles="bg-bg-dark"
+              showMenuBtn={false}
+              headerStyles="bg-bg-primary"
             />
           ),
         }}
       />
       <ExpenseForm
-        ref={formRef}
+        // Controlled state
+        amount={amount}
+        selectedCategory={selectedCategory}
+        selectedPaymentMethod={selectedPaymentMethod}
+        expenseDate={expenseDate}
+        description={description}
+        // Change handlers
+        onAmountChange={setAmount}
+        onCategoryChange={setSelectedCategory}
+        onPaymentMethodChange={setSelectedPaymentMethod}
+        onExpenseDateChange={setExpenseDate}
+        onDescriptionChange={setDescription}
+        // Submission
         onSubmit={handleSubmit}
-        submitButtonText="Add Expense"
         isSubmitting={isSubmitting}
       />
     </>

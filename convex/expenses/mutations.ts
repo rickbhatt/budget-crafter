@@ -1,16 +1,16 @@
 import { Doc } from "convex/_generated/dataModel";
 import { ConvexError, v } from "convex/values";
-import { getCurrentDateUnix } from "src/utils/date";
 import { mutation } from "../_generated/server";
-import { findActiveBudgetOrThrow } from "../models/budgets.helpers";
+import { findBudgetOrThrow } from "../models/budgets.helpers";
 import { getAuthUserOrThrow } from "../models/users.helpers";
+import { getCurrentDate } from "../utils/date";
 
 export const createExpense = mutation({
   args: {
     categoryId: v.id("categories"),
     amount: v.float64(),
     notes: v.optional(v.string()),
-    description: v.string(),
+    description: v.optional(v.string()),
     paymentMethod: v.union(
       v.literal("cash"),
       v.literal("upi"),
@@ -18,12 +18,12 @@ export const createExpense = mutation({
       v.literal("debitCard"),
       v.literal("creditCard")
     ),
-    expenseDate: v.number(),
+    expenseDate: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getAuthUserOrThrow(ctx);
 
-    const timestamp = getCurrentDateUnix();
+    const timestamp = getCurrentDate();
 
     let budgetType: Doc<"budgets">["budgetType"];
 
@@ -33,7 +33,7 @@ export const createExpense = mutation({
       budgetType = "monthly";
     }
 
-    let budgetQuery = await findActiveBudgetOrThrow(
+    let budgetQuery = await findBudgetOrThrow(
       ctx,
       user._id,
       budgetType,

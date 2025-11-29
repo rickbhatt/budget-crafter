@@ -1,20 +1,20 @@
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetScrollView,
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { api } from "convex/_generated/api";
 
-import cn from "clsx";
+import { cn } from "@/utils/cn";
 import { useMutation, useQuery } from "convex/react";
 import { memo, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { IconFamily, PaymentCategoryBottomSheetProps } from "type";
-import CustomButton from "./CustomButton";
-import DynamicIcon from "./DynamicIcon";
-import IconPicker from "./IconPicker";
+import { ExpenseCategoryBottomSheetProps, IconFamily } from "type";
+import CustomButton from "../CustomButton";
+import DynamicIcon from "../DynamicIcon";
+import IconPicker from "../IconPicker";
 
 const renderBackdrop = (props: any) => (
   <BottomSheetBackdrop
@@ -22,14 +22,17 @@ const renderBackdrop = (props: any) => (
     disappearsOnIndex={-1}
     appearsOnIndex={0}
     opacity={0.7}
+    style={{
+      zIndex: 9999,
+    }}
   />
 );
 
-const PaymentCategoryBottomSheet = ({
+const ExpenseCategoryBottomSheet = ({
   bottomSheetRef,
   selectedCategory,
   onSelect,
-}: PaymentCategoryBottomSheetProps) => {
+}: ExpenseCategoryBottomSheetProps) => {
   const { bottom, top } = useSafeAreaInsets();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -55,7 +58,7 @@ const PaymentCategoryBottomSheet = ({
 
   const createCategory = useMutation(api.categories.mutations.createCategory);
 
-  const snapPoints = useMemo(() => ["70%"], []);
+  const snapPoints = useMemo(() => ["70%", "100%"], []);
 
   const handleCreateNewCategorySubmit = async () => {
     if (newCategoryName && newCategoryIcon) {
@@ -155,12 +158,12 @@ const PaymentCategoryBottomSheet = ({
         </View>
 
         {/* Tab Content */}
-        <BottomSheetScrollView
-          overScrollMode={"never"}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="never"
-          className="screen-x-padding mt-8"
+          className="screen-x-padding mt-8 flex-1"
           contentContainerStyle={{
-            paddingBottom: 40, // Small buffer for gestures
+            paddingBottom: 60, // Small buffer for gestures
           }}
         >
           {activeTab === "pickOne" ? (
@@ -177,7 +180,7 @@ const PaymentCategoryBottomSheet = ({
                       <Pressable
                         className={cn(
                           "payment-category-chip",
-                          selectedCategory === category._id
+                          selectedCategory?._id === category._id
                             ? "bg-sky"
                             : "bg-bg-primary"
                         )}
@@ -193,7 +196,7 @@ const PaymentCategoryBottomSheet = ({
                         <Text
                           className={cn(
                             "ml-1",
-                            selectedCategory === category._id
+                            selectedCategory?._id === category._id
                               ? "paragraph-bold"
                               : "paragraph-semibold"
                           )}
@@ -220,12 +223,12 @@ const PaymentCategoryBottomSheet = ({
                   placeholder="WiFi bill, uber..."
                   accessibilityLabel="Enter category name"
                   className="w-full text-text-primary h-14 px-3 py-2 border border-border-dark paragraph-semibold bg-bg-primary rounded-md"
-                  onBlur={() => {
-                    setTimeout(
-                      () => bottomSheetRef.current?.snapToIndex(0),
-                      150
-                    ); // Restore to 65%
-                  }}
+                  // onBlur={() => {
+                  //   setTimeout(
+                  //     () => bottomSheetRef.current?.snapToIndex(0),
+                  //     150
+                  //   ); // Restore to 65%
+                  // }}
                 />
               </View>
               {/* Icon picker */}
@@ -241,10 +244,10 @@ const PaymentCategoryBottomSheet = ({
               />
             </View>
           )}
-        </BottomSheetScrollView>
+        </ScrollView>
       </BottomSheetView>
     </BottomSheet>
   );
 };
 
-export default memo(PaymentCategoryBottomSheet);
+export default memo(ExpenseCategoryBottomSheet);

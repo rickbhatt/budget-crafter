@@ -9,7 +9,6 @@
  */
 
 import type * as admin_categoriesMutations from "../admin/categoriesMutations.js";
-import type * as admin_queries from "../admin/queries.js";
 import type * as budgets_mutations from "../budgets/mutations.js";
 import type * as budgets_queries from "../budgets/queries.js";
 import type * as categories_mutations from "../categories/mutations.js";
@@ -19,6 +18,7 @@ import type * as expenses_queries from "../expenses/queries.js";
 import type * as http from "../http.js";
 import type * as users_mutations from "../users/mutations.js";
 import type * as users_queries from "../users/queries.js";
+import type * as utils_date from "../utils/date.js";
 
 import type {
   ApiFromModules,
@@ -36,7 +36,6 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   "admin/categoriesMutations": typeof admin_categoriesMutations;
-  "admin/queries": typeof admin_queries;
   "budgets/mutations": typeof budgets_mutations;
   "budgets/queries": typeof budgets_queries;
   "categories/mutations": typeof categories_mutations;
@@ -46,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "users/mutations": typeof users_mutations;
   "users/queries": typeof users_queries;
+  "utils/date": typeof utils_date;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
