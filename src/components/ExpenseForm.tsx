@@ -5,7 +5,13 @@ import { api } from "convex/_generated/api";
 import { useQuery } from "convex/react";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useRef, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import DatePickerModal from "src/components/DatePickerModal";
 import DynamicIcon from "src/components/DynamicIcon";
 import { cn } from "src/utils/cn";
@@ -69,16 +75,22 @@ const ExpenseForm = ({
   };
 
   // handle category selection
-  const handleExpenseCategorySelect = useCallback((params: Category) => {
-    onCategoryChange(params);
-    expenseCategoryBottomSheetRef.current?.close();
-  }, [onCategoryChange]);
+  const handleExpenseCategorySelect = useCallback(
+    (params: Category) => {
+      onCategoryChange(params);
+      expenseCategoryBottomSheetRef.current?.close();
+    },
+    [onCategoryChange]
+  );
 
   // handle payment method selection
-  const handlePaymentMethodSelect = useCallback((params: PaymentMethodType) => {
-    onPaymentMethodChange(params);
-    paymentMethodBottomSheetRef.current?.close();
-  }, [onPaymentMethodChange]);
+  const handlePaymentMethodSelect = useCallback(
+    (params: PaymentMethodType) => {
+      onPaymentMethodChange(params);
+      paymentMethodBottomSheetRef.current?.close();
+    },
+    [onPaymentMethodChange]
+  );
 
   // handle numpad press
   const handleNumpadPress = (num: string) => {
@@ -285,6 +297,7 @@ const ExpenseForm = ({
           </View>
           {/* Action Btns: Right Column */}
           <View className="flex-col gap-y-2 flex-1">
+            {/* backspace */}
             <Pressable
               className="flex-1 bg-red-500/30 border border-red-700 crt-action-btn"
               onPress={handleBackspace}
@@ -296,17 +309,23 @@ const ExpenseForm = ({
                 color="#EF4444"
               />
             </Pressable>
+
+            {/* submit */}
             <Pressable
               className="flex-[2] bg-bg-dark crt-action-btn"
               onPress={handleSubmit}
               disabled={isSubmitting}
             >
-              <DynamicIcon
-                family="MaterialCommunityIcons"
-                name="check"
-                size={28}
-                color="#FFFFFF"
-              />
+              {isSubmitting ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <DynamicIcon
+                  family="MaterialCommunityIcons"
+                  name="check"
+                  size={28}
+                  color="#FFFFFF"
+                />
+              )}
             </Pressable>
           </View>
         </View>
