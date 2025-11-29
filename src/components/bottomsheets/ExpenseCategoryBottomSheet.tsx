@@ -58,7 +58,7 @@ const ExpenseCategoryBottomSheet = ({
 
   const createCategory = useMutation(api.categories.mutations.createCategory);
 
-  const snapPoints = useMemo(() => ["70%"], []);
+  const snapPoints = useMemo(() => ["70%", "100%"], []);
 
   const handleCreateNewCategorySubmit = async () => {
     if (newCategoryName && newCategoryIcon) {
@@ -159,12 +159,11 @@ const ExpenseCategoryBottomSheet = ({
 
         {/* Tab Content */}
         <ScrollView
-          overScrollMode={"never"}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="never"
-          className="screen-x-padding mt-8"
+          className="screen-x-padding mt-8 flex-1"
           contentContainerStyle={{
-            paddingBottom: 40, // Small buffer for gestures
+            paddingBottom: 60, // Small buffer for gestures
           }}
         >
           {activeTab === "pickOne" ? (
@@ -224,12 +223,12 @@ const ExpenseCategoryBottomSheet = ({
                   placeholder="WiFi bill, uber..."
                   accessibilityLabel="Enter category name"
                   className="w-full text-text-primary h-14 px-3 py-2 border border-border-dark paragraph-semibold bg-bg-primary rounded-md"
-                  onBlur={() => {
-                    setTimeout(
-                      () => bottomSheetRef.current?.snapToIndex(0),
-                      150
-                    ); // Restore to 65%
-                  }}
+                  // onBlur={() => {
+                  //   setTimeout(
+                  //     () => bottomSheetRef.current?.snapToIndex(0),
+                  //     150
+                  //   ); // Restore to 65%
+                  // }}
                 />
               </View>
               {/* Icon picker */}
