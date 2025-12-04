@@ -198,6 +198,7 @@ const Expenses = () => {
     <>
       <Tabs.Screen
         options={{
+          headerShown: true,
           header: () => (
             <ScreenHeader
               title="Expenses"

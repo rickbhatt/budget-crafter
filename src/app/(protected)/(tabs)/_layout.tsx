@@ -37,6 +37,8 @@ const TabsLayout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
+        headerShadowVisible: false,
+        headerShown: false,
         tabBarStyle: {
           height: 120,
           paddingBottom: bottom,
@@ -59,7 +61,6 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
           tabBarIcon: ({ focused }) => (
             <TabBarIcon
               focused={focused}

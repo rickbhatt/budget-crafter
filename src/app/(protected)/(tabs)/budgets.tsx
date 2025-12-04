@@ -1,6 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import ScreenHeader from "@/components/ScreenHeader";
-import { Stack, useRouter } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import React from "react";
 
 const Budgets = () => {
@@ -11,8 +11,9 @@ const Budgets = () => {
 
   return (
     <>
-      <Stack.Screen
+      <Tabs.Screen
         options={{
+          headerShown: true,
           header: () => (
             <ScreenHeader
               title="Budgets"

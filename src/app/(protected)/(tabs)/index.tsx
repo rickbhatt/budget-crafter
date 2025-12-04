@@ -1,6 +1,7 @@
 import CustomButton from "@/components/CustomButton";
 import EmptyState from "@/components/EmptyState";
 import ExpenseCard from "@/components/ExpenseCard";
+import Loader from "@/components/Loader";
 import ScreenHeader from "@/components/ScreenHeader";
 import { images } from "@/constants";
 import {
@@ -35,6 +36,8 @@ const Dashboard = () => {
     api.expenses.queries.getAllExpenses,
     budget != null ? { budgetId: budget._id } : "skip"
   );
+
+  const isLoading = userProfile === undefined || budget === undefined;
 
   const totalExpense = useMemo(() => {
     return totalExpenseCalc(expenses ?? []);
@@ -82,6 +85,10 @@ const Dashboard = () => {
 
   const router = useRouter();
 
+  if (isLoading) {
+    return <Loader loadingText="Hang on there..." />;
+  }
+
   if (budget === null) {
     return (
       <View className="bg-bg-primary flex-1 items-center justify-center">
@@ -100,6 +107,7 @@ const Dashboard = () => {
     <>
       <Tabs.Screen
         options={{
+          headerShown: true,
           header: () => (
             <ScreenHeader
               title="Dashboard"
